@@ -1,0 +1,15 @@
+{
+  "hash": "7e0ab4eceb45002aae67c695c46a4145",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Index\"\n---\n\n\n\nWelcome to the [effective data visualisation with R]{style=\"color:#006DAE;\"} workshop!\n\n\n<i class=\"fas fa-calendar\" style=\"width:40px;\"></i>  Tuesday 6th December 2022  \n<i class=\"fas fa-clock\" style=\"width:40px;\"></i>   9.00AM - 12.00PM AEDT  \n<i class=\"fas fa-map-pin\" style=\"width:40px;\"></i>  Zoom (links provided to participants via email)\n\n## Materials\n\nAll materials are hosted on a GitHub repo [here](https://github.com/emitanaka/EDVR-workshop) and can be downloaded [here as a zip file](https://github.com/emitanaka/EDVR-workshop/archive/refs/heads/master.zip) (including the website, slides and exercises).\n\nOnce the material is downloaded, open the `docs/index.html` in a browser to see this website ([emitanaka.org/EDVR-workshop](https://emitanaka.org/EDVR-workshop/)). \n\n\n\n## Schedule\n\n\n## Installation\n\nThis is only needed if the exercise links above do not work for you.\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages(c(\"remotes\", \"learnr\"))\nremotes::install_github(\"emitanaka/EDVR-workshop/pkg\")\n```\n:::\n\n\n\n\n## Exercises \n\n\nTo run the exercises locally, install the packages under [Installation](#installation) and then run:\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlearnr::run_tutorial(\"exercise-01\", package = \"edvr.workshop\")\nlearnr::run_tutorial(\"exercise-02\", package = \"edvr.workshop\")\n```\n:::\n\n\n\n\n## Lorum Ipsum\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, \nquis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum \ndolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

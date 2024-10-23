@@ -1,0 +1,18 @@
+bibentry(
+    bibtype      = "Manual",
+    header       = "To cite the sgpFlow package in publications use:",
+    title        = "{sgpFlow}: Functions to perform sgpFlow analyses utilizing data derived from SGP analyses.",
+    author       = c(
+                    person(given = c("Damian", "W."), family = "Betebenner"),
+                    person(given = c("Adam", "R."), family = "Van Iwaarden")
+                   ),
+    year         = "2024",
+    note         = "R package version 0.0-0.1",
+    url          = "https://centerforassessment.github.io/sgpFlow",
+    textVersion  = paste(
+                    "Damian W. Betebenner and Adam R. Van Iwaarden (2024).",
+                    "{sgpFlow}: Functions to perform sgpFlow analyses utilizing data derived from SGP analyses.",
+                    "(R package version 0.0-0.1)",
+                    "URL: https://centerforassessment.github.io/sgpFlow"
+                  )
+)

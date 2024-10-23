@@ -1,0 +1,17 @@
+---
+title: "Reference"
+execute:
+  echo: false
+---  
+
+# Function Reference
+
+Below is the list of functions available in the `packageSkeleton` package.
+
+```{r}
+Rd2md::render_refman(pkg="..", output_file="reference_TEMP.md")
+doc <- readLines("reference_TEMP.md")
+doc <- gsub("```", "``````", doc)
+cat(doc, sep = "\n")
+unlink("reference_TEMP.md")
+```

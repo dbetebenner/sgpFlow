@@ -1,4 +1,4 @@
-export(createSGPFlowMatrices)
+export(createMatrices)
 import(data.table)
 import(testthat)
 import(SGP)

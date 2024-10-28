@@ -1,4 +1,4 @@
-`createSGPFlowMatrices` <-
+`createMatrices` <-
 function(
     data_for_matrices,### Either data.table or object of class SGP
     state,
@@ -40,4 +40,4 @@ function(
 				parallel.config = list(BACKEND="PARALLEL", WORKERS=list(TAUS=8)))
     }
     return(sgpFlowMatrices.list)
-} ### END createSGPFlowMatrices
+} ### END createMatrices

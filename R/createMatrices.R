@@ -1,9 +1,10 @@
 `createMatrices` <-
 function(
-    data_for_matrices,### Either data.table or object of class SGP
+    data_for_matrices, ### Either data.table or object of class SGP
     state,
     matrix.sgp.config,
     super_cohort.sgp.config,
+    parallel.config,
     matrix_types=c("single-cohort", "super-cohort")
 ) {
     # Parameters
@@ -37,7 +38,8 @@ function(
 				return.matrices.only=TRUE,
 				calculate.baseline.sgps=FALSE,
 				goodness.of.fit.print=FALSE,
-				parallel.config = list(BACKEND="PARALLEL", WORKERS=list(TAUS=8)))
+				parallel.config=parallel.config)
     }
+
     return(sgpFlowMatrices.list)
 } ### END createMatrices

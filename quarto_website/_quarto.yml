@@ -1,0 +1,88 @@
+project:
+  type: website
+  output-dir: ../docs
+  render:
+   - "*.qmd"
+   - "assets/**/*"
+   - "!pkg/"
+
+author: 
+  - name: "Damian Betebenner"
+  - name: "Adam VanIwaarden"
+
+execute:
+  freeze: auto
+
+# Define your package documentation
+references:
+  - type: r
+    title: "Function Reference"
+    source: "../man"   # Path to your R package .Rd files (relative to quarto_website)
+
+website:
+  site-url: "https://centerforassessment.github.io/packageSkeleton/"
+  repo-url: "https://github.com/centerforassessment/packageSkeleton"
+  title: "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website"
+  repo-actions: [edit, issue]
+  favicon: ./assets/img/logo_color.png
+
+  page-navigation: true
+  navbar:
+    title: "packageSkeleton"
+    logo: ./assets/img/logo_grey.png
+    logo-alt: "Center for Assessment GitHub Homepage"
+    logo-href: "https://centerforassessment.github.io/"
+    search: false
+    pinned: true
+    foreground: "#7c7c7c"
+    right:
+      - text: Getting Started 
+        href: getting_started.qmd
+      - text: Presentations 
+        href: ./content/presentations/packageSkeleton_Presentation.qmd
+      - text: Documents
+        href: documents.qmd
+      - text: Reference 
+        href: reference.qmd
+      - text: News
+        href: news.qmd
+      - icon: github
+        aria-label: packageSkeleton GitHub Repo 
+        href: https://github.com/centerforassessment/packageSkeleton
+      - icon: github
+        aria-label: Share on Bluesky 
+        href: https://bsky.app/intent/compose?text=packageSkeleton%3A%20A%20GitHub%20repository%20featuring%20a%20starter%20template%20for%20R%20package%20development%2C%20paired%20with%20a%20Quarto-powered%20website.%20%23packageSkeleton%20%23rstats
+
+  search:
+    location: navbar
+    type: overlay
+    copy-button: true
+
+  page-footer:
+    center:
+      - text: About
+        href: about.qmd
+      - icon: github
+        text: GitHub
+        aria-label: github
+        href: https://https://github.com/centerforassessment/packageSkeleton
+
+  open-graph: true
+  twitter-card: 
+    creator: "dbetebenner"
+    site: "nciea1"
+
+format:
+  html:
+    theme:
+     - cosmo
+     - ./assets/css/website-custom.scss
+    css: ./assets/css/website-styles.css
+    toc: true
+    include-after: |
+      <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600" rel="stylesheet" type="text/css">
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script type="text/javascript" src="/assets/js/jquery.sticky-kit.min.js"></script>
+      <script type="text/javascript" src="/assets/js/scroll.js"></script>
+      <script type="text/javascript" src="/assets/js/logo-switch.js"></script>
+      <script type="text/javascript" src="/assets/js/custom-navbar.js"></script>

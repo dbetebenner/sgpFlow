@@ -1,0 +1,18 @@
+Package: sgpFlow
+Version: 0.0-0.3
+Date: 2024-10-29
+Title: Functions for sgpFlow Analyses Utilizing Data Derived from SGP Analyses
+Description: sgpFlow analyses utilize the SGP framework to construct student learning flows allowing for the simultaneous modeling of student growth and attainment.
+Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre"), 
+		comment = c(ORCID = "0000-0003-0476-5599")),
+                person(given=c("Adam", "R."), family="Van Iwaarden", email="avaniwaarden@nciea.org", role="aut"))
+Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
+Depends: R (>= 4.0)
+Suggests: knitr, rmarkdown
+Imports: crayon, data.table (>= 1.14.0), SGP (>= 2.2-0.4), sgpFlowMatrices, testthat, toOrdinal
+URL: https://centerforassessment.github.io/sgpFlow/
+BugReports: https://github.com/centerforassessment/sgpFlow/issues/
+LazyLoad: Yes
+ByteCompile: TRUE
+License: MIT + file LICENSE
+Encoding: UTF-8

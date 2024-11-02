@@ -1,18 +1,37 @@
 `createScaleScorePermutations` <- 
 function(state,
-    sgp.config
+    sgp.config,
+    permutations="ALL"
 ) {
 
     ### Utility function
     convert_to_long <- function(wide.dt, content_area_sequence, year_sequence, grade_sequence) {
-        tmp.dt.list <- list()
-        for (num_years.iter in seq_along(grade_sequence)) {
-            tmp.dt.list[[num_years.iter]] <- data.table(VALID_CASE="VALID_CASE", CONTENT_AREA=content_area_sequence[num_years.iter], YEAR=year_sequence[num_years.iter], GRADE=grade_sequence[num_years.iter], ID=paste(seq(dim(wide.dt)[1]), paste(grade_sequence, collapse=""), sep="_"), SCALE_SCORE=wide.dt[[num_years.iter]])
-        }
-        return(rbindlist(tmp.dt.list))
+  
+        long.dt <- melt(
+            wide.dt, 
+            measure.vars = names(wide.dt), 
+            variable.name = "TEMP", 
+            value.name = "SCALE_SCORE"
+        )
+
+        long.dt[, INDEX := as.integer(INDEX)] ### Converts factor INDEX to underlying positive integers
+
+        tmp.dt <- data.table(
+            INDEX = seq_along(year_sequence),
+            GRADE = grade_sequence,
+            YEAR = year_sequence,
+            CONTENT_AREA = content_area_sequence,
+            VALID_CASE = "VALID_CASE")
+
+        long.dt <- tmp.dt[long.dt, on = "INDEX"]
+
+        set(long.dt, j = "INDEX", value = NULL)
+        setcolorder(long.dt, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
+  
+        return(long.dt)
     }
 
-    ### Create table with all scale score permutations 
+    ### Create table with all or observed scale score permutations 
     tmp.dt.list <- list()
     for (sgp.config.iter in seq_along(sgp.config)) {
         for (grade_sequence.iter in seq_along(sgp.config[[sgp.config.iter]][['sgp.grade.sequences']])) {

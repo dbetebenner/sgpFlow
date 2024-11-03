@@ -1,4 +1,4 @@
-export(capwords)
+export(capWords)
 export(createMatrices)
 export(createLookupTables)
 export(getGradeProjectionSequenceMatrices)

@@ -40,7 +40,7 @@ function(state,
             year_sequence <- tail(sgp.config[[sgp.config.iter]][['sgp.panel.years']], length(grade_sequence))
             scale_score_range_list <- list()
             for (scale_score_range_list.iter in seq_along(grade_sequence)) {
-                tmp.scale.range <- SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[content_area_sequence[1]]][[paste("loss.hoss", grade_sequence[scale_score_range_list.iter], sep="_")]]
+                tmp.scale.range <- sgpFlow::sgpFlowStateData[[state]][['Achievement']][['Knots_Boundaries']][[content_area_sequence[1]]][[paste("loss.hoss", grade_sequence[scale_score_range_list.iter], sep="_")]]
                 scale_score_range_list[[scale_score_range_list.iter]] <- as.numeric(seq(tmp.scale.range[1], tmp.scale.range[2]))
             }
 

@@ -15,7 +15,7 @@ function(
             # Check for unsupported growth distribution & correct length
             if (!all(growth.distribution %in% supported_distributions)) {
                 stop(paste("Unsupported 'growth.distribution' supplied: Currently supported 'growth.distribution':", 
-                        paste(sapply(supported_distributions, SGP::capwords), collapse = ", ")))
+                        paste(sapply(supported_distributions, capwords), collapse = ", ")))
             }
             
             if (!length(growth.distribution) %in% c(1, years.projected)) {

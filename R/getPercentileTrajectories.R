@@ -29,7 +29,7 @@ function(
         }
 
         get.boundaries <- function(state, content_area, grade) {
-            return(SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[content_area]][[paste("boundaries", grade, sep="_")]])
+            return(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['Knots_Boundaries']][[content_area]][[paste("boundaries", grade, sep="_")]])
         }
 
         get.subset.indices <- function(ss.data, growth.distribution) {

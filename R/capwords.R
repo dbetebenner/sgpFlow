@@ -1,4 +1,4 @@
-`capwords` <- 
+`capWords` <- 
 function(
     x,
     special.words = c("ELA", "I", "II", "III", "IV", "CCSD", "CUSD", "CUD", "USD", "PSD", "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX", "SS", "SAT", "PSAT", "WIDA", "ACCESS", "WIDA-ACCESS")
@@ -33,4 +33,4 @@ function(
     s.new <- gsub("\\s+([)-])", "\\1", gsub("([(])\\s+", "\\1", s.new))
     
     return(s.new)
-} ### END capwords
+} ### END capWords

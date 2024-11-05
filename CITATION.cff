@@ -7,7 +7,7 @@ authors:
 - family-names: "Van Iwaarden"
   given-names: "Adam"
 title: "sgpFlow: Functions for sgpFlow Analyses Utilizing Data Derived from SGP Analyses."
-version: 0.0-0.8
+version: 0.0-0.81
 doi: 10.5281/zenodo.3634024
-date-released: 2024-11-4
+date-released: 2024-11-5
 url: "https://centerforassessment.github.io/sgpFlow"

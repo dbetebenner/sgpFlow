@@ -28,8 +28,8 @@ function(
             return(rep(growth.distribution, years.projected))
         }
 
-        get.boundaries <- function(state, content_area, grade) {
-            return(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['Knots_Boundaries']][[content_area]][[paste("boundaries", grade, sep="_")]])
+        get.loss.hoss <- function(state, content_area, grade) {
+            return(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['Knots_Boundaries']][[content_area]][[paste("loss.hoss", grade, sep="_")]])
         }
 
         get.subset.indices <- function(ss.data, growth.distribution) {
@@ -46,10 +46,10 @@ function(
             }
         }
 
-        bound.iso.subset.scores <- function(projected.scores, boundaries, subset.indices) {
+        bound.iso.subset.scores <- function(projected.scores, loss.hoss, subset.indices) {
             ## Pull in outlier to loss/hoss
-            projected.scores[TEMP_1 < boundaries[1L], TEMP_1 := boundaries[1L]]
-            projected.scores[TEMP_1 > boundaries[2L], TEMP_1 := boundaries[2L]]
+            projected.scores[TEMP_1 < loss.hoss[1L], TEMP_1 := loss.hoss[1L]]
+            projected.scores[TEMP_1 > loss.hoss[2L], TEMP_1 := loss.hoss[2L]]
 
             ## isotonize projections
             setorder(projected.scores, ID, TEMP_1)
@@ -66,7 +66,7 @@ function(
             label.iter <- 1L
             for (j in seq_along(projection.splineMatrices[[i]])) {
 		    	tmp.matrix <- projection.splineMatrices[[i]][[j]]
-                boundaries <- get.boundaries(state, tail(tmp.matrix@Content_Areas[[1]], 1L), tail(tmp.matrix@Grade_Progression[[1L]], 1L))
+                loss.hoss <- get.loss.hoss(state, tail(tmp.matrix@Content_Areas[[1]], 1L), tail(tmp.matrix@Grade_Progression[[1L]], 1L))
                 subset.indices <- get.subset.indices(ss.data, growth.distribution.projection.sequence[j])
 
 		    	mod <- character()
@@ -79,7 +79,7 @@ function(
 
     			tmp.scores <- eval(parse(text=paste0(int, substring(mod, 2L), ", key='ID')")))
                 projected.scores <- melt(as.data.table(as.matrix(tmp.scores[,-1L]) %*% tmp.matrix@.Data)[,ID:=tmp.scores[['ID']]], id.vars="ID", value.name="TEMP_1")[,variable:=NULL]
-                ss.data[,TEMP_2:=bound.iso.subset.scores(projected.scores, boundaries, subset.indices)]
+                ss.data[,TEMP_2:=bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)]
     			setnames(ss.data, "TEMP_2", paste0("SS", tail(tmp.matrix@Grade_Progression[[1L]], 1L)))
 	    		label.iter <- label.iter + 1L
 	    	} ## END j loop

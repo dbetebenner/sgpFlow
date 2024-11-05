@@ -13,7 +13,8 @@ function(
     }
 
 	## Parameters
-	supported.distributions <- c("Normal")
+	distribution <- toupper(distribution)
+	supported.distributions <- c("NORMAL")
 
 	### Define relevant variables
 	if (!distribution %in% supported.distributions) stop(paste0("Distribution supplied (", distribution, ") not currently supported."))
@@ -23,8 +24,15 @@ function(
 		loss.hoss <- range(scale_score_csem_data[['SCALE_SCORE']], na.rm=TRUE)
 	}
 
-	scale_score_csem_data[, SCALE_SCORE_PERTURBED := SCALE_SCORE + rnorm(.N, mean = 0, sd = SCALE_SCORE_CSEM)]
-	scale_score_csem_data[SCALE_SCORE_PERTURBED < loss.hoss[1L], SCALE_SCORE_PERTURBED := loss.hoss[1L]]
-	scale_score_csem_data[SCALE_SCORE_PERTURBED > loss.hoss[2L], SCALE_SCORE_PERTURBED := loss.hoss[2L]]
-	return(scale_score_csem_data[['SCALE_SCORE_PERTURBED']])
+	if (distribution=="NORMAL") {
+		scale_score_csem_data[, SCALE_SCORE_ORIGINAL := SCALE_SCORE]
+		scale_score_csem_data[, SCALE_SCORE := SCALE_SCORE_ORIGINAL + rnorm(.N, mean = 0, sd = get(csem_variable))]
+	}
+
+	## Pull in scores to loss and hoss
+	scale_score_csem_data[SCALE_SCORE < loss.hoss[1L], SCALE_SCORE := loss.hoss[1L]]
+	scale_score_csem_data[SCALE_SCORE > loss.hoss[2L], SCALE_SCORE := loss.hoss[2L]]
+
+	## Return perturbed values
+	return(scale_score_csem_data[['SCALE_SCORE']])
 } ### END csemScoreSimulator

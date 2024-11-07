@@ -3,8 +3,14 @@ function(
          ss.data,
          state,
          projection.splineMatrices,
-         growth.distribution=NULL
+         growth.distribution=NULL,
+         csem.perturbation.of.initial.scores=TRUE
 ) {
+        ## Check arguments 
+        if (csem.perturbation.of.initial.scores & is.null(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['CSEM']])) {
+            stop(paste0("CSEM meta-data not included in sgpFlowStateData for state: ", state, 
+            "\nContact package maintainers for CSEM meta-data incorporation into sgpFlow package."))
+        }
 
         ## Utility functions
         get.growth.distribution.projection.sequence <- function(growth.distribution, years.projected) {
@@ -60,6 +66,11 @@ function(
 
         ## Parameters
         growth.distribution.projection.sequence <- get.growth.distribution.projection.sequence(growth.distribution, length(projection.splineMatrices[[1]]))
+
+        ## Perturb initial scores with CSEM if requested 
+        if (csem.perturbation.of.initial.scores) {
+
+        }
 
         ## Loop over daisy-chained, matrix sequence
         for (i in seq_along(projection.splineMatrices)) {

@@ -23,15 +23,15 @@ function(
             tmp.data <- data_for_matrices
         }
         if (matrix_type.iter=="super-cohort") {
-            tmp.data <- SGP::createSuperCohortData(
+            tmp.data <- createSuperCohortData(
                         base_data=data_for_matrices[, .(VALID_CASE, CONTENT_AREA, YEAR, GRADE, ID, SCALE_SCORE)],
                         sgp.config=super_cohort.sgp.config)
         }
 
         ### Create Baseline Matrices
-        TEMP_SGP <- prepareSGP(tmp.data, state=state, create.additional.variables=FALSE, create.achievement.level=FALSE)
+        TEMP_SGP <- SGP::prepareSGP(tmp.data, state=state, create.additional.variables=FALSE, create.achievement.level=FALSE)
 
-        sgpFlowMatrices.list[[matrix_type.name]] <- baselineSGP(
+        sgpFlowMatrices.list[[matrix_type.name]] <- SGP::baselineSGP(
 				TEMP_SGP,
                 state=state,
 				sgp.baseline.config=matrix.sgp.config,

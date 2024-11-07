@@ -30,7 +30,7 @@ function(
         ### create Lookup tables and embed in an SGP object
         sgp_object <- new("SGP", Data=createScaleScorePermutations(state=state, sgp.config=sgp.config))
 
-        sgp_object <- abcSGP(
+        sgp_object <- SGP::abcSGP(
                 sgp_object=sgp_object,
                 state=state,
                 steps=c("prepareSGP", "analyzeSGP", "combineSGP"),

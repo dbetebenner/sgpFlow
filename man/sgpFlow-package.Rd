@@ -10,8 +10,8 @@
 \tabular{ll}{
 Package: \tab sgpFlow\cr
 Type: \tab Package\cr
-Version: \tab 0.0-0.83\cr
-Date: \tab 2024-11-5\cr
+Version: \tab 0.0-0.85\cr
+Date: \tab 2024-11-7\cr
 License: \tab MIT\cr
 LazyLoad: \tab yes\cr
 }

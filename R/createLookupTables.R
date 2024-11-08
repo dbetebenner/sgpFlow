@@ -22,7 +22,7 @@ function(
         lookup_table_type.label <- toupper(gsub("-", "_", lookup_table_type.iter))
 
         ### Add matrices from sgpFlow_Matrices to SGPstateData
-        SGPstateData <- addSGPFlowMatrices(state, matrix_year, lookup_table_type.label)
+        SGPstateData <- addsgpFlowMatrices(state, matrix_year, lookup_table_type.label)
 
         ### Get all 99 percentile cuts 
         SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]] <- 1:99

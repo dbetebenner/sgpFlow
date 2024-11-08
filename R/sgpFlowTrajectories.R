@@ -28,8 +28,7 @@ function(
 						long_data,
 						grade.progression,
 						content_area.progression,
-						year_lags.progression,
-						base_years=NULL)
+						year_lags.progression)
 
 		### Calculate percentile trajectories
 		tmp.trajectories <- getPercentileTrajectories(

@@ -49,3 +49,19 @@ function(tmp.dt, ...) {
                 dcast(tmp.dt, ...)
         }
 } ### END ddcast Function
+
+### yearIncrement
+`yearIncrement` <-
+function(
+    base_year,
+	year_lags) {
+
+	if (is.null(base_year)) return(NULL)
+
+	if (grepl("_", base_year[1L])) {
+        base_year_pieces_lagged <- outer(as.numeric(unlist(strsplit(base_year, "_"))), c(0, cumsum(year_lags)), '-')
+        sort(apply(base_year_pieces_lagged, 2, function(x) paste(x, collapse = "_")))
+	} else {
+		as.character(as.numeric(base_year) - rev(c(0, cumsum(year_lags))))
+	}
+} ### End yearIncrement

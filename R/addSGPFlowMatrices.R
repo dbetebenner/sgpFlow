@@ -1,4 +1,4 @@
-`addSGPFlowMatrices` <-
+`addsgpFlowMatrices` <-
 function(state,
          year,
          cohort_type,
@@ -24,4 +24,4 @@ function(state,
 
         SGPstateData[[add.matrices.to.which.state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- eval(parse(text=getMatrixLabel(state, year, cohort_type, add.matrices.to.which.state)))
         return(SGPstateData)
-} ### END addSGPFlowMatrices
+} ### END addsgpFlowMatrices

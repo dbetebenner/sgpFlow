@@ -3,13 +3,12 @@ function(
         base_data, 
         sgp.config,
         supercohort_base_years, ## Subset of years of supplied_base data to use for super-cohort construction
-        indicate_cohort=FALSE
-) {
+        indicate_cohort=FALSE) {
 
   YEAR <- CONTENT_AREA <- GRADE <- YEAR_NEW <- COHORT <- ID <- NULL
 
   ### Parameters
-  data.years <- sort(unique(base_data$YEAR))
+  data.years <- sort(unique(base_data[['YEAR']]))
   tmp.cohort.list <- list()
 
   ### Test parameters

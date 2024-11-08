@@ -4,8 +4,8 @@ function(
     sgp.config,
     parallel.config,
     matrices=NULL,
-    lookup_table_types=c('single-cohort', 'super-cohort')
-) {
+    lookup_table_types=c('single-cohort', 'super-cohort')) {
+
     ### Parameters
     matrix_year <- tail(sgp.config[[1]][['sgp.panel.years']], 1)
 

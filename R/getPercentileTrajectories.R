@@ -2,10 +2,11 @@
 function(
          ss.data,
          state,
+         sgpFlow.config,
          projection.splineMatrices,
          growth.distribution=NULL,
-         csem.perturbation.of.initial.scores=TRUE
-) {
+         csem.perturbation.of.initial.scores=TRUE) {
+
         ## Check arguments 
         if (csem.perturbation.of.initial.scores & is.null(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['CSEM']])) {
             stop(paste0("CSEM meta-data not included in sgpFlowStateData for state: ", state, 

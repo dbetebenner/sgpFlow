@@ -5,8 +5,8 @@ function(
     matrix.sgp.config,
     super_cohort.sgp.config,
     parallel.config,
-    matrix_types=c("single-cohort", "super-cohort")
-) {
+    matrix_types=c("single-cohort", "super-cohort")) {
+
     # Parameters
     sgpFlowMatrices.list <- list()
 

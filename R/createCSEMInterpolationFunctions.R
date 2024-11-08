@@ -1,7 +1,7 @@
 `createCSEMInterpolationFunctions` <- 
 function(
-    scale_score_csem_data
-) {
+    scale_score_csem_data) {
+
     ### Test for appropriate variables in supplied data
     if (!all(c("CONTENT_AREA", "GRADE", "SCALE_SCORE", "SCALE_SCORE_CSEM") %in% names(scale_score_csem_data))) {
         stop("Please provide a LONG formatted data set with 'CONTENT_AREA', 'GRADE', 'SCALE_SCORE', and 'SCALE_SCORE_CSEM' variables.")

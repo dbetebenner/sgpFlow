@@ -1,6 +1,6 @@
 Package: sgpFlow
-Version: 0.0-0.86
-Date: 2024-11-8
+Version: 0.0-0.87
+Date: 2024-11-9
 Title: Functions for sgpFlow Analyses Utilizing Data Derived from SGP Analyses
 Description: sgpFlow analyses utilize the SGP framework to construct student learning flows allowing for the simultaneous modeling of student growth and attainment.
 Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre"), 

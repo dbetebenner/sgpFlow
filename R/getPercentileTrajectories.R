@@ -73,12 +73,12 @@ function(
         get.percentile.trajectories.INTERNAL <- function(ss.data, growth.distribution.projection.sequence) {
 
             sgpFlow.trajectories.list.INTERNAL <- vector("list", length(projection.splineMatrices))
-            completed.ids <- rep(FALSE, nrow(ss.data))  # Logical vector for completed IDs
+            completed.ids <- data.table(ID = ss.data[['ID']], COMPLETED = FALSE, key="ID")
 
             ## Loop over daisy-chained, matrix sequence
             for (i in seq_along(projection.splineMatrices)) {
-                sgpFlow.trajectories.list.INTERNAL[[i]] <- na.omit(ss.data[!completed.ids, c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
-                completed.ids[which(ss.data[['ID']] %in% sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]])] <- TRUE
+                sgpFlow.trajectories.list.INTERNAL[[i]] <- na.omit(ss.data[!completed.ids[COMPLETED == TRUE, ID], c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
+                completed.ids[sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]], COMPLETED := TRUE]
 
                 for (j in seq_along(projection.splineMatrices[[i]])) {
 		    	    tmp.matrix <- projection.splineMatrices[[i]][[j]]
@@ -92,23 +92,10 @@ function(
                             bs(sgpFlow.trajectories.list.INTERNAL[[i]][[ncol(sgpFlow.trajectories.list.INTERNAL[[i]]) - model.iter + 1L]], knots = knt, Boundary.knots = bnd)
                     })
 
-#		    	    mod <- character()
-#		    	    int <- "data.table(ID=sgpFlow.trajectories.list.INTERNAL[[i]][[1L]], INT=1L,"
-#		    	    for (model.iter in seq_along(tmp.matrix@Time_Lags[[1L]])) {
-#		    		    knt <- paste0("tmp.matrix@Knots[[", model.iter, "]]")
-#			    	    bnd <- paste0("tmp.matrix@Boundaries[[", model.iter, "]]")
-#			    	    mod <- paste0(mod, ", bs(sgpFlow.trajectories.list.INTERNAL[[i]][[", ncol(sgpFlow.trajectories.list.INTERNAL[[i]])-model.iter+1L, "]], knots=", knt, ", Boundary.knots=", bnd, ")")
-#		    	    }
-
                     tmp.scores <- cbind(1, do.call(cbind, bspline_terms))
                     projected.scores <- melt(as.data.table(tmp.scores %*% tmp.matrix@.Data)[,ID:=sgpFlow.trajectories.list.INTERNAL[[i]][['ID']]], id.vars="ID", value.name="TEMP_1")[, variable:=NULL]
                     sgpFlow.trajectories.list.INTERNAL[[i]][, TEMP_2 := bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)]
                     setnames(sgpFlow.trajectories.list.INTERNAL[[i]], "TEMP_2", paste0("SS", tail(tmp.matrix@Grade_Progression[[1L]], 1L)))
-
-#    			    tmp.scores <- eval(parse(text=paste0(int, substring(mod, 2L), ", key='ID')")))
-#                   projected.scores <- melt(as.data.table(as.matrix(tmp.scores[,-1L]) %*% tmp.matrix@.Data)[,ID:=tmp.scores[['ID']]], id.vars="ID", value.name="TEMP_1")[,variable:=NULL]
-#                   sgpFlow.trajectories.list.INTERNAL[[i]][,TEMP_2:=bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)]
-#    			    setnames(sgpFlow.trajectories.list.INTERNAL[[i]], "TEMP_2", paste0("SS", tail(tmp.matrix@Grade_Progression[[1L]], 1L)))
 	    	    } ## END j loop
             } ## END i loop
 

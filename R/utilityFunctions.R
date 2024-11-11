@@ -65,3 +65,9 @@ function(
 		as.character(as.numeric(base_year) - rev(c(0, cumsum(year_lags))))
 	}
 } ### End yearIncrement
+
+perturb.rnorm <- function(mean = 0, sd) {
+    dt <- data.table(sd = sd, VALUE = as.numeric(NA))
+    dt[!is.na(sd), VALUE:=rnorm(.N, mean, sd)]
+    return(dt[["VALUE"]])
+} ### END 

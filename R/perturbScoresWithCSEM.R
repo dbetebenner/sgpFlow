@@ -10,6 +10,12 @@ function(
         return(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['Knots_Boundaries']][[content_area]][[paste("boundaries", grade, sep="_")]])
     }
 
+	perturb.rnorm <- function(mean = 0, sd) {
+	    dt <- data.table(sd = sd, VALUE = as.numeric(NA))
+		dt[!is.na(sd), VALUE:=rnorm(.N, mean, sd)]
+		return(dt[["VALUE"]])
+	}
+
 	## Parameters
 	distribution <- toupper(distribution)
 	supported.distributions <- c("NORMAL")
@@ -29,13 +35,14 @@ function(
 		}
 
 		if (distribution=="NORMAL") {
-#			ss.data[, (paste0("SS", tmp.grade, "_ORIGINAL")) := get(paste0("SS", tmp.grade))]
-			ss.data[, (paste0("SS", tmp.grade)) := get(paste0("SS", tmp.grade)) + rnorm(nrow(ss.data), sd=sgpFlow::sgpFlowStateData[[state]][['Achievement']][['CSEM']][[tmp.content_area]][[paste("GRADE", tmp.grade, sep="_")]](ss.data[[paste0("SS", tmp.grade)]]))]
+			ss.data[, (paste0("SS", tmp.grade)) := 
+				get(paste0("SS", tmp.grade)) + perturb.rnorm(sd=sgpFlow::sgpFlowStateData[[state]][['Achievement']][['CSEM']][[tmp.content_area]][[paste("GRADE", tmp.grade, sep="_")]](ss.data[[paste0("SS", tmp.grade)]]))]
 		}
 
 		## Pull in scores to loss and hoss
-		ss.data[(paste0("SS", tmp.grade)) < loss.hoss[1L], (paste0("SS", tmp.grade)) := loss.hoss[1L]]
-		ss.data[(paste0("SS", tmp.grade)) > loss.hoss[2L], (paste0("SS", tmp.grade)) := loss.hoss[2L]]
+		tmp.column.name <- paste0("SS", tmp.grade)
+		ss.data[get(tmp.column.name) < loss.hoss[1L], (tmp.column.name) := loss.hoss[1L]]
+		ss.data[get(tmp.column.name) > loss.hoss[2L], (tmp.column.name) := loss.hoss[2L]]
 	}
 
 	## Return perturbed values

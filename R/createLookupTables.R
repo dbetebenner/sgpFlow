@@ -47,6 +47,7 @@ function(
                 prepareSGP.create.achievement.level=FALSE)
 
         ### Extract tables and save
+        setDTthreads(0)
         if (!dir.exists(file.path("Data", lookup_table_type.label))) dir.create(file.path("Data", lookup_table_type.label), recursive=TRUE)
         SGP_LOOKUP_TABLES <- extractLookupTables(sgp_object=sgp_object)
         save(SGP_LOOKUP_TABLES, file=file.path("Data", lookup_table_type.label, "SGP_LOOKUP_TABLES.Rdata"))

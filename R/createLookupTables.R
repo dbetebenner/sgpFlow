@@ -4,8 +4,8 @@ function(
     sgp.config,
     parallel.config,
     matrices=NULL,
-    lookup_table_types=c('single-cohort', 'super-cohort')
-) {
+    lookup_table_types=c('single-cohort', 'super-cohort')) {
+
     ### Parameters
     matrix_year <- tail(sgp.config[[1]][['sgp.panel.years']], 1)
 
@@ -22,7 +22,7 @@ function(
         lookup_table_type.label <- toupper(gsub("-", "_", lookup_table_type.iter))
 
         ### Add matrices from sgpFlow_Matrices to SGPstateData
-        SGPstateData <- addSGPFlowMatrices(state, matrix_year, lookup_table_type.label)
+        SGPstateData <- addsgpFlowMatrices(state, matrix_year, lookup_table_type.label)
 
         ### Get all 99 percentile cuts 
         SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]] <- 1:99
@@ -30,7 +30,7 @@ function(
         ### create Lookup tables and embed in an SGP object
         sgp_object <- new("SGP", Data=createScaleScorePermutations(state=state, sgp.config=sgp.config))
 
-        sgp_object <- abcSGP(
+        sgp_object <- SGP::abcSGP(
                 sgp_object=sgp_object,
                 state=state,
                 steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
@@ -47,6 +47,7 @@ function(
                 prepareSGP.create.achievement.level=FALSE)
 
         ### Extract tables and save
+        setDTthreads(0)
         if (!dir.exists(file.path("Data", lookup_table_type.label))) dir.create(file.path("Data", lookup_table_type.label), recursive=TRUE)
         SGP_LOOKUP_TABLES <- extractLookupTables(sgp_object=sgp_object)
         save(SGP_LOOKUP_TABLES, file=file.path("Data", lookup_table_type.label, "SGP_LOOKUP_TABLES.Rdata"))

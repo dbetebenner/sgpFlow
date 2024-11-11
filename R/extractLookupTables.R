@@ -1,7 +1,6 @@
 `extractLookupTables` <- 
 function(
-    sgp_object
-) {
+    sgp_object) {
 
     ### Parameters
     variables.to.keep <- c("CONTENT_AREA", "GRADE", "SGP_BASELINE", grep("PERCENTILE_CUT_BASELINE", names(sgp_object@Data), value=TRUE), "SGP_NORM_GROUP_BASELINE_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE")

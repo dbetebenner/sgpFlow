@@ -1,3 +1,8 @@
+###############################################################################
+### Utility functions for sgpFlow package
+###############################################################################
+
+### capWords
 `capWords` <- 
 function(
     x,
@@ -34,3 +39,35 @@ function(
     
     return(s.new)
 } ### END capWords
+
+### ddcast
+`ddcast` <-
+function(tmp.dt, ...) {
+        if (dim(tmp.dt)[1L]==0L) {
+                return(data.table(NULL))
+        } else {
+                dcast(tmp.dt, ...)
+        }
+} ### END ddcast Function
+
+### yearIncrement
+`yearIncrement` <-
+function(
+    base_year,
+	year_lags) {
+
+	if (is.null(base_year)) return(NULL)
+
+	if (grepl("_", base_year[1L])) {
+        base_year_pieces_lagged <- outer(as.numeric(unlist(strsplit(base_year, "_"))), c(0, cumsum(year_lags)), '-')
+        sort(apply(base_year_pieces_lagged, 2, function(x) paste(x, collapse = "_")))
+	} else {
+		as.character(as.numeric(base_year) - rev(c(0, cumsum(year_lags))))
+	}
+} ### End yearIncrement
+
+perturb.rnorm <- function(mean = 0, sd) {
+    dt <- data.table(sd = sd, VALUE = as.numeric(NA))
+    dt[!is.na(sd), VALUE:=rnorm(.N, mean, sd)]
+    return(dt[["VALUE"]])
+} ### END 

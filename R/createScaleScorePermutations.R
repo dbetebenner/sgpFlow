@@ -1,8 +1,7 @@
 `createScaleScorePermutations` <- 
 function(state,
     sgp.config,
-    permutations="ALL"
-) {
+    permutations="ALL") {
 
     ### Utility function
     convert_to_long <- function(wide.dt, content_area_sequence, year_sequence, grade_sequence) {

@@ -2,9 +2,23 @@
 function(
          ss.data,
          state,
+         sgpFlow.config,
          projection.splineMatrices,
-         growth.distribution=NULL
-) {
+         growth.distribution=NULL,
+         csem.perturbation.of.initial.scores=TRUE,
+         csem.perturbation.iterations=100L) {
+
+        ## Parameters 
+        sgpFlow.trajectories.list <- list()
+        if (csem.perturbation.of.initial.scores) ss.data.original <- copy(ss.data)
+
+        ## Check arguments 
+        if (csem.perturbation.of.initial.scores & is.null(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['CSEM']])) {
+            stop(paste0("CSEM meta-data not included in sgpFlowStateData for state: ", state, 
+            "\nContact package maintainers for CSEM meta-data incorporation into sgpFlow package."))
+        }
+
+        if (csem.perturbation.of.initial.scores==FALSE) csem.perturbation.iterations <- 1L
 
         ## Utility functions
         get.growth.distribution.projection.sequence <- function(growth.distribution, years.projected) {
@@ -35,14 +49,12 @@ function(
         get.subset.indices <- function(ss.data, growth.distribution) {
 
             if (growth.distribution=="UNIFORM-RANDOM") {
-                tmp.quantiles <- runif(dim(ss.data)[1L], min = 0, max = 100)
-                my.indices <- findInterval(tmp.quantiles, seq(0.5, by = 1, length = 100), rightmost.closed = TRUE)
-                my.indices <- pmin(pmax(my.indices, 1L), 99L)
-                return(my.indices)
+                tmp.quantiles <- runif(nrow(ss.data), min = 0, max = 100)
+                return(pmin(pmax(findInterval(tmp.quantiles, seq(0.5, 100.5, 1), rightmost.closed = TRUE), 1L), 99L))
             }
 
             if (growth.distribution %in% as.character(1:99)) {
-                return(rep(as.integer(growth.distribution), dim(ss.data)[1L]))
+                return(rep(as.integer(growth.distribution), nrow(ss.data)))
             }
         }
 
@@ -58,32 +70,70 @@ function(
             return(projected.scores[subset.indices, .(TEMP_2=mean(TEMP_1)), by="ID"][['TEMP_2']])
 		}
 
-        ## Parameters
+        get.percentile.trajectories.INTERNAL <- function(ss.data, growth.distribution.projection.sequence) {
+
+            sgpFlow.trajectories.list.INTERNAL <- vector("list", length(projection.splineMatrices))
+            completed.ids <- rep(FALSE, nrow(ss.data))  # Logical vector for completed IDs
+
+            ## Loop over daisy-chained, matrix sequence
+            for (i in seq_along(projection.splineMatrices)) {
+                sgpFlow.trajectories.list.INTERNAL[[i]] <- na.omit(ss.data[!completed.ids, c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
+                completed.ids[which(ss.data[['ID']] %in% sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]])] <- TRUE
+
+                for (j in seq_along(projection.splineMatrices[[i]])) {
+		    	    tmp.matrix <- projection.splineMatrices[[i]][[j]]
+                    loss.hoss <- get.loss.hoss(state, tail(tmp.matrix@Content_Areas[[1]], 1L), tail(tmp.matrix@Grade_Progression[[1L]], 1L))
+                    subset.indices <- get.subset.indices(sgpFlow.trajectories.list.INTERNAL[[i]], growth.distribution.projection.sequence[j])
+
+                   # Create basis terms directly without eval(parse(...))
+                    bspline_terms <- lapply(seq_along(tmp.matrix@Time_Lags[[1L]]), function(model.iter) {
+                        knt <- tmp.matrix@Knots[[model.iter]]
+                        bnd <- tmp.matrix@Boundaries[[model.iter]]
+                            bs(sgpFlow.trajectories.list.INTERNAL[[i]][[ncol(sgpFlow.trajectories.list.INTERNAL[[i]]) - model.iter + 1L]], knots = knt, Boundary.knots = bnd)
+                    })
+
+#		    	    mod <- character()
+#		    	    int <- "data.table(ID=sgpFlow.trajectories.list.INTERNAL[[i]][[1L]], INT=1L,"
+#		    	    for (model.iter in seq_along(tmp.matrix@Time_Lags[[1L]])) {
+#		    		    knt <- paste0("tmp.matrix@Knots[[", model.iter, "]]")
+#			    	    bnd <- paste0("tmp.matrix@Boundaries[[", model.iter, "]]")
+#			    	    mod <- paste0(mod, ", bs(sgpFlow.trajectories.list.INTERNAL[[i]][[", ncol(sgpFlow.trajectories.list.INTERNAL[[i]])-model.iter+1L, "]], knots=", knt, ", Boundary.knots=", bnd, ")")
+#		    	    }
+
+                    tmp.scores <- cbind(1, do.call(cbind, bspline_terms))
+                    projected.scores <- melt(as.data.table(tmp.scores %*% tmp.matrix@.Data)[,ID:=sgpFlow.trajectories.list.INTERNAL[[i]][['ID']]], id.vars="ID", value.name="TEMP_1")[, variable:=NULL]
+                    sgpFlow.trajectories.list.INTERNAL[[i]][, TEMP_2 := bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)]
+                    setnames(sgpFlow.trajectories.list.INTERNAL[[i]], "TEMP_2", paste0("SS", tail(tmp.matrix@Grade_Progression[[1L]], 1L)))
+
+#    			    tmp.scores <- eval(parse(text=paste0(int, substring(mod, 2L), ", key='ID')")))
+#                   projected.scores <- melt(as.data.table(as.matrix(tmp.scores[,-1L]) %*% tmp.matrix@.Data)[,ID:=tmp.scores[['ID']]], id.vars="ID", value.name="TEMP_1")[,variable:=NULL]
+#                   sgpFlow.trajectories.list.INTERNAL[[i]][,TEMP_2:=bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)]
+#    			    setnames(sgpFlow.trajectories.list.INTERNAL[[i]], "TEMP_2", paste0("SS", tail(tmp.matrix@Grade_Progression[[1L]], 1L)))
+	    	    } ## END j loop
+            } ## END i loop
+
+            return(data.table(rbindlist(sgpFlow.trajectories.list.INTERNAL, fill=TRUE), key="ID"))
+        }
+
+        #######################################################
+        ### getPercentileTrajectories Calculations
+        #######################################################
+
+        ## Create matrix sequence for projections 
         growth.distribution.projection.sequence <- get.growth.distribution.projection.sequence(growth.distribution, length(projection.splineMatrices[[1]]))
 
-        ## Loop over daisy-chained, matrix sequence
-        for (i in seq_along(projection.splineMatrices)) {
-            label.iter <- 1L
-            for (j in seq_along(projection.splineMatrices[[i]])) {
-		    	tmp.matrix <- projection.splineMatrices[[i]][[j]]
-                loss.hoss <- get.loss.hoss(state, tail(tmp.matrix@Content_Areas[[1]], 1L), tail(tmp.matrix@Grade_Progression[[1L]], 1L))
-                subset.indices <- get.subset.indices(ss.data, growth.distribution.projection.sequence[j])
+        ## Loop over csem.perturbation.iterations
+        for (csem.iter in seq(csem.perturbation.iterations)) {
 
-		    	mod <- character()
-		    	int <- "data.table(ID=ss.data[[1L]], INT=1L,"
-		    	for (model.iter in seq_along(projection.splineMatrices[[i]][[j]]@Time_Lags[[1L]])) {
-		    		knt <- paste0("tmp.matrix@Knots[[", model.iter, "]]")
-			    	bnd <- paste0("tmp.matrix@Boundaries[[", model.iter, "]]")
-			    	mod <- paste0(mod, ", bs(ss.data[[", dim(ss.data)[2L]-model.iter+1L, "]], knots=", knt, ", Boundary.knots=", bnd, ")")
-		    	}
+            ## Perturb initial scores with CSEM if requested (after first iteration) 
+            if (csem.perturbation.of.initial.scores & csem.iter!=1L) {
+                ss.data <- copy(ss.data.original)
+                ss.data <- perturbScoresWithCSEM(ss.data, state, sgpFlow.config)
+            }
 
-    			tmp.scores <- eval(parse(text=paste0(int, substring(mod, 2L), ", key='ID')")))
-                projected.scores <- melt(as.data.table(as.matrix(tmp.scores[,-1L]) %*% tmp.matrix@.Data)[,ID:=tmp.scores[['ID']]], id.vars="ID", value.name="TEMP_1")[,variable:=NULL]
-                ss.data[,TEMP_2:=bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)]
-    			setnames(ss.data, "TEMP_2", paste0("SS", tail(tmp.matrix@Grade_Progression[[1L]], 1L)))
-	    		label.iter <- label.iter + 1L
-	    	} ## END j loop
-        } ## END i loop
-
-        return(ss.data)
+            ## Get percentile trajectories
+            sgpFlow.trajectories.list[[csem.iter]] <- get.percentile.trajectories.INTERNAL(ss.data, growth.distribution.projection.sequence)
+        } ## END csem.iter loop
+        
+    return(sgpFlow.trajectories.list)
 } ### END getPercentileTrajectories

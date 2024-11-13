@@ -1,12 +1,14 @@
 `getPercentileTrajectories` <- 
-function(
-         ss.data,
-         state,
-         sgpFlow.config,
-         projection.splineMatrices,
-         growth.distribution=NULL,
-         csem.perturbation.of.initial.scores=TRUE,
-         csem.perturbation.iterations=100L) {
+    function(
+        ss.data,
+        state,
+        sgpFlow.config,
+        projection.splineMatrices,
+        growth.distribution=NULL,
+        csem.perturbation.of.initial.scores=TRUE,
+        csem.perturbation.iterations=100L,
+        csem.distribution="Normal"
+    ) {
 
         ## Parameters 
         sgpFlow.trajectories.list <- list()
@@ -42,15 +44,15 @@ function(
             return(rep(growth.distribution, years.projected))
         }
 
-        get.loss.hoss <- function(state, content_area, grade) {
-            return(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['Knots_Boundaries']][[content_area]][[paste("loss.hoss", grade, sep="_")]])
-        }
-
         get.subset.indices <- function(ss.data, growth.distribution) {
-
             if (growth.distribution=="UNIFORM-RANDOM") {
-                tmp.quantiles <- runif(nrow(ss.data), min = 0, max = 100)
-                return(pmin(pmax(findInterval(tmp.quantiles, seq(0.5, 100.5, 1), rightmost.closed = TRUE), 1L), 99L))
+                # tmp.quantiles <- runif(nrow(ss.data), min = 0, max = 100)
+                # return(pmin(pmax(findInterval(tmp.quantiles, seq(0.5, 100.5, 1), rightmost.closed = TRUE), 1L), 99L))
+                return(
+                    runif(dim(ss.data)[1L], min = 0, max = 100) |>  ##  select random uniform values (REAL)
+                      round() |> as.integer() |>                    ##  round and convert to INTEGER
+                        setv(0L, 1L) |> setv(100L, 99L)             ##  bound between 1 and 99 by reference
+                )
             }
 
             if (growth.distribution %in% as.character(1:99)) {
@@ -60,14 +62,20 @@ function(
 
         bound.iso.subset.scores <- function(projected.scores, loss.hoss, subset.indices) {
             ## Pull in outlier to loss/hoss
-            projected.scores[TEMP_1 < loss.hoss[1L], TEMP_1 := loss.hoss[1L]]
-            projected.scores[TEMP_1 > loss.hoss[2L], TEMP_1 := loss.hoss[2L]]
+            projected.scores[
+              TEMP_1 < loss.hoss[1L], TEMP_1 := loss.hoss[1L]
+            ][TEMP_1 > loss.hoss[2L], TEMP_1 := loss.hoss[2L]]
 
             ## isotonize projections
             setorder(projected.scores, ID, TEMP_1)
             tmp.increment <- (seq.int(length(subset.indices)) - 1L) * 100L
             subset.indices <- c(rbind(subset.indices + tmp.increment, 1L + subset.indices + tmp.increment))
-            return(projected.scores[subset.indices, .(TEMP_2=mean(TEMP_1)), by="ID"][['TEMP_2']])
+            # return(projected.scores[subset.indices, .(TEMP_2=mean(TEMP_1)), by="ID"][['TEMP_2']])
+            return(
+                fsubset(projected.scores, subset.indices) |>
+                  collapv(by = "ID", keep.by = FALSE) |> # FUN = fmean by default
+                    unlist(use.names = FALSE)
+            )
 		}
 
         get.percentile.trajectories.INTERNAL <- function(ss.data, growth.distribution.projection.sequence) {
@@ -77,25 +85,41 @@ function(
 
             ## Loop over daisy-chained, matrix sequence
             for (i in seq_along(projection.splineMatrices)) {
-                sgpFlow.trajectories.list.INTERNAL[[i]] <- na.omit(ss.data[!completed.ids[COMPLETED == TRUE, ID], c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
+                sgpFlow.trajectories.list.INTERNAL[[i]] <-
+                    na_omit(ss.data[!completed.ids[COMPLETED == TRUE, ID], c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
                 completed.ids[sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]], COMPLETED := TRUE]
 
                 for (j in seq_along(projection.splineMatrices[[i]])) {
-		    	    tmp.matrix <- projection.splineMatrices[[i]][[j]]
-                    loss.hoss <- get.loss.hoss(state, tail(tmp.matrix@Content_Areas[[1]], 1L), tail(tmp.matrix@Grade_Progression[[1L]], 1L))
+		    	    qreg_coef_matrix <- projection.splineMatrices[[i]][[j]]
+                    loss.hoss <- get.loss.hoss(state, tail(qreg_coef_matrix@Content_Areas[[1]], 1L), tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))
                     subset.indices <- get.subset.indices(sgpFlow.trajectories.list.INTERNAL[[i]], growth.distribution.projection.sequence[j])
 
-                   # Create basis terms directly without eval(parse(...))
-                    bspline_terms <- lapply(seq_along(tmp.matrix@Time_Lags[[1L]]), function(model.iter) {
-                        knt <- tmp.matrix@Knots[[model.iter]]
-                        bnd <- tmp.matrix@Boundaries[[model.iter]]
-                            bs(sgpFlow.trajectories.list.INTERNAL[[i]][[ncol(sgpFlow.trajectories.list.INTERNAL[[i]]) - model.iter + 1L]], knots = knt, Boundary.knots = bnd)
-                    })
+                   #  Create model (design) matrix 
+                   #  Use function as a "promise" to evaluate directly rather than create intermediate objects
+                    getModelMatrix <- function() {
+                        Reduce(
+                            f = cbind, init = 1L, 
+                            x = lapply(seq_along(qreg_coef_matrix@Time_Lags[[1L]]), function(model.iter) {
+                                    bs( x = sgpFlow.trajectories.list.INTERNAL[[i]][[ncol(sgpFlow.trajectories.list.INTERNAL[[i]]) - model.iter + 1L]],
+                                        knots = qreg_coef_matrix@Knots[[model.iter]],
+                                        Boundary.knots = qreg_coef_matrix@Boundaries[[model.iter]]
+                                    )}
+                                )
+                        )
+                    }
 
-                    tmp.scores <- cbind(1, do.call(cbind, bspline_terms))
-                    projected.scores <- melt(as.data.table(tmp.scores %*% tmp.matrix@.Data)[,ID:=sgpFlow.trajectories.list.INTERNAL[[i]][['ID']]], id.vars="ID", value.name="TEMP_1")[, variable:=NULL]
-                    sgpFlow.trajectories.list.INTERNAL[[i]][, TEMP_2 := bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)]
-                    setnames(sgpFlow.trajectories.list.INTERNAL[[i]], "TEMP_2", paste0("SS", tail(tmp.matrix@Grade_Progression[[1L]], 1L)))
+                    projected.scores <-
+                        pivot(
+                            data =
+                              qDT(getModelMatrix() %*% qreg_coef_matrix@.Data)[, ID := sgpFlow.trajectories.list.INTERNAL[[i]][['ID']]],
+                            ids = "ID",
+                            names = list("variable", "TEMP_1")
+                        )[, variable := NULL]
+
+                    sgpFlow.trajectories.list.INTERNAL[[i]][,
+                        eval(paste0("SS", tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))) :=
+                            bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)
+                    ]
 	    	    } ## END j loop
             } ## END i loop
 
@@ -114,8 +138,8 @@ function(
 
             ## Perturb initial scores with CSEM if requested (after first iteration) 
             if (csem.perturbation.of.initial.scores & csem.iter!=1L) {
-                ss.data <- copy(ss.data.original)
-                ss.data <- perturbScoresWithCSEM(ss.data, state, sgpFlow.config)
+                ss.data <-
+                    perturbScoresWithCSEM(copy(ss.data.original), state, sgpFlow.config, csem.distribution)
             }
 
             ## Get percentile trajectories

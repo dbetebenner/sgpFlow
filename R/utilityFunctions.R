@@ -65,3 +65,7 @@ function(
 		as.character(as.numeric(base_year) - rev(c(0, cumsum(year_lags))))
 	}
 } ### End yearIncrement
+
+`get.loss.hoss` <- function(state, content_area, grade) {
+    return(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['Knots_Boundaries']][[content_area]][[paste("boundaries", grade, sep="_")]])
+}

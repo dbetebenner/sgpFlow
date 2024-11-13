@@ -1,6 +1,6 @@
 `getPercentileTrajectories` <- 
     function(
-        ss.data,
+        wide_data,
         state,
         sgpFlow.config,
         projection.splineMatrices,
@@ -12,7 +12,7 @@
 
         ## Parameters 
         sgpFlow.trajectories.list <- list()
-        if (csem.perturbation.of.initial.scores) ss.data.original <- copy(ss.data)
+        if (csem.perturbation.of.initial.scores) wide_data_original <- copy(wide_data)
 
         ## Check arguments 
         if (csem.perturbation.of.initial.scores & is.null(sgpFlow::sgpFlowStateData[[state]][['Achievement']][['CSEM']])) {
@@ -44,19 +44,19 @@
             return(rep(growth.distribution, years.projected))
         }
 
-        get.subset.indices <- function(ss.data, growth.distribution) {
+        get.subset.indices <- function(wide_data, growth.distribution) {
             if (growth.distribution=="UNIFORM-RANDOM") {
-                # tmp.quantiles <- runif(nrow(ss.data), min = 0, max = 100)
+                # tmp.quantiles <- runif(nrow(wide_data), min = 0, max = 100)
                 # return(pmin(pmax(findInterval(tmp.quantiles, seq(0.5, 100.5, 1), rightmost.closed = TRUE), 1L), 99L))
                 return(
-                    runif(dim(ss.data)[1L], min = 0, max = 100) |>  ##  select random uniform values (REAL)
+                    runif(dim(wide_data)[1L], min = 0, max = 100) |>  ##  select random uniform values (REAL)
                       round() |> as.integer() |>                    ##  round and convert to INTEGER
                         setv(0L, 1L) |> setv(100L, 99L)             ##  bound between 1 and 99 by reference
                 )
             }
 
             if (growth.distribution %in% as.character(1:99)) {
-                return(rep(as.integer(growth.distribution), nrow(ss.data)))
+                return(rep(as.integer(growth.distribution), nrow(wide_data)))
             }
         }
 
@@ -78,15 +78,15 @@
             )
 		}
 
-        get.percentile.trajectories.INTERNAL <- function(ss.data, growth.distribution.projection.sequence) {
+        get.percentile.trajectories.INTERNAL <- function(wide_data, growth.distribution.projection.sequence) {
 
             sgpFlow.trajectories.list.INTERNAL <- vector("list", length(projection.splineMatrices))
-            completed.ids <- data.table(ID = ss.data[['ID']], COMPLETED = FALSE, key="ID")
+            completed.ids <- data.table(ID = wide_data[['ID']], COMPLETED = FALSE, key="ID")
 
             ## Loop over daisy-chained, matrix sequence
             for (i in seq_along(projection.splineMatrices)) {
                 sgpFlow.trajectories.list.INTERNAL[[i]] <-
-                    na_omit(ss.data[!completed.ids[COMPLETED == TRUE, ID], c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
+                    na_omit(wide_data[!completed.ids[COMPLETED == TRUE, ID], c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
                 completed.ids[sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]], COMPLETED := TRUE]
 
                 for (j in seq_along(projection.splineMatrices[[i]])) {
@@ -138,12 +138,12 @@
 
             ## Perturb initial scores with CSEM if requested (after first iteration) 
             if (csem.perturbation.of.initial.scores & csem.iter!=1L) {
-                ss.data <-
-                    perturbScoresWithCSEM(copy(ss.data.original), state, sgpFlow.config, csem.distribution)
+                wide_data <-
+                    perturbScoresWithCSEM(copy(wide_data_original), state, sgpFlow.config, csem.distribution)
             }
 
             ## Get percentile trajectories
-            sgpFlow.trajectories.list[[csem.iter]] <- get.percentile.trajectories.INTERNAL(ss.data, growth.distribution.projection.sequence)
+            sgpFlow.trajectories.list[[csem.iter]] <- get.percentile.trajectories.INTERNAL(wide_data, growth.distribution.projection.sequence)
         } ## END csem.iter loop
         
     return(sgpFlow.trajectories.list)

@@ -81,13 +81,13 @@
         get.percentile.trajectories.INTERNAL <- function(wide_data, growth.distribution.projection.sequence) {
 
             sgpFlow.trajectories.list.INTERNAL <- vector("list", length(projection.splineMatrices))
-            completed.ids <- data.table(ID = wide_data[['ID']], COMPLETED = FALSE, key="ID")
+            completed_ids <- data.table(ID = wide_data[['ID']], COMPLETED = FALSE, key="ID")
 
             ## Loop over daisy-chained, matrix sequence
             for (i in seq_along(projection.splineMatrices)) {
                 sgpFlow.trajectories.list.INTERNAL[[i]] <-
-                    na_omit(wide_data[!completed.ids[COMPLETED == TRUE, ID], c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
-                completed.ids[sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]], COMPLETED := TRUE]
+                    na_omit(wide_data[!completed_ids[COMPLETED == TRUE, ID], c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
+                completed_ids[sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]], COMPLETED := TRUE]
 
                 for (j in seq_along(projection.splineMatrices[[i]])) {
 		    	    qreg_coef_matrix <- projection.splineMatrices[[i]][[j]]

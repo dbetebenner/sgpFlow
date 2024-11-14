@@ -8,7 +8,7 @@ function(
 	## Utility functions
 	perturb.rnorm <- function(mean = 0, sd) {
 	    dt <-
-		  data.table(sd = sd, VALUE = as.numeric(NA))[!is.na(sd), VALUE:=rnorm(.N, mean, sd)]
+		  data.table(sd = sd, VALUE = as.numeric(NA))[!is.na(sd), VALUE := rnorm(.N, mean, sd)]
 		return(dt[["VALUE"]])
 	}
 
@@ -29,12 +29,14 @@ function(
 		if (!is.null(state)) {
 			loss.hoss <- get.loss.hoss(state, tmp.content_area, tmp.grade) 
 		} else {
-			loss.hoss <- .range(wide_data[[paste0("SS", tmp.grade)]], na.rm=TRUE)
+			loss.hoss <- range(wide_data[[paste0("SS", tmp.grade)]], na.rm=TRUE)
 		}
 
 		if (distribution=="NORMAL") {
 			wide_data[, (paste0("SS", tmp.grade)) := 
-				get(paste0("SS", tmp.grade)) + perturb.rnorm(sd=sgpFlow::sgpFlowStateData[[state]][['Achievement']][['CSEM']][[tmp.content_area]][[paste("GRADE", tmp.grade, sep="_")]](wide_data[[paste0("SS", tmp.grade)]]))]
+				get(paste0("SS", tmp.grade)) +
+				perturb.rnorm(sd=sgpFlow::sgpFlowStateData[[state]][['Achievement']][['CSEM']][[tmp.content_area]][[paste("GRADE", tmp.grade, sep="_")]](wide_data[[paste0("SS", tmp.grade)]]))
+			]
 		}
 
 		## Pull in scores to loss and hoss

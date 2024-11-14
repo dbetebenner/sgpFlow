@@ -1,0 +1,3 @@
+add_fields: ["author"] # appending
+set_fields: ["export","usage","details","examples"] # resetting 
+author: ["Damian Betebenner", "Adam Van Iwaarden"]

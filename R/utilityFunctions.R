@@ -122,3 +122,16 @@ capWords <-
     function(state, content_area, grade) {
         return(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("boundaries", grade, sep = "_")]])
     }
+
+`my.beta` <- 
+    function(quantiles, shape1.min.max=c(3,7), shape2.min.max=c(3,7), interpolated.bottom=NULL) {
+        my.shape1 <- seq(shape1.min.max[2L], shape1.min.max[1L] , length=100L)
+        my.shape2 <- seq(shape2.min.max[1L], shape2.min.max[2L] , length=100L)
+        tmp.sample <- stats::rbeta(length(quantiles), shape1=my.shape1[quantiles], shape2=my.shape2[quantiles])
+        if (is.null(interpolated.bottom)) {
+            return(100*tmp.sample)
+        } else {
+            tmp.interpolate <- seq(0, interpolated.bottom, length=100L)/100
+            return(100*(tmp.sample * (1-tmp.interpolate[quantiles]) + tmp.interpolate[quantiles]))
+        }
+    }

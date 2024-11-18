@@ -57,38 +57,34 @@ getPercentileTrajectories <-
 
         ## Utility functions
         get.growth.distribution.projection.sequence <- function(growth.distribution, years.projected) {
-            if (is.null(growth.distribution)) growth.distribution <- "UNIFORM-RANDOM"
-            growth.distribution <- toupper(growth.distribution)
-            supported_distributions <- c("UNIFORM-RANDOM", as.character(1:99))
-
-            # Check for unsupported growth distribution & correct length
+            # Default to "UNIFORM-RANDOM" if NULL
+            growth.distribution <- toupper(ifelse(is.null(growth.distribution), "UNIFORM-RANDOM", growth.distribution))
+            supported_distributions <- c("UNIFORM-RANDOM", "BETA", as.character(1:99))
+    
+            # Validate growth.distribution
             if (!all(growth.distribution %in% supported_distributions)) {
-                stop(paste(
-                    "Unsupported 'growth.distribution' supplied: Currently supported 'growth.distribution':",
+                stop(sprintf(
+                    "Unsupported 'growth.distribution' supplied: Currently supported values are: %s",
                     paste(sapply(supported_distributions, capwords), collapse = ", ")
                 ))
             }
-
+    
+            # Validate length of growth.distribution
             if (!length(growth.distribution) %in% c(1, years.projected)) {
-                stop(paste0("Length of supplied growth distribution must be either 1 or ", years.projected, "."))
+                stop(sprintf(
+                    "Length of supplied 'growth.distribution' must be either 1 or %d.",
+                    years.projected
+                ))
             }
-
-            # Return values based on the input growth.distribution
-            if (growth.distribution == "UNIFORM-RANDOM") {
-                return(rep("UNIFORM-RANDOM", years.projected))
-            }
-            if (length(growth.distribution) == 1L && growth.distribution %in% as.character(1:99)) {
-                return(rep(growth.distribution, years.projected))
-            }
+    
+            # Return growth distribution sequence
             return(rep(growth.distribution, years.projected))
         }
 
         get.subset.indices <- function(wide_data, growth.distribution) {
             if (growth.distribution == "UNIFORM-RANDOM") {
-                # tmp.quantiles <- runif(nrow(wide_data), min = 0, max = 100)
-                # return(pmin(pmax(findInterval(tmp.quantiles, seq(0.5, 100.5, 1), rightmost.closed = TRUE), 1L), 99L))
                 return(
-                    stats::runif(dim(wide_data)[1L], min = 0, max = 100) |> ##  select random uniform values (REAL)
+                    stats::runif(nrow(wide_data), min = 0, max = 100) |> ##  select random uniform values (REAL)
                         round() |> as.integer() |> ##  round and convert to INTEGER
                         collapse::setv(0L, 1L) |> collapse::setv(100L, 99L) ##  bound between 1 and 99 by reference
                 )
@@ -96,6 +92,10 @@ getPercentileTrajectories <-
 
             if (growth.distribution %in% as.character(1:99)) {
                 return(rep(as.integer(growth.distribution), nrow(wide_data)))
+            }
+
+            if (growth.distribution == "BETA") {
+                return(my.beta())
             }
         }
 

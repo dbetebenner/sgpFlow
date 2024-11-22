@@ -16,7 +16,7 @@
 #'  [sgpFlowStateData][sgpFlow::sgpFlowStateData]
 #' @rdname createScaleScorePermutations
 #' @importFrom data.table melt data.table set setcolorder rbindlist
-#' @importFrom sgpFlow sgpFlowStateData
+
 createScaleScorePermutations <-
     function(
         state,

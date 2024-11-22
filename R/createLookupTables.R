@@ -1,29 +1,42 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param state PARAM_DESCRIPTION
-#' @param sgp.config PARAM_DESCRIPTION
-#' @param parallel.config PARAM_DESCRIPTION
-#' @param matrices PARAM_DESCRIPTION, Default: NULL
-#' @param lookup_table_types PARAM_DESCRIPTION, Default: c("single-cohort", "super-cohort")
-#' @returns OUTPUT_DESCRIPTION
-#' @details DETAILS
+#' @title Create Lookup Tables for SGP Analysis
+#' @description This function generates lookup tables from sgpFlow analyses. It allows for the creation of percentile and projection lookup tables based on the provided state, configuration settings, provided sgpFlow matrices.
+#' @param state A character string acronymn indicating the state for which the lookup tables are being created.
+#' @param sgp.config A list containing the sgpFlow configuration settings, including panel years and other required parameters.
+#' @param parallel.config A list specifying parallel computation configurations for SGP calculations.
+#' @param matrices A list of coefficient matrices for the sgpFlow analyses. If not provided, the function attempts to retrieve matrices from the `sgpFlowMatrices` package. Default: `NULL`.
+#' @param lookup_table_types A character vector specifying the types of lookup tables to generate. Options include `"single-cohort"` and `"super-cohort"`. Default: `c("single-cohort", "super-cohort")`.
+#' @returns A set of lookup tables saved as `.Rdata` and `.csv.gzip` files in a `Data` directory, organized by the type of lookup table.
+#' @details 
+#' This function:
+#' - Validates the availability of necessary matrices.
+#' - Adds matrices to state-level SGP configuration data.
+#' - Generates scale score permutations and embeds them into an SGP object.
+#' - Runs the `abcSGP` process for baseline percentile calculations.
+#' - Saves the resulting lookup tables in specified file formats.
+#' 
+#' The function can handle single-cohort and super-cohort data structures, allowing for flexible analysis configurations.
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
-#'  #EXAMPLE1
-#'  }
+#'   createLookupTables(
+#'      state = "DEMO",
+#'      sgp.config = DEMO_Lookup_Table.config[[1]],
+#'      parallel.config = list(BACKEND="PARALLEL", WORKERS=list(BASELINE_PERCENTILES=num_cores)),
+#'      lookup_table_types = c('single-cohort', 'super-cohort')
+#'   )
+#' }
 #' }
 #' @seealso 
-#'  [sgpFlowMatrices][sgpFlowMatrices::sgpFlowMatrices]
-#'  [new][methods::new]
-#'  [abcSGP][SGP::abcSGP]
-#'  [setDTthreads][data.table::setDTthreads], [fwrite][data.table::fwrite]
+#'  \code{\link[sgpFlowMatrices]{sgpFlowMatrices}}
+#'  \code{\link[methods]{new}}
+#'  \code{\link[SGP]{abcSGP}}
+#'  \code{\link[data.table]{setDTthreads}}, \code{\link[data.table]{fwrite}}
 #' @rdname createLookupTables
 #' @export 
-#' @importFrom sgpFlowMatrices sgpFlowMatrices
 #' @importFrom methods new
 #' @importFrom SGP abcSGP
 #' @importFrom data.table setDTthreads fwrite
+
 createLookupTables <-
     function(
         state,

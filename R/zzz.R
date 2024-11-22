@@ -1,6 +1,7 @@
 #' @importFrom data.table getDTthreads setDTthreads
 #' @importFrom utils globalVariables packageVersion
 #' @importFrom crayon bold magenta
+#' @importFrom toOrdinal toOrdinalDate
 
 .onLoad <- function(libname, pkgname) {
     function(libname, pkgname) {
@@ -17,10 +18,10 @@
 
         # Define a friendly startup message
         message_text <- paste0(
-            magenta(bold("sgpFlow")), " v", version,
-            " (11-13-2024)\n",
-            "For help, type: ", magenta(bold("> help(\"sgpFlow\")")), " or visit:\n",
-            magenta(bold("https://centerforassessment.github.io/sgpFlow"))
+            magenta(bold("🎉 sgpFlow v", version)), " - ", toOrdinal::toOrdinalDate(as.character(Sys.Date())), "\n",
+            "💡 Tip: ", magenta(bold("> help(\"sgpFlow\")")), "\n",
+            "🌐 Docs: ", magenta(bold("https://centerforassessment.github.io/sgpFlow")), "\n",
+            "✨ Happy sgpFlowing!"
         )
 
         # Display the startup message

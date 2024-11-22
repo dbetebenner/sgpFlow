@@ -1,6 +1,3 @@
-#' @importFrom SGP SGPstateData getStateAbbreviation
-#' @importFrom sgpFlowMatrices sgpFlowMatrices
-
 addsgpFlowMatrices <-
     function(
         state,

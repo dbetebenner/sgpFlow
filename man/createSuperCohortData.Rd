@@ -2,7 +2,7 @@
 % Please edit documentation in R/createSuperCohortData.R
 \name{createSuperCohortData}
 \alias{createSuperCohortData}
-\title{FUNCTION_TITLE}
+\title{Create Super-Cohort Data}
 \usage{
 createSuperCohortData(
   base_data,
@@ -12,30 +12,43 @@ createSuperCohortData(
 )
 }
 \arguments{
-\item{base_data}{PARAM_DESCRIPTION}
+\item{base_data}{A `data.table` containing the base data with columns `YEAR`, `CONTENT_AREA`, `GRADE`, and `ID`.}
 
-\item{sgp.config}{PARAM_DESCRIPTION}
+\item{sgp.config}{A list of SGP configurations specifying `sgp.content.areas`, `sgp.grade.sequences`, and `sgp.grade.sequences.lags`.}
 
-\item{supercohort_base_years}{Subset of years of supplied_base data to use for super-cohort construction}
+\item{supercohort_base_years}{A vector of years (subset of `base_data$YEAR`) to include for super-cohort construction. If not specified, all years in `base_data` are used.}
 
-\item{indicate_cohort}{PARAM_DESCRIPTION, Default: FALSE}
+\item{indicate_cohort}{A logical value indicating whether to include a `COHORT` column in the output, which assigns a label for each super-cohort. Default: `FALSE`.}
 }
 \value{
-OUTPUT_DESCRIPTION
+A `data.table` with adjusted year mappings and optionally a cohort indicator. The output combines data across all specified configurations and collapses it into a super-cohort structure.
 }
 \description{
-FUNCTION_DESCRIPTION
+Constructs super-cohort data by collapsing and reassigning years in the provided base data, based on SGP configuration and specified base years.
+
+This function prepares super-cohort datasets, which are used for analyses involving students grouped across multiple years. It adjusts year mappings, applies grade sequences, and optionally assigns cohort indicators.
 }
 \details{
-DETAILS
+- The function verifies that `supercohort_base_years` are present in `base_data`.
+- Each SGP configuration is processed iteratively, and grade-year-content mappings are applied to create super-cohort datasets.
+- The `YEAR` column is updated based on the most recent year in the grade sequence (`YEAR_NEW`).
+- Duplicate records are removed by keeping only the most recent (last) instance for each unique combination of `YEAR`, `GRADE`, and `ID`.
+- The optional `COHORT` column provides a unique identifier for each super-cohort, formed by concatenating `CONTENT_AREA`, `YEAR`, and `GRADE`.
 }
 \examples{
 \dontrun{
 if(interactive()){
- #EXAMPLE1
- }
+  # Example usage
+  super_cohort_data <- createSuperCohortData(
+    base_data = SGPdata::sgpData_LONG[, .(VALID_CASE, CONTENT_AREA, YEAR, GRADE, ID, ACHIEVEMENT_LEVEL)],
+    sgp.config = sgp_config_list,
+    supercohort_base_years = c("2021_2022", "2022_2023", "2023_2024"),
+    indicate_cohort = TRUE
+  )
+  print(super_cohort_data)
+}
 }
 }
 \seealso{
-[data.table][data.table::data.table], [rbindlist][data.table::rbindlist], [setkey][data.table::setkey]
+\code{\link[data.table]{data.table}}, \code{\link[data.table]{rbindlist}}, \code{\link[data.table]{setkey}}
 }

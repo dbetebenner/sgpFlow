@@ -1,6 +1,5 @@
 #' @importFrom data.table data.table
 #' @importFrom stats rnorm
-#' @importFrom sgpFlow sgpFlowStateData
 
 perturbScoresWithCSEM <-
     function(

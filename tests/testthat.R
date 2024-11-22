@@ -1,3 +1,3 @@
-#library(testthat)
-
-#test_check("sgpFlow")
+library(testthat)
+library(sgpFlow)
+test_check("sgpFlow")

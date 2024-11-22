@@ -2,29 +2,46 @@
 % Please edit documentation in R/extractLookupTables.R
 \name{extractLookupTables}
 \alias{extractLookupTables}
-\title{FUNCTION_TITLE}
+\title{Extract SGP Lookup Tables}
 \usage{
 extractLookupTables(sgp_object)
 }
 \arguments{
-\item{sgp_object}{PARAM_DESCRIPTION}
+\item{sgp_object}{An object of class `SGP` containing the data required for extracting lookup tables. The `Data` slot of the SGP object must include columns such as `CONTENT_AREA`, `GRADE`, `YEAR`, `SGP_BASELINE`, and `SGP_NORM_GROUP_BASELINE_SCALE_SCORES`.}
 }
 \value{
-OUTPUT_DESCRIPTION
+A list containing two `data.table` objects:
+- `sgpPercentileLookupTable`: A table of baseline percentiles, scale scores, and related metadata.
+- `sgpProjectionLookupTable`: A table of projected percentile trajectories with scale scores.
 }
 \description{
-FUNCTION_DESCRIPTION
+Extracts percentile and projection lookup tables from an SGP object for use in Student Growth Percentile (SGP) analyses.
+
+This function processes an SGP object to generate two key lookup tables: 
+- `sgpPercentileLookupTable`: A table containing baseline percentiles and associated scale scores.
+- `sgpProjectionLookupTable`: A table with projected percentile trajectories and their corresponding scale scores.
+These tables can be used for further analysis, reporting, or visualization of SGP data.
 }
 \details{
-DETAILS
+- The function identifies the most recent year (`tmp.final.year`) in the data and processes the relevant subset.
+- It generates `sgpPercentileLookupTable` by extracting baseline percentiles and splitting the `SGP_NORM_GROUP_BASELINE_SCALE_SCORES` column into prior and current scale scores.
+- The `sgpProjectionLookupTable` is derived from `sgpPercentileLookupTable` by isolating and transforming percentile trajectories and their corresponding scale scores.
+- The function ensures that both tables are keyed for efficient lookup and manipulation.
 }
 \examples{
 \dontrun{
 if(interactive()){
- #EXAMPLE1
- }
+  # Extract lookup tables from an SGP object
+  sgp_tables <- extractLookupTables(sgp_object)
+  
+  # Access the percentile lookup table
+  print(sgp_tables$sgpPercentileLookupTable)
+  
+  # Access the projection lookup table
+  print(sgp_tables$sgpProjectionLookupTable)
+}
 }
 }
 \seealso{
-[tstrsplit][data.table::tstrsplit], [setcolorder][data.table::setcolorder], [melt.data.table][data.table::melt.data.table], [setattr][data.table::setattr], [setnames][data.table::setnames], [setkey][data.table::setkey]
+\code{\link[data.table]{tstrsplit}}, \code{\link[data.table]{setcolorder}}, \code{\link[data.table]{melt.data.table}}, \code{\link[data.table]{setattr}}, \code{\link[data.table]{setnames}}, \code{\link[data.table]{setkey}}
 }

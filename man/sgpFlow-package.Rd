@@ -2,19 +2,49 @@
 % Please edit documentation in R/sgpFlow-package.R
 \docType{package}
 \name{sgpFlow-package}
-\alias{sgpFlow}
 \alias{sgpFlow-package}
-\title{sgpFlow: Functions for sgpFlow Analyses Utilizing Data Derived from Student Growth Percentile (SGP) Analyses}
+\alias{sgpFlow}
+\title{sgpFlow: Tools for Generating and Analyzing Student Growth Percentiles}
 \description{
-sgpFlow analyses utilize the SGP framework to construct student learning flows allowing for the simultaneous modeling of student growth and attainment.
+The `sgpFlow` package provides tools for generating and analyzing Student Growth Percentiles (SGPs) based on longitudinal student data. 
+It includes utilities for computing growth percentile trajectories, handling cohort-specific analyses, perturbing scores based on 
+Conditional Standard Error of Measurement (CSEM), and managing state-specific configurations.
+
+The package is designed for scalability and efficiency when working with large datasets, integrating features such as projection spline matrices, 
+growth distribution customization, and flexible trajectory simulation.
+}
+\details{
+**Main Features:**
+- **Trajectory Generation:** Tools like \code{\link[sgpFlow]{sgpFlowTrajectories}} enable computation of student growth trajectories over multiple iterations.
+- **Wide and Long Data Support:** Utilities like \code{\link[sgpFlow]{getWideData}} and \code{\link[sgpFlow]{getLongData}} allow seamless conversion between data formats.
+- **State-Specific Configurations:** Embedded configurations (\code{sgpFlowStateData}) facilitate state-specific SGP analyses.
+- **Simulation Support:** Integrates CSEM perturbation methods for variability simulation.
+
+**Embedded Data:**
+The package includes the \code{sgpFlowStateData} object, which provides state-specific meta-data, including:
+- **Achievement Data:** Contains information such as CSEM values required for perturbation.
+- **Projection Matrices:** State-specific projection spline matrices for modeling student growth.
+}
+\examples{
+\dontrun{
+if(interactive()){
+  # Generate SGP trajectories
+DEMO_Percentile_Trajectories_Cohort_50_LIST <- sgpFlowTrajectories(
+                                           long_data = sgpData::sgpData_LONG,
+                                           state = "DEMO",
+                                           sgpFlow.config = sgpFlow.config,
+                                           growth.distribution = "50",
+                                           projection.splineMatrices = projection.splineMatrices)
+  # Access the first iteration results
+  print(DEMO_Percentile_Trajectories_Cohort_50_LIST[[1]])
+}
+}
 }
 \seealso{
-Useful links:
-\itemize{
-  \item \url{https://centerforassessment.github.io/sgpFlow/}
-  \item Report bugs at \url{https://github.com/centerforassessment/sgpFlow/issues/}
-}
-
+\code{\link[sgpFlow]{sgpFlowTrajectories}}, 
+ \code{\link[sgpFlow]{getPercentileTrajectories}}, 
+ \code{\link[sgpFlow]{getWideData}}, 
+ \code{\link[sgpFlow]{getGradeProjectionSequenceMatrices}}
 }
 \author{
 \strong{Maintainer}: Damian W. Betebenner \email{dbetebenner@nciea.org} (\href{https://orcid.org/0000-0003-0476-5599}{ORCID})
@@ -25,4 +55,3 @@ Authors:
 }
 
 }
-\keyword{internal}

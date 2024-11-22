@@ -2,7 +2,7 @@
 % Please edit documentation in R/createMatrices.R
 \name{createMatrices}
 \alias{createMatrices}
-\title{FUNCTION_TITLE}
+\title{Create SGP Coefficient Matrices}
 \usage{
 createMatrices(
   data_for_matrices,
@@ -14,34 +14,49 @@ createMatrices(
 )
 }
 \arguments{
-\item{data_for_matrices}{PARAM_DESCRIPTION}
+\item{data_for_matrices}{Either a `data.table` or an object of class `SGP` containing the necessary data for matrix construction. If the input is an `SGP` object, the `Data` slot will be used.}
 
-\item{state}{PARAM_DESCRIPTION}
+\item{state}{A character string indicating the state for which matrices are being generated.}
 
-\item{matrix.sgp.config}{PARAM_DESCRIPTION}
+\item{matrix.sgp.config}{A configuration list specifying the SGP baseline setup for generating coefficient matrices.}
 
-\item{super_cohort.sgp.config}{PARAM_DESCRIPTION}
+\item{super_cohort.sgp.config}{A configuration list used specifically for creating super-cohort datasets. Required if `matrix_types` includes `"super-cohort"`.}
 
-\item{parallel.config}{PARAM_DESCRIPTION}
+\item{parallel.config}{A configuration list for specifying parallel processing options.}
 
-\item{matrix_types}{PARAM_DESCRIPTION, Default: c("single-cohort", "super-cohort")}
+\item{matrix_types}{A character vector specifying the types of matrices to generate. Options are `"single-cohort"` and `"super-cohort"`. Default: `c("single-cohort", "super-cohort")`.}
 }
 \value{
-OUTPUT_DESCRIPTION
+A list of SGP coefficient matrices, with separate entries for each matrix type specified in `matrix_types`.
 }
 \description{
-FUNCTION_DESCRIPTION
+Generates single-cohort and super-cohort Student Growth Percentile (SGP) coefficient matrices using the provided data and configuration settings.
+
+This function processes input data to create coefficient matrices that are essential for baseline SGP calculations. It supports both single-cohort and super-cohort analyses, based on the specified matrix types.
 }
 \details{
-DETAILS
+This function processes input data to generate SGP coefficient matrices for both single-cohort and super-cohort analyses. The workflow includes:
+- Preparing data for SGP calculations using \code{\link[SGP]{prepareSGP}}.
+- Constructing super-cohort datasets using \code{\link[SGP]{createSuperCohortData}} (if applicable).
+- Generating SGP baseline matrices using \code{\link[SGP]{baselineSGP}} with the provided configuration settings.
+
+The resulting matrices can be used for subsequent baseline SGP analyses or stored for further use.
 }
 \examples{
 \dontrun{
 if(interactive()){
- #EXAMPLE1
- }
+  DEMO_sgpFlow_Matrices <- createMatrices(
+     data_for_matrices = SGPdata::sgpData_LONG,
+     state = "DEMO",
+     matrix.sgp.config = DEMO_Matrix.config,
+     super_cohort.sgp.config = DEMO_Super_Cohort.config,
+     parallel.config=list(BACKEND = "PARALLEL", WORKERS=list(TAUS=num_cores)),
+     matrix_types=c("single-cohort", "super-cohort")
+  )
+  save(DEMO_sgpFlow_Matrices, file="Data/DEMO_sgpFlow_Matrices.rda", compress="xz")
+}
 }
 }
 \seealso{
-[createSuperCohortData][SGP::createSuperCohortData], [prepareSGP][SGP::prepareSGP], [baselineSGP][SGP::baselineSGP]
+\code{\link[SGP]{createSuperCohortData}}, \code{\link[SGP]{prepareSGP}}, \code{\link[SGP]{baselineSGP}}
 }

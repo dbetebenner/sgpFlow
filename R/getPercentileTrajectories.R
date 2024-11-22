@@ -1,31 +1,56 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param wide_data PARAM_DESCRIPTION
-#' @param state PARAM_DESCRIPTION
-#' @param sgpFlow.config PARAM_DESCRIPTION
-#' @param projection.splineMatrices PARAM_DESCRIPTION
-#' @param growth.distribution PARAM_DESCRIPTION, Default: NULL
-#' @param csem.perturbation.of.initial.scores PARAM_DESCRIPTION, Default: TRUE
-#' @param csem.perturbation.iterations PARAM_DESCRIPTION, Default: 100
-#' @param csem.distribution PARAM_DESCRIPTION, Default: 'Normal'
-#' @returns OUTPUT_DESCRIPTION
-#' @details DETAILS
+#' @title Generate Percentile Trajectories
+#' @description Computes percentile trajectories for student growth percentiles (SGPs) using projection matrices and optionally perturbs initial scores with conditional standard error of measurement (CSEM).
+#' 
+#' This function generates percentile trajectories over time for students based on provided data, state-specific configurations, and projection spline matrices. It supports iterative simulations with CSEM perturbation and custom growth distributions.
+#' 
+#' @param wide_data A `data.table` in wide format containing student data, including scale scores and student IDs, for calculating percentile trajectories.
+#' @param state A character string indicating the state for which the trajectories are computed. This is used for state-specific configurations in the `sgpFlow` package.
+#' @param sgpFlow.config A list of configuration parameters required for the SGP analysis, including grade progressions, content areas, and other metadata.
+#' @param projection.splineMatrices A list of projection spline matrices used for modeling growth percentiles over time.
+#' @param growth.distribution A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM-RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.
+#' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
+#' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
+#' @param csem.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"Normal"`. Default: `"Normal"`.
+#' @returns A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
+#' @details 
+#' - The function allows for iterative simulation of percentile trajectories using CSEM perturbations.
+#' - Growth distribution can be customized for each year or kept uniform across projections.
+#' - Handles projection matrix sequences (`projection.splineMatrices`) to compute scale scores over time.
+#' - Perturbation with CSEM requires state-specific meta-data in the `sgpFlowStateData` object.
+#' - Internal checks ensure valid configurations for growth distribution and state meta-data.
+#' 
+#' **Steps:**
+#' 1. Generates a growth distribution projection sequence.
+#' 2. Optionally perturbs initial scores using CSEM.
+#' 3. Computes percentile trajectories using projection spline matrices for each iteration.
+#' 4. Binds and returns all iterations as a list of `data.table` objects.
+#' 
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
-#'  #EXAMPLE1
-#'  }
+#'   # Example usage
+#'   trajectories <- getPercentileTrajectories(
+#'     wide_data = student_data,
+#'     state = "NY",
+#'     sgpFlow.config = sgp_config_list,
+#'     projection.splineMatrices = spline_matrices_list,
+#'     growth.distribution = "UNIFORM-RANDOM",
+#'     csem.perturbation.iterations = 50
+#'   )
+#'   
+#'   # Access the first iteration results
+#'   print(trajectories[[1]])
+#' }
 #' }
 #' @seealso 
-#'  [copy][data.table::copy], [setorder][data.table::setorder], [data.table][data.table::data.table], [rbindlist][data.table::rbindlist]
-#'  [sgpFlowStateData][sgpFlow::sgpFlowStateData]
-#'  [runif][stats::runif]
-#'  [setv][collapse::setv], [fsubset][collapse::fsubset], [collapv][collapse::collapv], [na_omit][collapse::na_omit], [pivot][collapse::pivot], [qDT][collapse::qDT]
-#'  [bs][splines::bs]
+#'  \code{\link[data.table]{copy}}, \code{\link[data.table]{setorder}}, \code{\link[data.table]{data.table}}, \code{\link[data.table]{rbindlist}}
+#'  \code{\link[sgpFlow]{sgpFlowStateData}}
+#'  \code{\link[stats]{runif}}
+#'  \code{\link[collapse]{setv}}, \code{\link[collapse]{fsubset}}, \code{\link[collapse]{collapv}}, \code{\link[collapse]{na_omit}}, \code{\link[collapse]{pivot}}, \code{\link[collapse]{qDT}}
+#'  \code{\link[splines]{bs}}
 #' @rdname getPercentileTrajectories
 #' @export 
 #' @importFrom data.table copy setorder data.table rbindlist
-#' @importFrom sgpFlow sgpFlowStateData
 #' @importFrom stats runif
 #' @importFrom collapse setv fsubset collapv na_omit pivot qDT
 #' @importFrom splines bs

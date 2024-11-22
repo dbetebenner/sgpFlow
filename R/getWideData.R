@@ -5,15 +5,15 @@ getWideData <-
     function(
         long_data,
         sgpFlow.config,
-        cohort_end_year = NULL
+        cohort.end.year = NULL
     ) {
         ### Parameters
-        if (is.null(cohort_end_year)) cohort_end_year <- long_data[, max(YEAR)]
+        if (is.null(cohort.end.year)) cohort.end.year <- long_data[, max(YEAR)]
         year.progression <-
             if (length(sgpFlow.config[["year_lags.progression"]]) > 0) {
-                yearIncrement(cohort_end_year, sgpFlow.config[["year_lags.progression"]])
+                yearIncrement(cohort.end.year, sgpFlow.config[["year_lags.progression"]])
             } else {
-                cohort_end_year
+                cohort.end.year
             }
 
         cohort_lookup <-

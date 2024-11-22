@@ -6,47 +6,47 @@
 
 ### capWords
 
-
-#' Function for converting all caps to mixed case. Useful in data cleaning.
+#' @title Convert All Caps to Mixed Case
+#' @description Converts a character string from all uppercase to mixed case, intelligently handling capitalization and preserving specific words or acronyms in uppercase.
 #' 
-#' The function capWords converts characters to mixed case character as
-#' intelligently as possible and leading/trailing spaces.
+#' This function is particularly useful for cleaning data where names, titles, or other text fields are stored in all caps. It intelligently converts text to mixed case while preserving the format of numbers, punctuation, and specific words or acronyms that should remain in uppercase.
 #' 
+#' @param x A character string or vector to be converted to mixed case.
+#' @param special.words A character vector specifying words or acronyms that should not be converted to mixed case (e.g., "ELA", "I", "III"). Default includes commonly used acronyms in education and assessment contexts.
+#' @return A character string in mixed case, with specific formatting applied.
+#' @details 
+#' - Words specified in `special.words` remain in uppercase.
+#' - Numbers and their formats (e.g., "2.0") are preserved.
+#' - Handles punctuation like hyphens, apostrophes, and parentheses appropriately.
+#' - Trims leading/trailing spaces and reduces multiple spaces to a single space.
 #' 
-#' @usage capWords(x, special.words = c("ELA","I", "II", "III", "IV", "CCSD",
-#' "CUSD", "CUD", "USD", "PSD", "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES",
-#' "SES", "IEP", "ELL", "MAD", "PARCC", "SBAC", "SD", "SWD", "US", "SGP",
-#' "SIMEX", "SS", "SAT", "PSAT", "WIDA", "ACCESS", "WIDA-ACCESS"))
-#' @param x A character string to be converted to mixed case.
-#' @param special.words A character vector (see default above), specifying
-#' words to not convert to mixed case.
-#' @return Returns a mixed case character string.
-#' @author Damian W. Betebenner \email{dbetebenner@@nciea.org}
-#' @keywords documentation
-#' @examples
-#'
+#' This function can process individual character strings or vectors of strings (using `sapply` for vectorized operations). For factors, it is recommended to apply the function to the levels of the factor.
+#' 
+#' @examples 
 #' \dontrun{
-#' if(interactive()){
-#'   capWords("TEST") ## Test
-#'   capWords("TEST1 TEST2") ## Test1 Test2
-#'   capWords("O'NEIL") ## O'Neil
-#'   capWords("JOHN'S") ## John's
+#' if(interactive()) {
+#'   # Basic examples
+#'   capWords("TEST")             # "Test"
+#'   capWords("ELA TEST1 TEST2")  # "ELA Test1 Test2"
+#'   capWords("O'NEIL")           # "O'Neil"
+#'   capWords("JOHN'S")           # "John's"
 #'
-#'   ## Use sapply for converting character vectors
-#'
-#'   test.vector <- paste("TEST", 1:10, sep="")
+#'   # Processing a character vector
+#'   test.vector <- paste("TEST", 1:10, sep = "")
 #'   sapply(test.vector, capWords)
 #'
-#'
-#' ## With factors, convert levels instead of the entire vector
-#'
-#'   test.factor <- factor(paste("TEST", rep(letters[1:10], each=50)))
+#'   # Handling factors by converting levels
+#'   test.factor <- factor(paste("TEST", rep(letters[1:10], each = 50)))
 #'   levels(test.factor) <- sapply(levels(test.factor), capWords)
 #'   levels(test.factor)
-#'  }
 #' }
-#' @rdname sgpFlowTr
+#' }
+#' 
+#' @seealso 
+#'  \code{\link[base]{toupper}}, \code{\link[base]{tolower}}
+#' @rdname capWords
 #' @export capWords
+
 capWords <-
     function(
         x,
@@ -91,6 +91,7 @@ capWords <-
 
 ### ddcast
 #' @importFrom data.table data.table dcast
+
 `ddcast` <-
     function(tmp.dt, ...) {
         if (dim(tmp.dt)[1L] == 0L) {
@@ -101,6 +102,7 @@ capWords <-
     } ### END ddcast Function
 
 ### yearIncrement
+
 `yearIncrement` <-
     function(
         base_year,
@@ -123,15 +125,18 @@ capWords <-
         return(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("boundaries", grade, sep = "_")]])
     }
 
+
+### my.beta
+
 `my.beta` <- 
-    function(quantiles, shape1.min.max=c(3,7), shape2.min.max=c(3,7), interpolated.bottom=NULL) {
+    function(quantiles, shape1.min.max=c(3,7), shape2.min.max=c(3,7), interpolated.min.value=NULL) {
         my.shape1 <- seq(shape1.min.max[2L], shape1.min.max[1L] , length=100L)
         my.shape2 <- seq(shape2.min.max[1L], shape2.min.max[2L] , length=100L)
         tmp.sample <- stats::rbeta(length(quantiles), shape1=my.shape1[quantiles], shape2=my.shape2[quantiles])
-        if (is.null(interpolated.bottom)) {
+        if (is.null(interpolated.min.value)) {
             return(100*tmp.sample)
         } else {
-            tmp.interpolate <- seq(0, interpolated.bottom, length=100L)/100
+            tmp.interpolate <- seq(0, interpolated.min.value, length=100L)/100
             return(100*(tmp.sample * (1-tmp.interpolate[quantiles]) + tmp.interpolate[quantiles]))
         }
     }

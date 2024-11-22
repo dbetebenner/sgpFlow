@@ -2,13 +2,13 @@
 % Please edit documentation in R/sgpFlowTrajectories.R
 \name{sgpFlowTrajectories}
 \alias{sgpFlowTrajectories}
-\title{FUNCTION_TITLE}
+\title{Generate SGP Trajectories for Cohorts}
 \usage{
 sgpFlowTrajectories(
   long_data,
   state,
   sgpFlow.config,
-  cohort_end_year = NULL,
+  cohort.end.year = NULL,
   growth.distribution = NULL,
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
@@ -16,35 +16,58 @@ sgpFlowTrajectories(
 )
 }
 \arguments{
-\item{long_data}{PARAM_DESCRIPTION}
+\item{long_data}{A `data.table` in long format containing student data. Required columns typically include `YEAR`, `GRADE`, `CONTENT_AREA`, `ID`, and scale scores.}
 
-\item{state}{PARAM_DESCRIPTION}
+\item{state}{A character string indicating the state for which trajectories are computed, used for state-specific configurations in the `sgpFlow` package.}
 
-\item{sgpFlow.config}{PARAM_DESCRIPTION}
+\item{sgpFlow.config}{A list of configurations for SGP analysis, including grade progressions, content areas, and metadata.}
 
-\item{cohort_end_year}{PARAM_DESCRIPTION, Default: NULL}
+\item{cohort.end.year}{Integer or `NULL`. The end year of the cohort for which percentile trajectories are generated. If `NULL`, the latest year in the data is used. Default: `NULL`.}
 
-\item{growth.distribution}{PARAM_DESCRIPTION, Default: NULL}
+\item{growth.distribution}{A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM-RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.}
 
-\item{csem.perturbation.of.initial.scores}{PARAM_DESCRIPTION, Default: TRUE}
+\item{csem.perturbation.of.initial.scores}{Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.}
 
-\item{csem.perturbation.iterations}{PARAM_DESCRIPTION, Default: 100}
+\item{csem.perturbation.iterations}{Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.}
 
-\item{projection.splineMatrices}{PARAM_DESCRIPTION}
+\item{projection.splineMatrices}{A list of projection spline matrices used to model growth percentiles over time.}
 }
 \value{
-OUTPUT_DESCRIPTION
+A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
 }
 \description{
-FUNCTION_DESCRIPTION
+Computes student growth percentile (SGP) trajectories for cohorts of students using longitudinal data, state-specific configurations, and projection spline matrices.
+
+This function processes longitudinal student data to generate percentile trajectories over time, integrating cohort-specific configurations, growth distributions, and optional perturbations based on conditional standard error of measurement (CSEM).
 }
 \details{
-DETAILS
+- Converts `long_data` to wide format using \code{\link[sgpFlow]{getWideData}}, tailored to the specified `cohort.end.year` and `sgpFlow.config`.
+- Integrates projection spline matrices using \code{\link[sgpFlow]{getGradeProjectionSequenceMatrices}}.
+- Delegates percentile trajectory calculations to \code{\link[sgpFlow]{getPercentileTrajectories}}, which handles CSEM perturbations and growth distribution sequences.
+
+The function ensures seamless computation of percentile trajectories by chaining key steps, enabling detailed cohort-specific growth analysis.
 }
 \examples{
 \dontrun{
 if(interactive()){
- #EXAMPLE1
- }
+  # Example usage
+  trajectories <- sgpFlowTrajectories(
+    long_data = student_long_data,
+    state = "NY",
+    sgpFlow.config = sgp_config_list,
+    cohort.end.year = 2023,
+    growth.distribution = "UNIFORM-RANDOM",
+    csem.perturbation.iterations = 50,
+    projection.splineMatrices = spline_matrices_list
+  )
+  
+  # Access the first iteration results
+  print(trajectories[[1]])
 }
+}
+}
+\seealso{
+\code{\link[sgpFlow]{getPercentileTrajectories}}, 
+ \code{\link[sgpFlow]{getWideData}}, 
+ \code{\link[sgpFlow]{getGradeProjectionSequenceMatrices}}
 }

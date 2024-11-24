@@ -17,12 +17,12 @@
         version <- utils::packageVersion("sgpFlow")
 
         # Define a friendly startup message
-        message_text <- paste0(
-            magenta(bold("🎉 sgpFlow v", version)), " - ", toOrdinal::toOrdinalDate(as.character(Sys.Date())), "\n",
-            "💡 Tip: ", magenta(bold("> help(\"sgpFlow\")")), "\n",
-            "🌐 Docs: ", magenta(bold("https://centerforassessment.github.io/sgpFlow")), "\n",
-            "✨ Happy sgpFlowing!"
-        )
+	message_text <- paste0(
+	    magenta(bold("\uD83C\uDF89 sgpFlow v", version)), " - ", toOrdinal::toOrdinalDate(as.character(Sys.Date())), "\n",
+	    "\U1F4A1 Tip: ", magenta(bold("> help(\"sgpFlow\")")), "\n",
+	    "\U1F310 Docs: ", magenta(bold("https://centerforassessment.github.io/sgpFlow")), "\n",
+	    "\u2728 Happy sgpFlowing!"
+	)
 
         # Display the startup message
         packageStartupMessage(message_text)

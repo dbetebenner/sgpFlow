@@ -10,7 +10,7 @@
 #' @details 
 #' **Main Features:**
 #' - **Trajectory Generation:** Tools like \code{\link[sgpFlow]{sgpFlowTrajectories}} enable computation of student growth trajectories over multiple iterations.
-#' - **Wide and Long Data Support:** Utilities like \code{\link[sgpFlow]{getWideData}} and \code{\link[sgpFlow]{getLongData}} allow seamless conversion between data formats.
+#' - **Wide and Long Data Support:** Utilities like \code{\link[sgpFlow]{getWideData}} allow seamless conversion between data formats.
 #' - **State-Specific Configurations:** Embedded configurations (\code{sgpFlowStateData}) facilitate state-specific SGP analyses.
 #' - **Simulation Support:** Integrates CSEM perturbation methods for variability simulation.
 #' 
@@ -37,7 +37,6 @@
 #'  \code{\link[sgpFlow]{sgpFlowTrajectories}}, 
 #'  \code{\link[sgpFlow]{getPercentileTrajectories}}, 
 #'  \code{\link[sgpFlow]{getWideData}}, 
-#'  \code{\link[sgpFlow]{getGradeProjectionSequenceMatrices}}
 #' @name sgpFlow-package
 #' @aliases sgpFlow
 #' @docType package

@@ -14,7 +14,7 @@
 #' @returns A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
 #' @details 
 #' - Converts `long_data` to wide format using \code{\link[sgpFlow]{getWideData}}, tailored to the specified `cohort.end.year` and `sgpFlow.config`.
-#' - Integrates projection spline matrices using \code{\link[sgpFlow]{getGradeProjectionSequenceMatrices}}.
+#' - Integrates projection spline matrices using \code{getGradeProjectionSequenceMatrices}.
 #' - Delegates percentile trajectory calculations to \code{\link[sgpFlow]{getPercentileTrajectories}}, which handles CSEM perturbations and growth distribution sequences.
 #' 
 #' The function ensures seamless computation of percentile trajectories by chaining key steps, enabling detailed cohort-specific growth analysis.
@@ -40,7 +40,6 @@
 #' @seealso 
 #'  \code{\link[sgpFlow]{getPercentileTrajectories}}, 
 #'  \code{\link[sgpFlow]{getWideData}}, 
-#'  \code{\link[sgpFlow]{getGradeProjectionSequenceMatrices}}
 #' @rdname sgpFlowTrajectories
 #' @export 
 

@@ -54,6 +54,7 @@
 #' @importFrom stats runif
 #' @importFrom collapse setv fsubset collapv na_omit pivot qDT
 #' @importFrom splines bs
+#' @importFrom utils head
 
 getPercentileTrajectories <-
     function(
@@ -90,7 +91,7 @@ getPercentileTrajectories <-
             if (!all(growth.distribution %in% supported_distributions)) {
                 stop(sprintf(
                     "Unsupported 'growth.distribution' supplied: Currently supported values are: %s",
-                    paste(sapply(supported_distributions, capwords), collapse = ", ")
+                    paste(sapply(supported_distributions, capWords), collapse = ", ")
                 ))
             }
     

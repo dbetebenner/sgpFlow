@@ -1,4 +1,5 @@
 #' @importFrom data.table setnames
+#' @importFrom utils tail
 
 getSplineMatrices <-
     function(

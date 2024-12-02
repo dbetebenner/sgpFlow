@@ -16,7 +16,7 @@ growth distribution customization, and flexible trajectory simulation.
 \details{
 **Main Features:**
 - **Trajectory Generation:** Tools like \code{\link[sgpFlow]{sgpFlowTrajectories}} enable computation of student growth trajectories over multiple iterations.
-- **Wide and Long Data Support:** Utilities like \code{\link[sgpFlow]{getWideData}} and \code{\link[sgpFlow]{getLongData}} allow seamless conversion between data formats.
+- **Wide and Long Data Support:** Utilities like \code{\link[sgpFlow]{getWideData}} allow seamless conversion between data formats.
 - **State-Specific Configurations:** Embedded configurations (\code{sgpFlowStateData}) facilitate state-specific SGP analyses.
 - **Simulation Support:** Integrates CSEM perturbation methods for variability simulation.
 
@@ -43,8 +43,7 @@ DEMO_Percentile_Trajectories_Cohort_50_LIST <- sgpFlowTrajectories(
 \seealso{
 \code{\link[sgpFlow]{sgpFlowTrajectories}}, 
  \code{\link[sgpFlow]{getPercentileTrajectories}}, 
- \code{\link[sgpFlow]{getWideData}}, 
- \code{\link[sgpFlow]{getGradeProjectionSequenceMatrices}}
+ \code{\link[sgpFlow]{getWideData}},
 }
 \author{
 \strong{Maintainer}: Damian W. Betebenner \email{dbetebenner@nciea.org} (\href{https://orcid.org/0000-0003-0476-5599}{ORCID})

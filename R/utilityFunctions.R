@@ -50,7 +50,9 @@
 capWords <-
     function(
         x,
-        special.words = c("ELA", "I", "II", "III", "IV", "CCSD", "CUSD", "CUD", "USD", "PSD", "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX", "SS", "SAT", "PSAT", "WIDA", "ACCESS", "WIDA-ACCESS")) {
+        special.words = c("ELA", "I", "II", "III", "IV", "CCSD", "CUSD", "CUD", "USD", "PSD", "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX", "SS", "SAT", "PSAT", "WIDA", "ACCESS", "WIDA-ACCESS")
+    ) {
+
         if (is.null(x)) {
             return(NULL)
         }
@@ -62,30 +64,48 @@ capWords <-
         }
 
         # Basic cleaning: replace underscores, periods, and extra spaces
-        x <- gsub("[_.]", " ", x)
-        x <- gsub("\\s+", " ", trimws(x)) # Trim and reduce multiple spaces
+        x <- trimws(gsub("[_.]", " ", x))
 
         # Helper function to capitalize while respecting special words and numbers
         capitalize_words <- function(word) {
             # Handle special words
             if (word %in% special.words) {
                 return(word)
-            } else if (grepl("^[0-9]+(\\.[0-9]+)?$", word)) { # Check for numbers
+            } 
+            if (grepl("^[0-9]+(\\.[0-9]+)?$", word)) { # Check for numbers
                 return(word)
-            } else {
-                # Capitalize the first letter only
-                return(paste0(toupper(substring(word, 1, 1)), tolower(substring(word, 2))))
+            } 
+            if (grepl("'", word)) {# Handle apostrophes explicitly
+                parts <- strsplit(word, "'", fixed = TRUE)[[1]]
+                if (length(parts) > 1) {
+                    if (nchar(parts[2]) == 1) {  # Case where the second part is a single letter
+                        parts <- paste0(
+                            toupper(substring(parts[1], 1, 1)), tolower(substring(parts[1], 2)),
+                            "'", tolower(parts[2])
+                        )
+                    } else {  # Case where there are multiple characters after the apostrophe
+                        parts <- paste0(
+                            toupper(substring(parts[1], 1, 1)), tolower(substring(parts[1], 2)),
+                            "'", paste0(toupper(substring(parts[-1], 1, 1)), tolower(substring(parts[-1], 2)), collapse = "'")
+                        )
+                    }
+                }
+                return(parts)
             }
+            return(paste0(toupper(substring(word, 1, 1)), tolower(substring(word, 2))))
         }
 
-        # Split words and process each, handling punctuation (hyphens, apostrophes)
-        words <- unlist(strsplit(x, "(?=[\\s-'])|(?<=[\\s-'])", perl = TRUE))
+        # Split words and process each, handling punctuation (hyphens, apostrophes, parentheses)
+        words <- unlist(strsplit(x, "(?=[\\s()-])|(?<=[\\s()-])", perl = TRUE))
         result <- sapply(words, capitalize_words)
 
         # Combine processed words and fix spacing around punctuation
         s.new <- paste(result, collapse = "")
         s.new <- gsub("\\s+([)-])", "\\1", gsub("([(])\\s+", "\\1", s.new))
 
+        # Final step: Remove extra spaces between words
+        s.new <- gsub("\\s+", " ", s.new)
+        
         return(s.new)
     } ### END capWords
 

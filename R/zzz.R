@@ -26,7 +26,7 @@ utils::globalVariables(c(
 
         # Define a friendly startup message
 	message_text <- paste0(
-	    magenta(bold("\uD83C\uDF89 sgpFlow v", version)), " - ", toOrdinal::toOrdinalDate("2024-11-22"), "\n",
+	    magenta(bold("\uD83C\uDF89 sgpFlow v", version)), " - ", toOrdinal::toOrdinalDate("2024-12-3"), "\n",
 	    "\U1F4A1 Tip: ", magenta(bold("> help(\"sgpFlow\")")), "\n",
 	    "\U1F310 Docs: ", magenta(bold("https://centerforassessment.github.io/sgpFlow")), "\n",
 	    "\u2728 Happy sgpFlowing!"

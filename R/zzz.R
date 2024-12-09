@@ -1,5 +1,5 @@
 #' @importFrom data.table getDTthreads setDTthreads
-#' @importFrom utils globalVariables packageVersion
+#' @importFrom utils globalVariables packageDescription
 #' @importFrom crayon bold cyan green magenta red
 #' @importFrom toOrdinal toOrdinalDate
 

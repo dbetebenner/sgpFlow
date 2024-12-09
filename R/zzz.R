@@ -57,7 +57,7 @@ utils::globalVariables(c(
 		    "\U1F4A1 Tip: ", magenta(bold("> help(package=\"sgpFlow\")")), "\n",
 		    "\U1F310 Docs: ", magenta(bold("https://centerforassessment.github.io/sgpFlow")), "\n",
 			strrep("\u2501", 40), "\n",
-		    "\u2728 Happy randomNaming!")
+		    "\u2728 Happy sgpFlowing!")
 
         # Display the startup message
         packageStartupMessage(message_text)

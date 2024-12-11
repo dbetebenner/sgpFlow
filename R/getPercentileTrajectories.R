@@ -107,24 +107,6 @@ getPercentileTrajectories <-
             return(rep(growth.distribution, years.projected))
         }
 
-        get.subset.indices <- function(wide_data, growth.distribution) {
-            if (growth.distribution == "UNIFORM-RANDOM") {
-                return(
-                    stats::runif(nrow(wide_data), min = 0, max = 100) |> ##  select random uniform values (REAL)
-                        round() |> as.integer() |> ##  round and convert to INTEGER
-                        collapse::setv(0L, 1L) |> collapse::setv(100L, 99L) ##  bound between 1 and 99 by reference
-                )
-            }
-
-            if (growth.distribution %in% as.character(1:99)) {
-                return(rep(as.integer(growth.distribution), nrow(wide_data)))
-            }
-
-            if (growth.distribution == "BETA") {
-                return(my.beta())
-            }
-        }
-
         bound.iso.subset.scores <- function(projected.scores, loss.hoss, subset.indices) {
             ## Pull in outlier to loss/hoss
             projected.scores[
@@ -181,8 +163,7 @@ getPercentileTrajectories <-
                             names = list("variable", "TEMP_1")
                         )[, variable := NULL]
 
-                    sgpFlow.trajectories.list.INTERNAL[[i]][
-                        ,
+                    sgpFlow.trajectories.list.INTERNAL[[i]][,
                         eval(paste0("SS", tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))) :=
                             bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)
                     ]

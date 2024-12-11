@@ -39,6 +39,7 @@ getWideData <-
         cohort.end.year = NULL
     ) {
         ### Parameters
+        if (!is.null(cohort.end.year) & length(cohort.end.year) > 1) stop("Argument cohort.end.year must be of length 1.")
         if (is.null(cohort.end.year)) cohort.end.year <- long_data[, max(YEAR)]
         year.progression <-
             if (length(sgpFlow.config[["year_lags.progression"]]) > 0) {

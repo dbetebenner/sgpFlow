@@ -1,13 +1,22 @@
-#' @title sgpFlow: Tools for Generating and Analyzing Student Growth Percentiles
+#' @title sgpFlow: Tools for Generating sgpFlow Trajectories 
 #' @description 
-#' The `sgpFlow` package provides tools for generating and analyzing Student Growth Percentiles (SGPs) based on longitudinal student data. 
+#' The `sgpFlow` package provides tools for generating sgpFlow trajectories based on longitudinal student data. 
 #' It includes utilities for computing growth percentile trajectories, handling cohort-specific analyses, perturbing scores based on 
 #' Conditional Standard Error of Measurement (CSEM), and managing state-specific configurations.
 #' 
 #' The package is designed for scalability and efficiency when working with large datasets, integrating features such as projection spline matrices, 
 #' growth distribution customization, and flexible trajectory simulation.
 #' 
-#' @details 
+#' @details
+#' \tabular{ll}{
+#'   Package: \tab sgpFlow \cr
+#'   Type: \tab Package \cr
+#'   Version: \tab 0.0-0.94 \cr
+#'   Date: \tab 2024-12-11 \cr
+#'   License: \tab MIT \cr
+#'   LazyLoad: \tab yes \cr
+#' }
+#'  
 #' **Main Features:**
 #' - **Trajectory Generation:** Tools like \code{\link[sgpFlow]{sgpFlowTrajectories}} enable computation of student growth trajectories over multiple iterations.
 #' - **Wide and Long Data Support:** Utilities like \code{\link[sgpFlow]{getWideData}} allow seamless conversion between data formats.
@@ -39,12 +48,12 @@
 #'  \code{\link[sgpFlow]{getWideData}}, 
 #' @name sgpFlow-package
 #' @aliases sgpFlow
+#' @keywords package
 #' @docType package
 "_PACKAGE"
 
 ## usethis namespace: start
 ## usethis namespace: end
-
 NULL
 
 #' @title State-Specific Meta-Data for SGP Flow Analyses

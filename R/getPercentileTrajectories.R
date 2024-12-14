@@ -189,21 +189,21 @@ getPercentileTrajectories <-
 
         ## Loop over csem.perturbation.iterations (only one iteration if csem.perturbation.iterations == FALSE)
         for (csem.iter in 0:csem.perturbation.iterations) {
-            ## On first iteration (csem.iter == 0) apply transformScaleScore
+            ## On first iteration (csem.iter == 0) apply getAchievementPercentiles 
             if (csem.iter == 0) {
-                ## Apply transformScaleScore to:
+                ## Apply getAchievementPercentiles to:
                 ## 1. Create achievement percentiles tables if achievement.percentiles.tables == TRUE
                 ## 2. Add SCALE_SCORE_PERCENTILES and SCALE_SCORE_PERCENTILES_MULTIVARIATE to wide_data if achievement.percentiles.tables == FALSE
-                wide_data <- transformScaleScore(data.table::copy(wide_data_original), scale_score.names = paste("SCALE_SCORE_GRADE", sgpFlow.config[["grade.progression"]], sep="_"), achievement.percentiles.tables = achievement.percentiles.tables)
+                wide_data <- getAchievementPercentiles(data.table::copy(wide_data_original), scale_score.names = paste("SCALE_SCORE_GRADE", sgpFlow.config[["grade.progression"]], sep="_"), achievement.percentiles.tables = achievement.percentiles.tables)
             }
 
             ## After first iteration (csem.iter > 0) perturb initial scores with CSEM
             if (csem.perturbation.of.initial.scores & csem.iter != 0L) {
                 wide_data <- perturbScoresWithCSEM(data.table::copy(wide_data_original), state, sgpFlow.config, csem.distribution)
-                ## Apply transformScaleScore to:
+                ## Apply getAchievementPercentiles to:
                 ## 1. Create achievement percentiles tables if achievement.percentiles.tables == TRUE
                 ## 2. Add SCALE_SCORE_PERCENTILES and SCALE_SCORE_PERCENTILES_MULTIVARIATE to wide_data if achievement.percentiles.tables == FALSE
-                wide_data <- transformScaleScore(wide_data, scale_score.names = paste("SCALE_SCORE_GRADE", sgpFlow.config[["grade.progression"]], sep="_"), achievement.percentiles.tables = achievement.percentiles.tables)
+                wide_data <- getAchievementPercentiles(wide_data, scale_score.names = paste("SCALE_SCORE_GRADE", sgpFlow.config[["grade.progression"]], sep="_"), achievement.percentiles.tables = achievement.percentiles.tables)
             }
 
             ## Get percentile trajectories

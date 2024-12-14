@@ -8,8 +8,8 @@
 #'
 #' @return A data.table containing the original data along with additional columns for scale score percentiles:
 #' \itemize{
-#'   \item \code{SCALE_SCORE_PERCENTILE_CURRENT}: Percentile rank of the most recent scale score.
-#'   \item \code{SCALE_SCORE_PERCENTILE_MULTIVARIATE}: Multivariate percentile rank across all scale score variables (if applicable).
+#'   \item \code{ACHIEVEMENT_PERCENTILE_INITIAL_1}: Percentile rank of the most recent scale score.
+#'   \item \code{ACHIEVEMENT_PERCENTILE_INITIAL}: Multivariate percentile rank across all scale score variables (if applicable).
 #' }
 #' If `achievement.percentiles.tables` is TRUE, returns percentile tables.
 #'
@@ -56,7 +56,7 @@ function(
                         }, numeric(1))
             
             percentile_cuts_table <- 
-                as.data.table(apply(complete_scores, 2, function(x) collapse::fquantile(x, probs=u1_values)))[,SCALE_SCORES_PERCENTILE:=u1_values][,SCALE_SCORES_PERCENTILE_MULTIVARIATE := 1:99]
+                as.data.table(apply(complete_scores, 2, function(x) collapse::fquantile(x, probs=u1_values)))[,ACHIEVEMENT_PERCENTILE_INITIAL_1:=u1_values][,ACHIEVEMENT_PERCENTILE_INITIAL := 1:99]
 
             return(percentile_cuts_table)
         }
@@ -70,12 +70,12 @@ function(
         if (length(scale_score.names) > 1) {
             wide_data <- data.table(ID=sprintf("%02d", 1:99), calculate_copula_quantiles(complete_scores, "PERCENTILE_CUTS"))
         } else {
-            wide_data <- setnames(data.table(ID=sprintf("%02d", 1:99), TEMP=collapse::fquantile(wide_data[[scale_score.names]], probs=1:99/100))[,(paste(scale_score.names, "PERCENTILE", sep="_")):=1:99], TEMP, scale_score.names)
+            wide_data <- setnames(data.table(ID=sprintf("%02d", 1:99), TEMP=collapse::fquantile(wide_data[[scale_score.names]], probs=1:99/100))[, ACHIEVEMENT_PERCENTILE_INITIAL_1 := 1:99], TEMP, scale_score.names)
         }
     } else {
-        wide_data[,(paste(tail(scale_score.names, 1), "PERCENTILE", sep="_")) := get_percentile(get(tail(scale_score.names, 1)))]
+        wide_data[, ACHIEVEMENT_PERCENTILE_INITIAL_1 := get_percentile(get(tail(scale_score.names, 1)))]
         if (length(scale_score.names) > 1) {
-            wide_data[complete_cases, SCALE_SCORES_PERCENTILE_MULTIVARIATE := calculate_copula_quantiles(complete_scores, "PERCENTILE_RANKS")]
+            wide_data[complete_cases, ACHIEVEMENT_PERCENTILE_INITIAL := calculate_copula_quantiles(complete_scores, "PERCENTILE_RANKS")]
         }
     }
 

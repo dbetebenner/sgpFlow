@@ -1,4 +1,4 @@
-#' Transform Scale Scores
+#' Get Achievement Percentiles 
 #' This function processes wide-format data to calculate various percentile scores
 #' (e.g., univariate and multivariate percentiles) based on scale score variables.
 #'
@@ -16,12 +16,12 @@
 #' @examples
 #' # Example usage:
 #' wide_data <- data.table(SCALE_SCORE_1 = rnorm(100), SCALE_SCORE_2 = rnorm(100))
-#' transformScaleScore(wide_data, c("SCALE_SCORE_1", "SCALE_SCORE_2"), FALSE)
+#' getAchievementPercentiles(wide_data, c("SCALE_SCORE_1", "SCALE_SCORE_2"), FALSE)
 #'
 #' @importFrom collapse missing_cases
 #' @importFrom copula normalCopula fitCopula pCopula
 
-`transformScaleScore` <- 
+`getAchievementPercentiles` <- 
 function(
         wide_data,
         scale_score.names,

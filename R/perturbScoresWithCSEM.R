@@ -6,12 +6,8 @@ perturbScoresWithCSEM <-
         wide_data,
         state,
         sgpFlow.config,
-        distribution = "Normal",
-        iterate.without.csem.perturbation
+        distribution = "Normal"
     ) {
-
-        ## iterate.without.csem.perturbation == TRUE just return unperturbed data
-        if (iterate.without.csem.perturbation) return(wide_data)
 
         ## Utility functions
         perturb.rnorm <- function(mean = 0, sd) {

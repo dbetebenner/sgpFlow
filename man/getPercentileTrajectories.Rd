@@ -79,6 +79,6 @@ if(interactive()){
 \code{\link[data.table]{copy}}, \code{\link[data.table]{setorder}}, \code{\link[data.table]{data.table}}, \code{\link[data.table]{rbindlist}}
  \code{\link[sgpFlow]{sgpFlowStateData}}
  \code{\link[stats]{runif}}
- \code{\link[collapse]{setv}}, \code{\link[collapse]{fsubset}}, \code{\link[collapse]{collapv}}, \code{\link[collapse]{na_omit}}, \code{\link[collapse]{pivot}}, \code{\link[collapse]{qDT}}
+ \code{\link[collapse]{anyv}}, \code{\link[collapse]{fsubset}}, \code{\link[collapse]{collapv}}, \code{\link[collapse]{na_omit}}, \code{\link[collapse]{pivot}}, \code{\link[collapse]{qDT}}
  \code{\link[splines]{bs}}
 }

@@ -1,6 +1,6 @@
 Package: sgpFlow
-Version: 0.0-0.96
-Date: 2024-12-13
+Version: 0.0-0.961
+Date: 2024-12-14
 Title: Functions for sgpFlow Analyses Utilizing Data Derived from Student Growth Percentile (SGP) Analyses
 Description: sgpFlow analyses utilize the SGP framework to construct student learning flows allowing for the simultaneous modeling of student growth and attainment.
 Authors@R: c(person(given=c("Damian", "W."), family="Betebenner",

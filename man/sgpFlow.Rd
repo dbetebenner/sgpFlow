@@ -9,9 +9,11 @@ sgpFlow(
   state,
   sgpFlow.config,
   superCohort.config = NULL,
-  cohort.data.type = "COHORT",
+  cohort.data.type = "SINGLE_COHORT",
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
+  iterate.without.csem.perturbation = FALSE,
+  achievement.percentiles.tables = TRUE,
   projection.splineMatrices
 )
 }
@@ -20,7 +22,7 @@ sgpFlow(
 
 \item{state}{A character string indicating the state for which the analysis is conducted. This must match a state entry in \code{sgpFlowStateData}.}
 
-\item{sgpFlow.config}{A configuration list for the SGP Flow analysis, containing details such as grade progression, year lags, and content area progression.}
+\item{sgpFlow.config}{A configuration list for the sgpFlow analysis, containing details such as grade progression, year lags, and content area progression.}
 
 \item{superCohort.config}{A configuration list specific to super-cohort analysis. If \code{NULL}, super-cohort analysis is skipped.}
 
@@ -30,10 +32,14 @@ sgpFlow(
 
 \item{csem.perturbation.iterations}{Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.}
 
+\item{iterate.without.csem.perturbation}{Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.}
+
+\item{achievement.percentiles.tables}{Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows)}
+
 \item{projection.splineMatrices}{A list of projection spline matrices used for calculating growth trajectories.}
 }
 \value{
-A list containing SGP Flow analysis results for each specified \code{cohort.data.type}.
+A list containing sgpFlow analysis results for each specified \code{cohort.data.type}.
 }
 \description{
 The `sgpFlow` function facilitates the analysis of sgpFlow trajectories using various cohort data types, such as traditional cohorts, super-cohorts, or achievement percentiles. It offers the flexibility to handle conditional standard error measurement (CSEM) perturbation, growth projection matrices, and other configurations.

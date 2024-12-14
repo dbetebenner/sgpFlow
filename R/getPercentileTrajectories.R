@@ -10,6 +10,7 @@
 #' @param growth.distribution A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM-RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
+#' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
 #' @param csem.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"Normal"`. Default: `"Normal"`.
 #' @returns A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
 #' @details 
@@ -49,12 +50,12 @@
 #'  \code{\link[collapse]{setv}}, \code{\link[collapse]{fsubset}}, \code{\link[collapse]{collapv}}, \code{\link[collapse]{na_omit}}, \code{\link[collapse]{pivot}}, \code{\link[collapse]{qDT}}
 #'  \code{\link[splines]{bs}}
 #' @rdname getPercentileTrajectories
-#' @export 
 #' @importFrom data.table copy setorder data.table rbindlist
 #' @importFrom stats runif
 #' @importFrom collapse setv fsubset collapv na_omit pivot qDT
 #' @importFrom splines bs
 #' @importFrom utils head
+#' @export 
 
 getPercentileTrajectories <-
     function(
@@ -65,11 +66,14 @@ getPercentileTrajectories <-
         growth.distribution = NULL,
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
+        iterate.without.csem.perturbation = FALSE,
+        achievement.percentiles.tables,
         csem.distribution = "Normal"
     ) {
         ## Parameters
         sgpFlow.trajectories.list <- list()
-        if (csem.perturbation.of.initial.scores) wide_data_original <- data.table::copy(wide_data)
+        if (csem.perturbation.iterations==0) csem.perturbation.of.initial.scores <- FALSE
+        if (csem.perturbation.of.initial.scores | iterate.without.csem.perturbation) wide_data_original <- data.table::copy(wide_data)
 
         ## Check arguments
         if (csem.perturbation.of.initial.scores & is.null(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["CSEM"]])) {
@@ -79,7 +83,9 @@ getPercentileTrajectories <-
             ))
         }
 
-        if (csem.perturbation.of.initial.scores == FALSE) csem.perturbation.iterations <- 1L
+        if (csem.perturbation.of.initial.scores & iterate.without.csem.perturbation) stop("Arguments csem.perturbation.of.initial.scores & iterate.without.csem.perturbation cannot both be set to TRUE.")
+
+        if (!csem.perturbation.of.initial.scores & !iterate.without.csem.perturbation) csem.perturbation.iterations <- 1L
 
         ## Utility functions
         get.growth.distribution.projection.sequence <- function(growth.distribution, years.projected) {
@@ -117,7 +123,6 @@ getPercentileTrajectories <-
             data.table::setorder(projected.scores, ID, TEMP_1)
             tmp.increment <- (seq.int(length(subset.indices)) - 1L) * 100L
             subset.indices <- c(rbind(subset.indices + tmp.increment, 1L + subset.indices + tmp.increment))
-            # return(projected.scores[subset.indices, .(TEMP_2=mean(TEMP_1)), by="ID"][['TEMP_2']])
             return(
                 collapse::fsubset(projected.scores, subset.indices) |>
                     collapse::collapv(by = "ID", keep.by = FALSE) |> # FUN = fmean by default
@@ -127,47 +132,49 @@ getPercentileTrajectories <-
 
         get.percentile.trajectories.INTERNAL <- function(wide_data, growth.distribution.projection.sequence) {
             sgpFlow.trajectories.list.INTERNAL <- vector("list", length(projection.splineMatrices))
-            completed_ids <- data.table::data.table(ID = wide_data[["ID"]], COMPLETED = FALSE, key = "ID")
+            completed_ids <- data.table::data.table(ID = wide_data[["ID"]], COMPLETED = NA, key = "ID")
 
             ## Loop over daisy-chained, matrix sequence
             for (i in seq_along(projection.splineMatrices)) {
-                sgpFlow.trajectories.list.INTERNAL[[i]] <-
-                    collapse::na_omit(wide_data[!completed_ids[COMPLETED == TRUE, ID], c("ID", paste0("SS", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1))), with = FALSE])
-                completed_ids[sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]], COMPLETED := TRUE]
+                if (!collapse::allNA(completed_ids[['COMPLETED']])) {
+                    cols_to_select <- c("ID", paste0("SCALE_SCORE_GRADE_", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1)))
+                    sgpFlow.trajectories.list.INTERNAL[[i]] <- collapse::na_omit(wide_data[!allNA(completed_ids[['COMPLETED']]), ..cols_to_select])
+                    completed_ids[sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]], COMPLETED := TRUE]
 
-                for (j in seq_along(projection.splineMatrices[[i]])) {
-                    qreg_coef_matrix <- projection.splineMatrices[[i]][[j]]
-                    loss.hoss <- get.loss.hoss(state, tail(qreg_coef_matrix@Content_Areas[[1]], 1L), tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))
-                    subset.indices <- get.subset.indices(sgpFlow.trajectories.list.INTERNAL[[i]], growth.distribution.projection.sequence[j])
+                    for (j in seq_along(projection.splineMatrices[[i]])) {
+                        qreg_coef_matrix <- projection.splineMatrices[[i]][[j]]
+                        loss.hoss <- get.loss.hoss(state, tail(qreg_coef_matrix@Content_Areas[[1]], 1L), tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))
+                        subset.indices <- get.subset.indices(sgpFlow.trajectories.list.INTERNAL[[i]], growth.distribution.projection.sequence[j])
 
-                    #  Create model (design) matrix
-                    #  Use function as a "promise" to evaluate directly rather than create intermediate objects
-                    getModelMatrix <- function() {
-                        Reduce(
-                            f = cbind, init = 1L,
-                            x = lapply(seq_along(qreg_coef_matrix@Time_Lags[[1L]]), function(model.iter) {
-                                splines::bs(
-                                    x = sgpFlow.trajectories.list.INTERNAL[[i]][[ncol(sgpFlow.trajectories.list.INTERNAL[[i]]) - model.iter + 1L]],
-                                    knots = qreg_coef_matrix@Knots[[model.iter]],
-                                    Boundary.knots = qreg_coef_matrix@Boundaries[[model.iter]]
-                                )
-                            })
-                        )
-                    }
+                        #  Create model (design) matrix
+                        #  Use function as a "promise" to evaluate directly rather than create intermediate objects
+                        getModelMatrix <- function() {
+                            Reduce(
+                                f = cbind, init = 1L,
+                                x = lapply(seq_along(qreg_coef_matrix@Time_Lags[[1L]]), function(model.iter) {
+                                    splines::bs(
+                                        x = sgpFlow.trajectories.list.INTERNAL[[i]][[ncol(sgpFlow.trajectories.list.INTERNAL[[i]]) - model.iter + 1L]],
+                                        knots = qreg_coef_matrix@Knots[[model.iter]],
+                                        Boundary.knots = qreg_coef_matrix@Boundaries[[model.iter]]
+                                    )
+                                })
+                            )
+                        }
 
-                    projected.scores <-
-                        collapse::pivot(
-                            data =
-                                collapse::qDT(getModelMatrix() %*% qreg_coef_matrix@.Data)[, ID := sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]]],
-                            ids = "ID",
-                            names = list("variable", "TEMP_1")
-                        )[, variable := NULL]
+                        projected.scores <-
+                            collapse::pivot(
+                                data =
+                                    collapse::qDT(getModelMatrix() %*% qreg_coef_matrix@.Data)[, ID := sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]]],
+                                ids = "ID",
+                                names = list("variable", "TEMP_1")
+                            )[, variable := NULL]
 
-                    sgpFlow.trajectories.list.INTERNAL[[i]][,
-                        eval(paste0("SS", tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))) :=
-                            bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)
-                    ]
-                } ## END j loop
+                        sgpFlow.trajectories.list.INTERNAL[[i]][,
+                            eval(paste0("SCALE_SCORE_GRADE_", tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))) :=
+                                bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)
+                        ]
+                    } ## END j loop
+                } ## END (!any(completed_ids[['COMPLETED']]))
             } ## END i loop
 
             return(data.table::data.table(data.table::rbindlist(sgpFlow.trajectories.list.INTERNAL, fill = TRUE), key = "ID"))
@@ -181,15 +188,20 @@ getPercentileTrajectories <-
         growth.distribution.projection.sequence <- get.growth.distribution.projection.sequence(growth.distribution, length(projection.splineMatrices[[1]]))
 
         ## Loop over csem.perturbation.iterations
-        for (csem.iter in seq(csem.perturbation.iterations)) {
-            ## Perturb initial scores with CSEM if requested (after first iteration)
-            if (csem.perturbation.of.initial.scores & csem.iter != 1L) {
+        for (csem.iter in 0:csem.perturbation.iterations) {
+            ## Perturb initial scores with CSEM or iterate without perturbation if requested (after first iteration)
+            if ((csem.perturbation.of.initial.scores | iterate.without.csem.perturbation) & csem.iter != 0L) {
                 wide_data <-
-                    perturbScoresWithCSEM(data.table::copy(wide_data_original), state, sgpFlow.config, csem.distribution)
+                    perturbScoresWithCSEM(data.table::copy(wide_data_original), state, sgpFlow.config, csem.distribution, iterate.without.csem.perturbation)
             }
 
+            ## Apply transformScaleScore to:
+            ## 1. Create achievement percentiles tables if achievement.percentiles.tables == TRUE
+            ## 2. Add SCALE_SCORE_PERCENTILES and SCALE_SCORE_PERCENTILES_MULTIVARIATE to wide_data if achievement.percentiles.tables == FALSE
+           wide_data <- transformScaleScore(wide_data, scale_score.names = paste("SCALE_SCORE_GRADE", sgpFlow.config[["grade.progression"]], sep="_"), achievement.percentiles.tables = achievement.percentiles.tables)
+
             ## Get percentile trajectories
-            sgpFlow.trajectories.list[[csem.iter]] <- get.percentile.trajectories.INTERNAL(wide_data, growth.distribution.projection.sequence)
+            sgpFlow.trajectories.list[[paste("ITERATION", csem.iter, sep="_")]] <- get.percentile.trajectories.INTERNAL(wide_data, growth.distribution.projection.sequence)
         } ## END csem.iter loop
 
         return(sgpFlow.trajectories.list)

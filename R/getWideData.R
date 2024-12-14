@@ -11,6 +11,7 @@
 #'     \item{\code{content_area.progression}}{A vector of content areas for the cohort.}
 #'   }
 #' @param cohort.end.year An optional integer specifying the cohort's end year. Defaults to the maximum year present in \code{long_data}.
+#' @param achievement.percentiles.tables Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows) 
 #'
 #' @return A wide-format `data.table` containing the following columns:
 #'   \describe{
@@ -36,7 +37,8 @@ getWideData <-
     function(
         long_data,
         sgpFlow.config,
-        cohort.end.year = NULL
+        cohort.end.year = NULL,
+        achievement.percentiles.tables
     ) {
         ### Parameters
         if (!is.null(cohort.end.year) & length(cohort.end.year) > 1) stop("Argument cohort.end.year must be of length 1.")
@@ -55,7 +57,7 @@ getWideData <-
                 GRADE = sgpFlow.config[["grade.progression"]],
                 CONTENT_AREA = sgpFlow.config[["content_area.progression"]]
             )
-        new.names <- c("ID", paste0("SS", sgpFlow.config[["grade.progression"]]))
+        new.names <- c("ID", paste0("SCALE_SCORE_GRADE_", sgpFlow.config[["grade.progression"]]))
         vars.to.keep <- c("ID", names(cohort_lookup), "SCALE_SCORE")
 
         return(
@@ -68,7 +70,10 @@ getWideData <-
                     ),
                 ids = "ID", names = c("YEAR", "CONTENT_AREA"),
                 values = "SCALE_SCORE"
-            ) |>
-                data.table::setnames(new.names) |> collapse::na_omit(cols = tail(new.names, 1)) |> data.table::setkeyv("ID")
+            ) 
+            |>
+                data.table::setnames(new.names) |> collapse::na_omit(cols = tail(new.names, 1))
+            |>
+                data.table::setkey(ID)
         )
     } ## END getWideData

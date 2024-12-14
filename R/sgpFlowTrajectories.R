@@ -10,6 +10,8 @@
 #' @param growth.distribution A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM-RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
+#' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
+#' @param achievement.percentiles.tables Logical. If `TRUE`, creates tables of 99 trajectories tables based upon initial achievement percentiles.
 #' @param projection.splineMatrices A list of projection spline matrices used to model growth percentiles over time.
 #' @returns A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
 #' @details 
@@ -52,23 +54,28 @@ sgpFlowTrajectories <-
         growth.distribution = NULL,
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
+        iterate.without.csem.perturbation = FALSE,
+        achievement.percentiles.tables,
         projection.splineMatrices
     ) {
 
-        ### Calculate percentile trajectories
+        ## Calculate percentile trajectories
         sgpFlow.trajectories <-
             getPercentileTrajectories(
                 wide_data = # Subset and reshape to wide data for getPercentileTrajectories
                     getWideData(
                         long_data = long_data,
                         sgpFlow.config = sgpFlow.config,
-                        cohort.end.year = cohort.end.year
+                        cohort.end.year = cohort.end.year,
+                        achievement.percentiles.tables = achievement.percentiles.tables
                     ),
                 state = state,
                 sgpFlow.config = sgpFlow.config,
                 growth.distribution = growth.distribution,
                 csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                 csem.perturbation.iterations = csem.perturbation.iterations,
+                iterate.without.csem.perturbation = iterate.without.csem.perturbation,
+                achievement.percentiles.tables = achievement.percentiles.tables,
                 projection.splineMatrices = # Get matrix sequence associated with trajectory calculations
                     getGradeProjectionSequenceMatrices(
                         sgpFlow.config,
@@ -76,6 +83,6 @@ sgpFlowTrajectories <-
                     )
             )
 
-        ### Return trajectories
+        ## Return trajectories
         return(sgpFlow.trajectories)
     } ### END sgpFlowTrajectories

@@ -3,7 +3,6 @@
 \docType{package}
 \name{sgpFlow-package}
 \alias{sgpFlow-package}
-\alias{sgpFlow}
 \title{sgpFlow: Tools for Generating sgpFlow Trajectories}
 \description{
 The `sgpFlow` package provides tools for generating sgpFlow trajectories based on longitudinal student data. 
@@ -17,8 +16,8 @@ growth distribution customization, and flexible trajectory simulation.
 \tabular{ll}{
   Package: \tab sgpFlow \cr
   Type: \tab Package \cr
-  Version: \tab 0.0-0.94 \cr
-  Date: \tab 2024-12-11 \cr
+  Version: \tab 0.0-0.96 \cr
+  Date: \tab 2024-12-13 \cr
   License: \tab MIT \cr
   LazyLoad: \tab yes \cr
 }

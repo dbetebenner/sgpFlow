@@ -76,6 +76,7 @@ function(
         wide_data[, ACHIEVEMENT_PERCENTILE_INITIAL_1 := get_percentile(get(tail(scale_score.names, 1)))]
         if (length(scale_score.names) > 1) {
             wide_data[complete_cases, ACHIEVEMENT_PERCENTILE_INITIAL := calculate_copula_quantiles(complete_scores, "PERCENTILE_RANKS")]
+            wide_data[is.na(ACHIEVEMENT_PERCENTILE_INITIAL), ACHIEVEMENT_PERCENTILE_INITIAL := ACHIEVEMENT_PERCENTILE_INITIAL_1]
         }
     }
 

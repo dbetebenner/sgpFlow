@@ -88,30 +88,6 @@ getPercentileTrajectories <-
         if (csem.perturbation.of.initial.scores | iterate.without.csem.perturbation) wide_data_original <- data.table::copy(wide_data)
 
         ## Utility functions
-        get.growth.distribution.projection.sequence <- function(growth.distribution, years.projected) {
-            # Default to "UNIFORM-RANDOM" if NULL
-            growth.distribution <- toupper(ifelse(is.null(growth.distribution), "UNIFORM-RANDOM", growth.distribution))
-            supported_distributions <- c("UNIFORM-RANDOM", "BETA", as.character(1:99))
-    
-            # Validate growth.distribution
-            if (!all(growth.distribution %in% supported_distributions)) {
-                stop(sprintf(
-                    "Unsupported 'growth.distribution' supplied: Currently supported values are: %s",
-                    paste(sapply(supported_distributions, capWords), collapse = ", ")
-                ))
-            }
-    
-            # Validate length of growth.distribution
-            if (!length(growth.distribution) %in% c(1, years.projected)) {
-                stop(sprintf(
-                    "Length of supplied 'growth.distribution' must be either 1 or %d.",
-                    years.projected
-                ))
-            }
-    
-            # Return growth distribution sequence
-            return(rep(growth.distribution, years.projected))
-        }
 
         bound.iso.subset.scores <- function(projected.scores, loss.hoss, subset.indices) {
             ## Pull in outlier to loss/hoss
@@ -144,7 +120,7 @@ getPercentileTrajectories <-
                     for (j in seq_along(projection.splineMatrices[[i]])) {
                         qreg_coef_matrix <- projection.splineMatrices[[i]][[j]]
                         loss.hoss <- get.loss.hoss(state, tail(qreg_coef_matrix@Content_Areas[[1]], 1L), tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))
-                        subset.indices <- get.subset.indices(sgpFlow.trajectories.list.INTERNAL[[i]], growth.distribution.projection.sequence[j])
+                        subset.indices <- getGrowthDistributionIndices(sgpFlow.trajectories.list.INTERNAL[[i]], growth.distribution.projection.sequence[j])
 
                         #  Create model (design) matrix
                         #  Use function as a "promise" to evaluate directly rather than create intermediate objects
@@ -185,7 +161,7 @@ getPercentileTrajectories <-
         #######################################################
 
         ## Create matrix sequence for projections
-        growth.distribution.projection.sequence <- get.growth.distribution.projection.sequence(growth.distribution, length(projection.splineMatrices[[1]]))
+        growth.distribution.projection.sequence <- getGrowthDistributionProjectionSequence(growth.distribution, length(projection.splineMatrices[[1]]))
 
         ## Loop over csem.perturbation.iterations (only one iteration if csem.perturbation.iterations == FALSE)
         for (csem.iter in 0:csem.perturbation.iterations) {

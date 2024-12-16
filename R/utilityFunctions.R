@@ -111,7 +111,6 @@ capWords <-
 
 ### ddcast
 #' @importFrom data.table data.table dcast
-
 `ddcast` <-
     function(tmp.dt, ...) {
         if (dim(tmp.dt)[1L] == 0L) {
@@ -122,7 +121,6 @@ capWords <-
     } ### END ddcast Function
 
 ### yearIncrement
-
 `yearIncrement` <-
     function(
         base_year,
@@ -140,6 +138,7 @@ capWords <-
         }
     } ### End yearIncrement
 
+### get.loss.hoss
 `get.loss.hoss` <-
     function(state, content_area, grade) {
         return(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("boundaries", grade, sep = "_")]])
@@ -147,7 +146,6 @@ capWords <-
 
 
 ### my.beta
-
 `my.beta` <- 
     function(quantiles, shape1.min.max=c(3,7), shape2.min.max=c(3,7), interpolated.min.value=NULL) {
         my.shape1 <- seq(shape1.min.max[2L], shape1.min.max[1L] , length=100L)
@@ -161,25 +159,8 @@ capWords <-
         }
     }
 
-###   Extraction of growth distribution function (initial)
-`get.subset.indices` <-
-    function(
-        wide_data,
-        growth.distribution
-    ) {
-        if (growth.distribution == "UNIFORM-RANDOM") {
-            return(
-                stats::runif(nrow(wide_data), min = 0, max = 100) |>    ##  select random uniform values (REAL)
-                    round() |> as.integer() |>                          ##  round and convert to INTEGER
-                    collapse::setv(0L, 1L) |> collapse::setv(100L, 99L) ##  bound between 1 and 99 by reference
-            )
-        }
-
-        if (growth.distribution %in% as.character(1:99)) {
-            return(rep(as.integer(growth.distribution), nrow(wide_data)))
-        }
-
-        if (growth.distribution == "BETA") {
-            return(my.beta())
-        }
-    }
+### beta.copula
+#' @importFrom stats rbeta
+`beta.copula` <- function(number, quantile, multiplier) {
+    return(quantile + (1 - quantile) * rbeta(number, multiplier*quantile, multiplier*(1-quantile)))
+}

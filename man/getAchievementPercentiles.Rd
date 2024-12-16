@@ -22,8 +22,8 @@ getAchievementPercentiles(
 \value{
 A data.table containing the original data along with additional columns for scale score percentiles:
 \itemize{
-  \item \code{SCALE_SCORE_PERCENTILE_CURRENT}: Percentile rank of the most recent scale score.
-  \item \code{SCALE_SCORE_PERCENTILE_MULTIVARIATE}: Multivariate percentile rank across all scale score variables (if applicable).
+  \item \code{ACHIEVEMENT_PERCENTILE_INITIAL_1}: Percentile rank of the most recent scale score.
+  \item \code{ACHIEVEMENT_PERCENTILE_INITIAL}: Multivariate percentile rank across all scale score variables (if applicable).
 }
 If `achievement.percentiles.tables` is TRUE, returns percentile tables.
 }
@@ -34,7 +34,7 @@ This function processes wide-format data to calculate various percentile scores
 }
 \examples{
 # Example usage:
-wide_data <- data.table(SCALE_SCORE_1 = rnorm(100), SCALE_SCORE_2 = rnorm(100))
-getAchievementPercentiles(wide_data, c("SCALE_SCORE_1", "SCALE_SCORE_2"), FALSE)
+wide_data <- data.table::data.table(SCALE_SCORE_1 = rnorm(100), SCALE_SCORE_2 = rnorm(100))
+sgpFlow::getAchievementPercentiles(wide_data, c("SCALE_SCORE_1", "SCALE_SCORE_2"), FALSE)
 
 }

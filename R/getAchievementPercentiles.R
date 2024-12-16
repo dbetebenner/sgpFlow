@@ -15,11 +15,12 @@
 #'
 #' @examples
 #' # Example usage:
-#' wide_data <- data.table(SCALE_SCORE_1 = rnorm(100), SCALE_SCORE_2 = rnorm(100))
-#' getAchievementPercentiles(wide_data, c("SCALE_SCORE_1", "SCALE_SCORE_2"), FALSE)
+#' wide_data <- data.table::data.table(SCALE_SCORE_1 = rnorm(100), SCALE_SCORE_2 = rnorm(100))
+#' sgpFlow::getAchievementPercentiles(wide_data, c("SCALE_SCORE_1", "SCALE_SCORE_2"), FALSE)
 #'
 #' @importFrom collapse missing_cases
 #' @importFrom copula normalCopula fitCopula pCopula
+#' @importFrom stats uniroot
 
 `getAchievementPercentiles` <- 
 function(
@@ -43,7 +44,7 @@ function(
         copula_model <- normalCopula(dim = ncol(scores_uniform))
         fit <- fitCopula(copula_model, scores_uniform, method = "ml") # Maximum likelihood fit
   
-        # Step 3: Using copula return PERCENTILE_RANKS or PERCENTILE_CUTS 
+        # Step 3: Using copula return PERCENTILE_RANKS or PERCENTILE_CUTS
         if (what.to.return=="PERCENTILE_RANKS") {
             return(as.integer(pmax(1, pmin(round(100*pCopula(scores_uniform, copula = fit@copula)), 99))))
         }

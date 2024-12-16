@@ -9,6 +9,8 @@
 #' @param cohort.data.type A character vector specifying the type of cohort data to analyze. Options include \code{"SUPER_COHORT"}, \code{"COHORT"}, and \code{"ACHIEVEMENT_PERCENTILES"}. Default is \code{"COHORT"}.
 #' @param csem.perturbation.of.initial.scores Logical. If \code{TRUE}, initial scores are perturbed using conditional standard error measurement (CSEM). Default is \code{TRUE}.
 #' @param csem.perturbation.iterations Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.
+#' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
+#' @param achievement.percentiles.tables Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows) 
 #' @param projection.splineMatrices A list of projection spline matrices used for calculating growth trajectories.
 #'
 #' @details
@@ -41,13 +43,15 @@ sgpFlow <-
         state,
         sgpFlow.config,
         superCohort.config=NULL,
-        cohort.data.type = "SINGLE_COHORT", #c("SUPER_COHORT", "SINGLE_COHORT", "ACHIEVEMENT_PERCENTILES"),
+        cohort.data.type = "SINGLE_COHORT", #c("SUPER_COHORT", "SINGLE_COHORT"),
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
+        iterate.without.csem.perturbation = FALSE,
+        achievement.percentiles.tables = TRUE,
         projection.splineMatrices
     ) {
 
-    # Test arguments
+    # Test/update arguments
     if (!any(class(sgp_object) %in% c("SGP", "data.table"))) stop("Supplied sgp_object must be either of class 'SGP' or 'data.table'.")
 
     if (is.null(superCohort.config) & "SUPER_COHORT" %in% cohort.data.type) {
@@ -55,8 +59,14 @@ sgpFlow <-
         cohort.data.type <- setdiff(cohort.data.type, "SUPER_COHORT")
     }
 
+    if (achievement.percentiles.tables) achievement.percentiles.tables <- c(FALSE, TRUE)
+
     # Get long_data
     if ("SGP" %in% class(sgp_object)) long_data <- sgp_object@Data else long_data <- sgp_object
+
+    # Add SCALE_SCORE_STANDARDIZED to long_data
+    long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
+
 
     # Initialize an empty list to store results
     sgpFlow_results_list <- list()
@@ -71,15 +81,21 @@ sgpFlow <-
 
             # Loop over growth.distribution
             for (growth.distributions.iter in sgpFlow.config.iter[['growth.distributions']]) {
-                sgpFlow_results_list[[tmp_name]][[data.type.iter]][[growth.distributions.iter]] <- 
-                    sgpFlowTrajectories(
+
+                # Loop over whether achievement.percentiles.tables get calculated.
+                for (achievement.percentiles.tables.iter in achievement.percentiles.tables) {
+                    sgpFlow_results_list[[tmp_name]][[data.type.iter]][[growth.distributions.iter]] <- 
+                        sgpFlowTrajectories(
                             long_data = long_data,
                             state = state,
                             sgpFlow.config = sgpFlow.config.iter,
                             growth.distribution = growth.distributions.iter,
                             csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                             csem.perturbation.iterations = csem.perturbation.iterations,
+                            iterate.without.csem.perturbation = iterate.without.csem.perturbation,
+                            achievement.percentiles.tables = achievement.percentiles.tables.iter,
                             projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[['content_area.progression']], 1), "BASELINE", sep=".")]])
+                } ### END achievement.percentiles.iter
             } ### END growth.distributions.iter
         } ### END data.type.iter
     } ### END sgpFlow.config.iter

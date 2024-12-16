@@ -11,8 +11,8 @@
 #' \tabular{ll}{
 #'   Package: \tab sgpFlow \cr
 #'   Type: \tab Package \cr
-#'   Version: \tab 0.0-0.95 \cr
-#'   Date: \tab 2024-12-11 \cr
+#'   Version: \tab 0.0-0.963 \cr
+#'   Date: \tab 2024-12-16 \cr
 #'   License: \tab MIT \cr
 #'   LazyLoad: \tab yes \cr
 #' }
@@ -47,7 +47,6 @@
 #'  \code{\link[sgpFlow]{getPercentileTrajectories}}, 
 #'  \code{\link[sgpFlow]{getWideData}}, 
 #' @name sgpFlow-package
-#' @aliases sgpFlow
 #' @keywords package
 #' @docType package
 "_PACKAGE"

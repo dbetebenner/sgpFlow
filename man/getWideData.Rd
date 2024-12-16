@@ -4,7 +4,12 @@
 \alias{getWideData}
 \title{Convert Long Data to Wide Format for Cohort Analysis}
 \usage{
-getWideData(long_data, sgpFlow.config, cohort.end.year = NULL)
+getWideData(
+  long_data,
+  sgpFlow.config,
+  cohort.end.year = NULL,
+  achievement.percentiles.tables
+)
 }
 \arguments{
 \item{long_data}{A `data.table` containing student-level data in long format, including variables such as \code{ID}, \code{YEAR}, \code{GRADE}, \code{CONTENT_AREA}, and \code{SCALE_SCORE}.}
@@ -17,6 +22,8 @@ getWideData(long_data, sgpFlow.config, cohort.end.year = NULL)
 }}
 
 \item{cohort.end.year}{An optional integer specifying the cohort's end year. Defaults to the maximum year present in \code{long_data}.}
+
+\item{achievement.percentiles.tables}{Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows)}
 }
 \value{
 A wide-format `data.table` containing the following columns:

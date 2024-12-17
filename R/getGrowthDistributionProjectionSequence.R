@@ -8,16 +8,16 @@
 #'      Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM-RANDOM distribution)
 #'      Groupings: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
 
-`get.growth.distribution.projection.sequence` <- 
+`getGrowthDistributionProjectionSequence` <- 
 function(
     growth.distribution,
     years.projected)
 {
 
     # Utility functions
-    check.growth.distribution.distribution <- function(distributions) {
+    check.growth.distribution.distribution <- function(growth.distribution.list) {
         # Validate Distribution component of growth.distribution.list
-        distribution.names <- sapply(distributions, function(x) x[['Distribution']])
+        distribution.names <- sapply(growth.distribution.list, function(x) x[['Distribution']])
         if (!all(unique(distribution.names) %in% supported_distributions)) {
             stop(sprintf(
                 "Unsupported 'growth.distribution' supplied: Currently supported distributions are: %s",
@@ -26,7 +26,10 @@ function(
         }
 
         # Convert Distribution P** to ** and return
-        lapply(distributions, function(x) x[['Distribution']] <- gsub("^P(\\d+)$", "\\1", x[['Distribution']]))
+        lapply(growth.distribution.list, function(x) {
+            x[['Distribution']] <- gsub("^P(\\d+)$", "\\1", x[['Distribution']])
+            x
+        })
     }
 
     check.growth.distribution.parameters <- function(parameters) {
@@ -49,8 +52,9 @@ function(
         return(parameters)
     }
 
-    check.growth.distribution.groupings <- function(groupings) {
-        if (is.null(groupings[['Groupings']])) groupings[['Groupings']] <- "ALL_STUDENTS"
+    check.growth.distribution.subgroups <- function(subgroups) {
+        if (is.null(groupings[['Subgroups']])) subgroups[['Subgroups']] <- "ALL_STUDENTS"
+        return(subgroups)
     }
 
     ## Parameters
@@ -59,7 +63,7 @@ function(
 
     ## Validate growth.distribution argument
     growth.distribution <- toupper(ifelse(is.null(growth.distribution), "UNIFORM-RANDOM", growth.distribution))
-    if (!is.list(growth.distribution) | is.character(growth.distribution)) stop("Supplied growth.distribution must be either of class 'character' or 'list'.")
+    if (!is.list(growth.distribution) && !is.character(growth.distribution)) stop("Supplied growth.distribution must be either of class 'character' or 'list'.")
 
     ## Validate length of growth.distribution
     if (!length(growth.distribution) %in% c(1, years.projected)) {
@@ -70,20 +74,20 @@ function(
     }
 
     # Convert growth.distribution to growth.distribution.list
-    if (length(growth.distribution)==1 & is.list(growth.distribution)) growth.distribution.list <- rep(growth.distribution, years.projected)
-    if (length(growth.distribution)==1 & is.character(growth.distribution)) {
-        growth.distribution.list <- vector("list", length = length(growth.distribution.names))
-        growth.distribution.list <- lapply(rep(growth.distribution), function(name) list(Distribution = name))
+    if (length(growth.distribution)==1 && is.list(growth.distribution)) growth.distribution.list <- rep(growth.distribution, years.projected)
+    if (length(growth.distribution)==1 && is.character(growth.distribution)) {
+        growth.distribution.list <- vector("list", length = years.projected)
+        growth.distribution.list <- lapply(rep(growth.distribution, years.projected), function(name) list(Distribution = name))
     }
 
     # Validate Distribution component of growth.distribution.list 
-    growth.distribution.list <- lapply(growth.distribution.list, function(x) check.growth.distribution.distribution(x))
+    growth.distribution.list <- check.growth.distribution.distribution(growth.distribution.list)
      
     # Validate Parameters component of growth.distribution.list
     growth.distribution.list <- lapply(growth.distribution.list, function(x) check.growth.distribution.parameters(x))
 
     # Validate Groupings component of growth.distribution.list
-    growth.distribution.list <- lapply(growth.distribution.list, function(x) check.growth.distribution.groupings(x))
+    growth.distribution.list <- lapply(growth.distribution.list, function(x) check.growth.distribution.subgroups(x))
 
     return(growth.distribution.list)
-} ### END get.growth.distribution.projection.sequence
+} ### END getGrowthDistributionProjectionSequence

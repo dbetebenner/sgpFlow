@@ -53,7 +53,8 @@ function(
     }
 
     check.growth.distribution.subgroups <- function(subgroups) {
-        if (is.null(groupings[['Subgroups']])) subgroups[['Subgroups']] <- "ALL_STUDENTS"
+        ### NULL subgroups[['Subgroups']] implies ALL_STUDENTS
+        ### No other checks on subgroups currently implemented
         return(subgroups)
     }
 
@@ -86,7 +87,7 @@ function(
     # Validate Parameters component of growth.distribution.list
     growth.distribution.list <- lapply(growth.distribution.list, function(x) check.growth.distribution.parameters(x))
 
-    # Validate Groupings component of growth.distribution.list
+    # Validate Subgroups component of growth.distribution.list
     growth.distribution.list <- lapply(growth.distribution.list, function(x) check.growth.distribution.subgroups(x))
 
     return(growth.distribution.list)

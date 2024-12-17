@@ -120,7 +120,7 @@ getPercentileTrajectories <-
                     for (j in seq_along(projection.splineMatrices[[i]])) {
                         qreg_coef_matrix <- projection.splineMatrices[[i]][[j]]
                         loss.hoss <- get.loss.hoss(state, tail(qreg_coef_matrix@Content_Areas[[1]], 1L), tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))
-                        subset.indices <- getGrowthDistributionIndices(sgpFlow.trajectories.list.INTERNAL[[i]], growth.distribution.projection.sequence[j])
+                        subset.indices <- getGrowthDistributionIndices(sgpFlow.trajectories.list.INTERNAL[[i]], growth.distribution.projection.sequence[[j]])
 
                         #  Create model (design) matrix
                         #  Use function as a "promise" to evaluate directly rather than create intermediate objects

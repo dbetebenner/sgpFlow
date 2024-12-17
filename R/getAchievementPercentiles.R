@@ -71,7 +71,7 @@ function(
         if (length(scale_score.names) > 1) {
             wide_data <- data.table(ID=sprintf("%02d", 1:99), calculate_copula_quantiles(complete_scores, "PERCENTILE_CUTS"))
         } else {
-            wide_data <- setnames(data.table(ID=sprintf("%02d", 1:99), TEMP=collapse::fquantile(wide_data[[scale_score.names]], probs=1:99/100))[, ACHIEVEMENT_PERCENTILE_INITIAL_1 := 1:99], TEMP, scale_score.names)
+            wide_data <- setnames(data.table(ID=sprintf("%02d", 1:99), TEMP=collapse::fquantile(wide_data[[scale_score.names]], probs=1:99/100))[, ACHIEVEMENT_PERCENTILE_INITIAL_1 := 1:99], "TEMP", scale_score.names)
         }
     } else {
         wide_data[, ACHIEVEMENT_PERCENTILE_INITIAL_1 := get_percentile(get(tail(scale_score.names, 1)))]

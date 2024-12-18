@@ -7,7 +7,7 @@
 #' @param state A character string indicating the state for which the trajectories are computed. This is used for state-specific configurations in the `sgpFlow` package.
 #' @param sgpFlow.config A list of configuration parameters required for the SGP analysis, including grade progressions, content areas, and other metadata.
 #' @param projection.splineMatrices A list of projection spline matrices used for modeling growth percentiles over time.
-#' @param growth.distribution A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM-RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.
+#' @param growth.distribution A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM_RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
 #' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
@@ -35,7 +35,7 @@
 #'     state = "NY",
 #'     sgpFlow.config = sgp_config_list,
 #'     projection.splineMatrices = spline_matrices_list,
-#'     growth.distribution = "UNIFORM-RANDOM",
+#'     growth.distribution = "UNIFORM_RANDOM",
 #'     csem.perturbation.iterations = 50
 #'   )
 #'   

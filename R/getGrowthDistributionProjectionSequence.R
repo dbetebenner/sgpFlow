@@ -4,8 +4,8 @@
 #' If only one year is specified in the growth distribution, then that distribution is utilized across each year of the projection. 
 #' Each element of the growth.distribution argument is a character string indicating the distribution from which to sample (using default parameters for the distribution)
 #' or a list containing the following components:
-#'      Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM-RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
-#'      Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM-RANDOM distribution)
+#'      Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
+#'      Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM_RANDOM distribution)
 #'      Groupings: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
 
 `getGrowthDistributionProjectionSequence` <- 
@@ -33,11 +33,11 @@ function(
     }
 
     check.growth.distribution.parameters <- function(parameters) {
-        if (parameters[['Distribution']]=="UNIFORM-RANDOM") {
+        if (parameters[['Distribution']]=="UNIFORM_RANDOM") {
             if (is.null(parameters[['Parameters']])) {
                 parameters[['Parameters']] <- list(min=1L, max=99L)
             } else {
-                if (all(c("min", "max") %in% names(parameters[['Parameters']]))) stop("Please supply integer min/max Value between 1 & 99 for UNIFORM-RANDOM growth.distribution.")
+                if (all(c("min", "max") %in% names(parameters[['Parameters']]))) stop("Please supply integer min/max Value between 1 & 99 for UNIFORM_RANDOM growth.distribution.")
             }
         }
         if (parameters[['Distribution']]=="BETA") {
@@ -59,11 +59,11 @@ function(
     }
 
     ## Parameters
-    supported_distributions <- c("UNIFORM-RANDOM", "BETA", paste0("P", 1:99), as.character(1:99))
-    supported_distributions.short <- c("UNIFORM-RANDOM", "BETA", "P**", "**")
+    supported_distributions <- c("UNIFORM_RANDOM", "BETA", paste0("P", 1:99), as.character(1:99))
+    supported_distributions.short <- c("UNIFORM_RANDOM", "BETA", "P**", "**")
 
     ## Validate growth.distribution argument
-    growth.distribution <- toupper(ifelse(is.null(growth.distribution), "UNIFORM-RANDOM", growth.distribution))
+    growth.distribution <- toupper(ifelse(is.null(growth.distribution), "UNIFORM_RANDOM", growth.distribution))
     if (!is.list(growth.distribution) && !is.character(growth.distribution)) stop("Supplied growth.distribution must be either of class 'character' or 'list'.")
 
     ## Validate length of growth.distribution

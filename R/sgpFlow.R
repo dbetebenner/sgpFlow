@@ -11,6 +11,7 @@
 #' @param csem.perturbation.iterations Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.
 #' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
 #' @param achievement.percentiles.tables Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows) 
+#' @param export.duckdb Logical. If `TRUE`, exports the results to a DuckDB database.
 #' @param projection.splineMatrices A list of projection spline matrices used for calculating growth trajectories.
 #'
 #' @details
@@ -35,6 +36,8 @@
 #' )
 #' }
 #'
+#' @importFrom collapse fscale
+#' @importFrom duckdb duckdb
 #' @export
 
 sgpFlow <- 
@@ -48,6 +51,7 @@ sgpFlow <-
         csem.perturbation.iterations = 100L,
         iterate.without.csem.perturbation = FALSE,
         achievement.percentiles.tables = TRUE,
+        export.duckdb = TRUE,
         projection.splineMatrices
     ) {
 
@@ -60,12 +64,13 @@ sgpFlow <-
     }
 
     if (achievement.percentiles.tables) achievement.percentiles.tables <- c(FALSE, TRUE)
+    achievement.percentiles.tables.names <- c("ENTIRE_COHORT", "ACHIEVEMENT_PERCENTILES")
 
     # Get long_data
     if ("SGP" %in% class(sgp_object)) long_data <- sgp_object@Data else long_data <- sgp_object
 
     # Add SCALE_SCORE_STANDARDIZED to long_data
-    long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
+    long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := collapse::fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
 
 
     # Initialize an empty list to store results
@@ -73,7 +78,7 @@ sgpFlow <-
 
     # Loop over sgpFlow.config 
     for (sgpFlow.config.iter in sgpFlow.config) {
-        tmp_name <- paste(toupper(tail(sgpFlow.config.iter[['content_area.progression']], 1)), "GRADE", tail(sgpFlow.config.iter[['grade.progression']], 1), sep="_")
+        tmp_name <- paste(toupper(tail(sgpFlow.config.iter[['content_area.progression']], 1)), "GRADE", paste(sgpFlow.config.iter[['grade.progression']], collapse=""), sep="__")
 
         # Loop over cohort.data.type
         for (data.type.iter in cohort.data.type) {
@@ -83,8 +88,8 @@ sgpFlow <-
             for (growth.distributions.iter in sgpFlow.config.iter[['growth.distributions']]) {
 
                 # Loop over whether achievement.percentiles.tables get calculated.
-                for (achievement.percentiles.tables.iter in achievement.percentiles.tables) {
-                    sgpFlow_results_list[[tmp_name]][[data.type.iter]][[growth.distributions.iter]] <- 
+                for (achievement.percentiles.tables.iter in seq_along(achievement.percentiles.tables)) {
+                    sgpFlow_results_list[[tmp_name]][[data.type.iter]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
                         sgpFlowTrajectories(
                             long_data = long_data,
                             state = state,
@@ -93,12 +98,16 @@ sgpFlow <-
                             csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                             csem.perturbation.iterations = csem.perturbation.iterations,
                             iterate.without.csem.perturbation = iterate.without.csem.perturbation,
-                            achievement.percentiles.tables = achievement.percentiles.tables.iter,
+                            achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
                             projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[['content_area.progression']], 1), "BASELINE", sep=".")]])
                 } ### END achievement.percentiles.iter
             } ### END growth.distributions.iter
         } ### END data.type.iter
     } ### END sgpFlow.config.iter
+
+#    if (export.duckdb) {
+#       duckdb::duckdb()
+#    }
 
     return(sgpFlow_results_list)
 } ### END sgpFlow

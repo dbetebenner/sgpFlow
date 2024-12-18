@@ -1,7 +1,7 @@
 #' Generate Growth Distribution Indices
 #'
 #' This internal function calculates indices based on the specified growth distribution. 
-#' It supports "UNIFORM-RANDOM" for generating random indices within a range, numeric 
+#' It supports "UNIFORM_RANDOM" for generating random indices within a range, numeric 
 #' growth distributions (e.g., "1" to "99") for fixed percentiles, and includes a 
 #' placeholder for "BETA" distribution (currently not implemented).
 #'
@@ -11,20 +11,20 @@
 #'   \itemize{
 #'     \item \code{Distribution}: The distribution type (required):
 #'       \itemize{
-#'         \item "UNIFORM-RANDOM" for random indices within a range
+#'         \item "UNIFORM_RANDOM" for random indices within a range
 #'         \item A string "1" to "99" for fixed percentile values
 #'         \item "BETA" (not yet implemented)
 #'       }
 #'     \item \code{Parameters}: Distribution-specific parameters (required):
 #'       \itemize{
-#'         \item For "UNIFORM-RANDOM": \code{min} and \code{max} integers defining the range
+#'         \item For "UNIFORM_RANDOM": \code{min} and \code{max} integers defining the range
 #'         \item For numeric distributions: A single integer value to repeat
 #'       }
 #'   }
 #'
 #' @return An integer vector with length equal to \code{nrow(wide_data)}:
 #'   \itemize{
-#'     \item For "UNIFORM-RANDOM": Random integers between \code{min} and \code{max} inclusive
+#'     \item For "UNIFORM_RANDOM": Random integers between \code{min} and \code{max} inclusive
 #'     \item For numeric distributions: The specified integer repeated
 #'     \item For "BETA": Error (not implemented)
 #'   }
@@ -35,7 +35,7 @@
 #'
 #' @examples
 #' # Generate random indices between 1 and 99
-#' growth.distribution <- list(Distribution = "UNIFORM-RANDOM", 
+#' growth.distribution <- list(Distribution = "UNIFORM_RANDOM", 
 #'                           Parameters = list(min = 1, max = 99))
 #' wide_data <- data.table::data.table(ID = 1:100)
 #' random_indices <- getGrowthDistributionIndices(wide_data, growth.distribution)
@@ -52,12 +52,12 @@ function(
     growth.distribution
 ) {
         
-    if (growth.distribution[['Distribution']] == "UNIFORM-RANDOM") {
+    if (growth.distribution[['Distribution']] == "UNIFORM_RANDOM") {
         if (!all(c("min", "max") %in% names(growth.distribution[['Parameters']]))) {
-            stop("UNIFORM-RANDOM distribution requires 'min' and 'max' parameters")
+            stop("UNIFORM_RANDOM distribution requires 'min' and 'max' parameters")
         }
         if (growth.distribution[['Parameters']][['min']] >= growth.distribution[['Parameters']][['max']]) {
-            stop("'min' must be less than 'max' for UNIFORM-RANDOM distribution")
+            stop("'min' must be less than 'max' for UNIFORM_RANDOM distribution")
         }
         return(dqrng::dqsample.int(growth.distribution[['Parameters']][['max']] - growth.distribution[['Parameters']][['min']] + 1L, nrow(wide_data), replace = TRUE) + growth.distribution[['Parameters']][['min']] - 1L)
     }

@@ -11,6 +11,7 @@
 #' @param csem.perturbation.iterations Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.
 #' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
 #' @param achievement.percentiles.tables Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows) 
+#' @param export.duckdb Logical. If `TRUE`, exports the results to a DuckDB database.
 #' @param projection.splineMatrices A list of projection spline matrices used for calculating growth trajectories.
 #'
 #' @details
@@ -36,6 +37,7 @@
 #' }
 #'
 #' @importFrom collapse fscale
+#' @importFrom duckdb duckdb
 #' @export
 
 sgpFlow <- 
@@ -49,6 +51,7 @@ sgpFlow <-
         csem.perturbation.iterations = 100L,
         iterate.without.csem.perturbation = FALSE,
         achievement.percentiles.tables = TRUE,
+        export.duckdb = TRUE,
         projection.splineMatrices
     ) {
 
@@ -75,7 +78,7 @@ sgpFlow <-
 
     # Loop over sgpFlow.config 
     for (sgpFlow.config.iter in sgpFlow.config) {
-        tmp_name <- paste(toupper(tail(sgpFlow.config.iter[['content_area.progression']], 1)), "GRADE", tail(sgpFlow.config.iter[['grade.progression']], 1), sep="_")
+        tmp_name <- paste(toupper(tail(sgpFlow.config.iter[['content_area.progression']], 1)), "GRADE", paste(sgpFlow.config.iter[['grade.progression']], collapse=""), sep="__")
 
         # Loop over cohort.data.type
         for (data.type.iter in cohort.data.type) {
@@ -101,6 +104,10 @@ sgpFlow <-
             } ### END growth.distributions.iter
         } ### END data.type.iter
     } ### END sgpFlow.config.iter
+
+#    if (export.duckdb) {
+#       duckdb::duckdb()
+#    }
 
     return(sgpFlow_results_list)
 } ### END sgpFlow

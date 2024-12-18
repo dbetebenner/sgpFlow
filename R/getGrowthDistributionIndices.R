@@ -63,7 +63,7 @@ function(
     }
 
     if (growth.distribution[['Distribution']] %in% as.character(1:99)) {
-        return(rep(as.integer(growth.distribution[['Parameters']]), nrow(wide_data)))
+        return(rep(as.integer(growth.distribution[['Distribution']]), nrow(wide_data)))
     }
 
     if (growth.distribution[['Distribution']] == "BETA") {

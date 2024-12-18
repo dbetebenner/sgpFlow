@@ -183,7 +183,10 @@ getPercentileTrajectories <-
             }
 
             ## Get percentile trajectories
-            sgpFlow.trajectories.list[[paste("ITERATION", csem.iter, sep="_")]] <- wide_data[,setdiff(names(wide_data), scale.score.variables.for.projections), with=FALSE][get.percentile.trajectories.INTERNAL(wide_data, growth.distribution.projection.sequence), on="ID"]
+            sgpFlow.trajectories.list[[paste("ITERATION", csem.iter, sep="_")]] <- 
+                wide_data[,setdiff(names(wide_data), scale.score.variables.for.projections), with=FALSE][
+                    get.percentile.trajectories.INTERNAL(wide_data, growth.distribution.projection.sequence), on="ID"
+                ]
         } ## END csem.iter loop
 
         return(sgpFlow.trajectories.list)

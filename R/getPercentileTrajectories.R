@@ -174,7 +174,7 @@ getPercentileTrajectories <-
             }
 
             ## After first iteration (csem.iter > 0) perturb initial scores with CSEM
-            if (csem.perturbation.of.initial.scores & csem.iter != 0L) {
+            if (csem.perturbation.of.initial.scores && csem.iter != 0L) {
                 wide_data <- perturbScoresWithCSEM(data.table::copy(wide_data_original), state, sgpFlow.config, csem.distribution)
                 ## Apply getAchievementPercentiles to:
                 ## 1. Create achievement percentiles tables if achievement.percentiles.tables == TRUE

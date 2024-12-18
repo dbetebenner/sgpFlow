@@ -35,6 +35,7 @@
 #' )
 #' }
 #'
+#' @importFrom collapse fscale
 #' @export
 
 sgpFlow <- 
@@ -60,12 +61,13 @@ sgpFlow <-
     }
 
     if (achievement.percentiles.tables) achievement.percentiles.tables <- c(FALSE, TRUE)
+    achievement.percentiles.tables.names <- c("ENTIRE_COHORT", "ACHIEVEMENT_PERCENTILES")
 
     # Get long_data
     if ("SGP" %in% class(sgp_object)) long_data <- sgp_object@Data else long_data <- sgp_object
 
     # Add SCALE_SCORE_STANDARDIZED to long_data
-    long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
+    long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := collapse::fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
 
 
     # Initialize an empty list to store results
@@ -83,8 +85,8 @@ sgpFlow <-
             for (growth.distributions.iter in sgpFlow.config.iter[['growth.distributions']]) {
 
                 # Loop over whether achievement.percentiles.tables get calculated.
-                for (achievement.percentiles.tables.iter in achievement.percentiles.tables) {
-                    sgpFlow_results_list[[tmp_name]][[data.type.iter]][[growth.distributions.iter]] <- 
+                for (achievement.percentiles.tables.iter in seq_along(achievement.percentiles.tables)) {
+                    sgpFlow_results_list[[tmp_name]][[data.type.iter]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
                         sgpFlowTrajectories(
                             long_data = long_data,
                             state = state,
@@ -93,7 +95,7 @@ sgpFlow <-
                             csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                             csem.perturbation.iterations = csem.perturbation.iterations,
                             iterate.without.csem.perturbation = iterate.without.csem.perturbation,
-                            achievement.percentiles.tables = achievement.percentiles.tables.iter,
+                            achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
                             projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[['content_area.progression']], 1), "BASELINE", sep=".")]])
                 } ### END achievement.percentiles.iter
             } ### END growth.distributions.iter

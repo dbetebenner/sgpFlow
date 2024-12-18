@@ -36,7 +36,7 @@ function(
     }
 
     calculate_copula_quantiles <- function(complete_scores, what.to.return, probs=seq(0.01, 0.99, 0.01)) {
-        # Step 1: Transform variables to uniform marginals using the empirical CDF
+        # Step 1: Transform variables to uniform marginals
         scores_uniform <- apply(complete_scores, 2, function(x) rank(x, ties.method = "average") / length(x))
   
         # Step 2: Fit a copula to the uniform data
@@ -57,7 +57,7 @@ function(
                         }, numeric(1))
             
             percentile_cuts_table <- 
-                as.data.table(apply(complete_scores, 2, function(x) collapse::fquantile(x, probs=u1_values)))[,ACHIEVEMENT_PERCENTILE_INITIAL_1:=u1_values][,ACHIEVEMENT_PERCENTILE_INITIAL := 1:99]
+                as.data.table(apply(complete_scores, 2, function(x) collapse::fquantile(x, probs=u1_values)))[,ACHIEVEMENT_PERCENTILE_INITIAL_1:=pmax(1L, pmin(99L, as.integer(round(100L*u1_values))))][,ACHIEVEMENT_PERCENTILE_INITIAL := 1:99]
 
             return(percentile_cuts_table)
         }

@@ -1,6 +1,12 @@
 #' Output Results from sgpFlow Analysis
 #'
+#' @description
+#' This function processes the nested list structure returned by sgpFlow() and combines the results 
+#' into a single data.table. It adds metadata columns for cohort type, content area, grade, and
+#' growth distribution type. The function can output results to both DuckDB and/or R data formats.
+#'
 #' @param sgpFlow_results_list A list containing the results from sgpFlow analysis
+#' @param state A character string indicating the state for which trajectories are computed, used for state-specific configurations in the `sgpFlow` package.
 #' @param export.duckdb Logical. If TRUE, exports results to a DuckDB database. Default is TRUE.
 #' @param export.Rdata Logical. If TRUE, saves results as an R data file. Default is TRUE.
 #'

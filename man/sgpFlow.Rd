@@ -14,6 +14,8 @@ sgpFlow(
   csem.perturbation.iterations = 100L,
   iterate.without.csem.perturbation = FALSE,
   achievement.percentiles.tables = TRUE,
+  export.duckdb = TRUE,
+  export.Rdata = TRUE,
   projection.splineMatrices
 )
 }
@@ -35,6 +37,10 @@ sgpFlow(
 \item{iterate.without.csem.perturbation}{Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.}
 
 \item{achievement.percentiles.tables}{Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows)}
+
+\item{export.duckdb}{Logical. If `TRUE`, exports the aggregated results to a DuckDB database.}
+
+\item{export.Rdata}{Logical. If `TRUE`, exports the sgpFlow results to an Rdata file.}
 
 \item{projection.splineMatrices}{A list of projection spline matrices used for calculating growth trajectories.}
 }

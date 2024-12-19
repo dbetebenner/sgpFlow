@@ -8,8 +8,8 @@ The argument growth.distribution is specified either as a single argument for us
 If only one year is specified in the growth distribution, then that distribution is utilized across each year of the projection. 
 Each element of the growth.distribution argument is a character string indicating the distribution from which to sample (using default parameters for the distribution)
 or a list containing the following components:
-     Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM-RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
-     Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM-RANDOM distribution)
+     Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
+     Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM_RANDOM distribution)
      Groupings: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)}
 \usage{
 getGrowthDistributionProjectionSequence(growth.distribution, years.projected)
@@ -21,7 +21,7 @@ The argument growth.distribution is specified either as a single argument for us
 If only one year is specified in the growth distribution, then that distribution is utilized across each year of the projection. 
 Each element of the growth.distribution argument is a character string indicating the distribution from which to sample (using default parameters for the distribution)
 or a list containing the following components:
-     Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM-RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
-     Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM-RANDOM distribution)
+     Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
+     Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM_RANDOM distribution)
      Groupings: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
 }

@@ -26,7 +26,7 @@ getPercentileTrajectories(
 
 \item{projection.splineMatrices}{A list of projection spline matrices used for modeling growth percentiles over time.}
 
-\item{growth.distribution}{A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM-RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.}
+\item{growth.distribution}{A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM_RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.}
 
 \item{csem.perturbation.of.initial.scores}{Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.}
 
@@ -66,7 +66,7 @@ if(interactive()){
     state = "NY",
     sgpFlow.config = sgp_config_list,
     projection.splineMatrices = spline_matrices_list,
-    growth.distribution = "UNIFORM-RANDOM",
+    growth.distribution = "UNIFORM_RANDOM",
     csem.perturbation.iterations = 50
   )
   

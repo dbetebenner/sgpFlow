@@ -14,6 +14,8 @@ outputsgpFlow(
 \arguments{
 \item{sgpFlow_results_list}{A list containing the results from sgpFlow analysis}
 
+\item{state}{A character string indicating the state for which trajectories are computed, used for state-specific configurations in the `sgpFlow` package.}
+
 \item{export.duckdb}{Logical. If TRUE, exports results to a DuckDB database. Default is TRUE.}
 
 \item{export.Rdata}{Logical. If TRUE, saves results as an R data file. Default is TRUE.}
@@ -22,7 +24,9 @@ outputsgpFlow(
 A data.table containing the processed and combined results from sgpFlow analysis
 }
 \description{
-Output Results from sgpFlow Analysis
+This function processes the nested list structure returned by sgpFlow() and combines the results 
+into a single data.table. It adds metadata columns for cohort type, content area, grade, and
+growth distribution type. The function can output results to both DuckDB and/or R data formats.
 }
 \details{
 This function processes the nested list structure returned by sgpFlow() and combines the results 

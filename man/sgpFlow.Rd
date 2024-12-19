@@ -16,7 +16,8 @@ sgpFlow(
   achievement.percentiles.tables = TRUE,
   export.duckdb = TRUE,
   export.Rdata = TRUE,
-  projection.splineMatrices
+  projection.splineMatrices,
+  parallel.config = list(WORKERS = parallel::detectCores() - 1)
 )
 }
 \arguments{

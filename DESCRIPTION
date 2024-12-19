@@ -10,7 +10,7 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner",
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 4.0)
 Suggests: knitr, rmarkdown, testthat
-Imports: collapse, copula, crayon, data.table (>= 1.14.0), dqrng, duckdb, methods, pkgsearch, SGP (>= 2.2-0.4), sgpFlowMatrices, splines, toOrdinal
+Imports: collapse, copula, crayon, data.table (>= 1.14.0), dqrng, duckdb, methods, parallel, pkgsearch, SGP (>= 2.2-0.4), sgpFlowMatrices, splines, toOrdinal
 URL: https://centerforassessment.github.io/sgpFlow/
 BugReports: https://github.com/centerforassessment/sgpFlow/issues/
 LazyData: Yes

@@ -4,14 +4,19 @@
 \alias{outputsgpFlow}
 \title{Output Results from sgpFlow Analysis}
 \usage{
-outputsgpFlow(sgpFlow_results_list, output.duckdb = TRUE, output.Rdata = TRUE)
+outputsgpFlow(
+  sgpFlow_results_list,
+  state,
+  export.duckdb = TRUE,
+  export.Rdata = TRUE
+)
 }
 \arguments{
 \item{sgpFlow_results_list}{A list containing the results from sgpFlow analysis}
 
-\item{output.duckdb}{Logical. If TRUE, exports results to a DuckDB database. Default is TRUE.}
+\item{export.duckdb}{Logical. If TRUE, exports results to a DuckDB database. Default is TRUE.}
 
-\item{output.Rdata}{Logical. If TRUE, saves results as an R data file. Default is TRUE.}
+\item{export.Rdata}{Logical. If TRUE, saves results as an R data file. Default is TRUE.}
 }
 \value{
 A data.table containing the processed and combined results from sgpFlow analysis

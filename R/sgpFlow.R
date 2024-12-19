@@ -11,7 +11,8 @@
 #' @param csem.perturbation.iterations Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.
 #' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
 #' @param achievement.percentiles.tables Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows) 
-#' @param export.duckdb Logical. If `TRUE`, exports the results to a DuckDB database.
+#' @param export.duckdb Logical. If `TRUE`, exports the aggregated results to a DuckDB database.
+#' @param export.Rdata Logical. If `TRUE`, exports the sgpFlow results to an Rdata file.
 #' @param projection.splineMatrices A list of projection spline matrices used for calculating growth trajectories.
 #'
 #' @details
@@ -52,8 +53,11 @@ sgpFlow <-
         iterate.without.csem.perturbation = FALSE,
         achievement.percentiles.tables = TRUE,
         export.duckdb = TRUE,
+        export.Rdata = TRUE,
         projection.splineMatrices
     ) {
+
+    # Utility functions
 
     # Test/update arguments
     if (!any(class(sgp_object) %in% c("SGP", "data.table"))) stop("Supplied sgp_object must be either of class 'SGP' or 'data.table'.")
@@ -72,24 +76,24 @@ sgpFlow <-
     # Add SCALE_SCORE_STANDARDIZED to long_data
     long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := collapse::fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
 
-
     # Initialize an empty list to store results
     sgpFlow_results_list <- list()
 
-    # Loop over sgpFlow.config 
-    for (sgpFlow.config.iter in sgpFlow.config) {
-        tmp_name <- paste(toupper(tail(sgpFlow.config.iter[['content_area.progression']], 1)), "GRADE", paste(sgpFlow.config.iter[['grade.progression']], collapse=""), sep="__")
+    # Loop over cohort.data.type
+    for (cohort.type.iter in cohort.data.type) {
+#            prepareLongData(long_data, cohort.type.iter) will return SUPER_COHORT data if requested
+#            tmp.long_data <- prepareLongData(long_data, cohort.type.iter)
 
-        # Loop over cohort.data.type
-        for (data.type.iter in cohort.data.type) {
-#            tmp.long_data <- prepareLongData(long_data, data.type.iter)
+        # Loop over sgpFlow.config 
+        for (sgpFlow.config.iter in sgpFlow.config) {
+            tmp_name <- paste(toupper(tail(sgpFlow.config.iter[['content_area.progression']], 1)), paste("GRADE", paste(sgpFlow.config.iter[['grade.progression']], collapse=""), sep="_"), sep="__")
 
             # Loop over growth.distribution
             for (growth.distributions.iter in sgpFlow.config.iter[['growth.distributions']]) {
 
                 # Loop over whether achievement.percentiles.tables get calculated.
                 for (achievement.percentiles.tables.iter in seq_along(achievement.percentiles.tables)) {
-                    sgpFlow_results_list[[tmp_name]][[data.type.iter]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
+                    sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
                         sgpFlowTrajectories(
                             long_data = long_data,
                             state = state,
@@ -99,15 +103,16 @@ sgpFlow <-
                             csem.perturbation.iterations = csem.perturbation.iterations,
                             iterate.without.csem.perturbation = iterate.without.csem.perturbation,
                             achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
-                            projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[['content_area.progression']], 1), "BASELINE", sep=".")]])
+                            projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[['content_area.progression']], 1), "BASELINE", sep=".")]]
+                        )
                 } ### END achievement.percentiles.iter
             } ### END growth.distributions.iter
-        } ### END data.type.iter
-    } ### END sgpFlow.config.iter
+        } ### END sgpFlow.config.iter
+    } ### END cohort.type.iter
 
-#    if (export.duckdb) {
-#       duckdb::duckdb()
-#    }
+    if (export.duckdb) {
+        outputsgpFlow(sgpFlow_results_list, state = state, export.duckdb = export.duckdb, export.Rdata = export.Rdata)
+    }
 
     return(sgpFlow_results_list)
 } ### END sgpFlow

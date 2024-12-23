@@ -32,18 +32,6 @@
 #' @note This function is not exported and is intended for internal use only.
 #' 
 #' @importFrom dqrng dqsample.int
-#'
-#' @examples
-#' # Generate random indices between 1 and 99
-#' growth.distribution <- list(Distribution = "UNIFORM_RANDOM", 
-#'                           Parameters = list(min = 1, max = 99))
-#' wide_data <- data.table::data.table(ID = 1:100)
-#' random_indices <- getGrowthDistributionIndices(wide_data, growth.distribution)
-#'
-#' # Generate fixed 50th percentile indices
-#' fixed_dist <- list(Distribution = "50", Parameters = 50)
-#' fixed_indices <- getGrowthDistributionIndices(wide_data, fixed_dist)
-#'
 #' @keywords internal
 
 `getGrowthDistributionIndices` <-
@@ -62,8 +50,9 @@ function(
             return(dqrng::dqsample.int(growth.distribution[["Parameters"]][["max"]] - growth.distribution[["Parameters"]][["min"]] + 1L, nrow(wide_data), replace = TRUE) + growth.distribution[["Parameters"]][["min"]] - 1L)
         }
 
-        if (growth.distribution[["Distribution"]] %in% as.character(1:99)) {
-            return(rep(as.integer(growth.distribution[["Distribution"]]), nrow(wide_data)))
+        if (growth.distribution[["Distribution"]] %in% c(paste0("P", 1:99), as.character(1:99))) {
+
+            return(rep(as.integer(gsub("P", "", growth.distribution[["Distribution"]])), nrow(wide_data)))
         }
 
         if (growth.distribution[["Distribution"]] == "BETA") {

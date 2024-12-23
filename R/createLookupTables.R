@@ -36,6 +36,8 @@
 #' @importFrom methods new
 #' @importFrom SGP abcSGP
 #' @importFrom data.table setDTthreads fwrite
+#' @note This function is not exported and is intended for internal use only.
+#' @keywords internal
 
 createLookupTables <-
     function(

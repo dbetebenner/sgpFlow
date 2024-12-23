@@ -14,6 +14,7 @@
 #' @param export.duckdb Logical. If `TRUE`, exports the aggregated results to a DuckDB database.
 #' @param export.Rdata Logical. If `TRUE`, exports the sgpFlow results to an Rdata file.
 #' @param projection.splineMatrices A list of projection spline matrices used for calculating growth trajectories.
+#' @param parallel.config A list of configuration parameters for parallel processing. Default: `list(WORKERS=parallel::detectCores()-1)`.
 #'
 #' @details
 #' The `sgpFlow` function loops over specified \code{cohort.data.type} values, performing SGP trajectory analysis for each type. It supports super-cohort analysis when a valid \code{superCohort.config} is provided. If \code{csem.perturbation.of.initial.scores} is enabled, the function applies random perturbations to initial scores to account for measurement error, with the number of iterations controlled by \code{csem.perturbation.iterations}.

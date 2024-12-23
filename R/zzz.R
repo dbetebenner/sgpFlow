@@ -8,7 +8,9 @@ utils::globalVariables(c(
     "ID", "INDEX", "PERCENTILE_TRAJECTORY", "SCALE_SCORE",
     "SCALE_SCORE_CSEM", "SCALE_SCORE_PRIOR_1", "SGP_BASELINE",
     "SGP_NORM_GROUP_BASELINE", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES",
-    "TEMP_1", "VALID_CASE", "VALUE", "YEAR", "variable"
+    "TEMP_1", "VALID_CASE", "VALUE", "YEAR", "variable", "scale_score.names",
+    "..cols_to_select", "..scale_score.names", "cols_to_select", ".SD",
+    "SCALE_SCORE_STANDARDIZED"
 ))
 
 .onLoad <- function(libname, pkgname) {

@@ -1,3 +1,5 @@
+#' Get Growth Distribution Projection Sequence
+#' 
 #' The function get.growth.distribution.projection.sequence takes the growth.distribution, validates it, and
 #' produces a list which exactly specifies the way in which growth is assigned to student trajectories
 #' The argument growth.distribution is specified either as a single argument for use with ALL years of the projection sequence or each year specifically.
@@ -6,7 +8,54 @@
 #' or a list containing the following components:
 #'      Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
 #'      Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM_RANDOM distribution)
-#'      Groupings: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
+#'      Subgroups: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
+#'
+#' @param growth.distribution A list or character string specifying the growth distribution(s) to use:
+#'   \itemize{
+#'     \item If a single distribution is provided, it will be used for all projection years
+#'     \item If multiple distributions are provided, they should match the number of projection years
+#'     \item Each distribution element can be either:
+#'       \itemize{
+#'         \item A character string indicating the distribution (e.g., "UNIFORM_RANDOM", "SGP_BASELINE")
+#'         \item A list with components:
+#'           \itemize{
+#'             \item Distribution: (Required) The distribution type or variable name
+#'             \item Parameters: (Optional) Distribution-specific parameters as a list
+#'             \item Subgroups: (Optional) Variable name for subgroup analysis
+#'           }
+#'       }
+#'   }
+#' @param years.projected Integer indicating the number of years to project growth distributions
+#'
+#' @return A list containing validated growth distribution specifications for each projection year:
+#'   \itemize{
+#'     \item Distribution: The specified distribution type
+#'     \item Parameters: Distribution parameters (with defaults if not specified)
+#'     \item Subgroups: Subgroup specifications (if provided)
+#'   }
+#'
+#' @examples
+#' \dontrun{
+#' # Single distribution for all years
+#' dist1 <- getGrowthDistributionProjectionSequence("UNIFORM_RANDOM", 3)
+#'
+#' # Custom distribution with parameters
+#' dist2 <- getGrowthDistributionProjectionSequence(
+#'   list(Distribution = "UNIFORM_RANDOM",
+#'        Parameters = list(min = 10, max = 90)),
+#'   2)
+#'
+#' # Multiple distributions by year
+#' dist3 <- getGrowthDistributionProjectionSequence(
+#'   list(
+#'     list(Distribution = "UNIFORM_RANDOM"),
+#'     list(Distribution = "SGP_BASELINE",
+#'           Subgroups = "SCHOOL_NUMBER")
+#'   ),
+#'   2)
+#' }
+#' 
+#' @keywords internal
 
 `getGrowthDistributionProjectionSequence` <-
 function(
@@ -24,13 +73,8 @@ function(
                     paste(sapply(supported_distributions.short, capWords), collapse = ", ")
                 ))
             }
+            return(growth.distribution.list)
         }
-
-        # Convert Distribution P** to ** and return
-        lapply(growth.distribution.list, function(x) {
-            x[["Distribution"]] <- gsub("^P(\\d+)$", "\\1", x[["Distribution"]])
-            x
-        })
 
         check.growth.distribution.parameters <- function(parameters) {
             if (parameters[["Distribution"]] == "UNIFORM_RANDOM") {
@@ -63,7 +107,7 @@ function(
         supported_distributions.short <- c("UNIFORM_RANDOM", "BETA", "P**", "**")
 
         ## Validate growth.distribution argument
-        growth.distribution <- toupper(ifelse(is.null(growth.distribution), "UNIFORM_RANDOM", growth.distribution))
+        growth.distribution <- toupper(ifelse(is.null(growth.distribution), "UNIFORM_RANDOM", gsub("[ -]", "", growth.distribution)))
         if (!is.list(growth.distribution) && !is.character(growth.distribution)) stop("Supplied growth.distribution must be either of class 'character' or 'list'.")
 
         ## Validate length of growth.distribution

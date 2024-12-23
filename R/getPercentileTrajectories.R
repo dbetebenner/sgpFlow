@@ -11,6 +11,7 @@
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
 #' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
+#' @param achievement.percentiles.tables Logical. If `TRUE`, creates growth trajectory tables based upon achievement percentiles tables intstead of all  `wide_data` supplied. Default: `FALSE`.
 #' @param csem.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"Normal"`. Default: `"Normal"`.
 #' @returns A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
 #' @details 
@@ -67,7 +68,7 @@ getPercentileTrajectories <-
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
         iterate.without.csem.perturbation = FALSE,
-        achievement.percentiles.tables,
+        achievement.percentiles.tables = FALSE,
         csem.distribution = "Normal"
     ) {
 

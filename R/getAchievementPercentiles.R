@@ -13,14 +13,12 @@
 #' }
 #' If `achievement.percentiles.tables` is TRUE, returns percentile tables.
 #'
-#' @examples
-#' # Example usage:
-#' wide_data <- data.table::data.table(SCALE_SCORE_1 = rnorm(100), SCALE_SCORE_2 = rnorm(100))
-#' sgpFlow::getAchievementPercentiles(wide_data, c("SCALE_SCORE_1", "SCALE_SCORE_2"), FALSE)
-#'
 #' @importFrom collapse missing_cases
 #' @importFrom copula normalCopula fitCopula pCopula
+#' @importFrom data.table as.data.table
 #' @importFrom stats uniroot
+#' @note This function is not exported and is intended for internal use only.
+#' @keywords internal
 
 `getAchievementPercentiles` <-
 function(

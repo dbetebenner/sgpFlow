@@ -32,9 +32,7 @@ Get Achievement Percentiles
 This function processes wide-format data to calculate various percentile scores
 (e.g., univariate and multivariate percentiles) based on scale score variables.
 }
-\examples{
-# Example usage:
-wide_data <- data.table::data.table(SCALE_SCORE_1 = rnorm(100), SCALE_SCORE_2 = rnorm(100))
-sgpFlow::getAchievementPercentiles(wide_data, c("SCALE_SCORE_1", "SCALE_SCORE_2"), FALSE)
-
+\note{
+This function is not exported and is intended for internal use only.
 }
+\keyword{internal}

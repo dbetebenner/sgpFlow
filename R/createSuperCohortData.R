@@ -5,11 +5,11 @@
 #' 
 #' @param base_data A `data.table` containing the base data with columns `YEAR`, `CONTENT_AREA`, `GRADE`, and `ID`.
 #' @param sgp.config A list of SGP configurations specifying `sgp.content.areas`, `sgp.grade.sequences`, and `sgp.grade.sequences.lags`.
-#' @param supercohort_base_years A vector of years (subset of `base_data$YEAR`) to include for super-cohort construction. If not specified, all years in `base_data` are used.
+#' @param super_cohort_base_years A vector of years (subset of `base_data$YEAR`) to include for super-cohort construction. If not specified, all years in `base_data` are used.
 #' @param indicate_cohort A logical value indicating whether to include a `COHORT` column in the output, which assigns a label for each super-cohort. Default: `FALSE`.
 #' @returns A `data.table` with adjusted year mappings and optionally a cohort indicator. The output combines data across all specified configurations and collapses it into a super-cohort structure.
 #' @details 
-#' - The function verifies that `supercohort_base_years` are present in `base_data`.
+#' - The function verifies that `super-cohort_base_years` are present in `base_data`.
 #' - Each SGP configuration is processed iteratively, and grade-year-content mappings are applied to create super-cohort datasets.
 #' - The `YEAR` column is updated based on the most recent year in the grade sequence (`YEAR_NEW`).
 #' - Duplicate records are removed by keeping only the most recent (last) instance for each unique combination of `YEAR`, `GRADE`, and `ID`.
@@ -22,7 +22,7 @@
 #'   super_cohort_data <- createSuperCohortData(
 #'     base_data = SGPdata::sgpData_LONG[, .(VALID_CASE, CONTENT_AREA, YEAR, GRADE, ID, ACHIEVEMENT_LEVEL)],
 #'     sgp.config = sgp_config_list,
-#'     supercohort_base_years = c("2021_2022", "2022_2023", "2023_2024"),
+#'     super_cohort_base_years = c("2021_2022", "2022_2023", "2023_2024"),
 #'     indicate_cohort = TRUE
 #'   )
 #'   print(super_cohort_data)
@@ -38,7 +38,7 @@ createSuperCohortData <-
     function(
         base_data,
         sgp.config,
-        supercohort_base_years,
+        super_cohort_base_years,
         indicate_cohort = FALSE
     ) {
         YEAR <- CONTENT_AREA <- GRADE <- YEAR_NEW <- COHORT <- ID <- NULL
@@ -48,10 +48,10 @@ createSuperCohortData <-
         tmp.cohort.list <- list()
 
         ### Test parameters
-        if (!missing(supercohort_base_years) && !all(supercohort_base_years %in% data.years)) stop("Note: supercohort_base_years supplied not all in years provided in base_data.")
+        if (!missing(super_cohort_base_years) && !all(super_cohort_base_years %in% data.years)) stop("Note: super_cohort_base_years supplied not all in years provided in base_data.")
 
-        ### Use supercohort_base_years to filter data if it is provided.
-        if (!missing(supercohort_base_years)) base_data <- base_data[YEAR %in% supercohort_base_years]
+        ### Use super_cohort_base_years to filter data if it is provided.
+        if (!missing(super_cohort_base_years)) base_data <- base_data[YEAR %in% super_cohort_base_years]
 
         ### Loop over configurations
         for (sgp.config.iter in sgp.config) {

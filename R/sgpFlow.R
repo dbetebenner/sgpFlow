@@ -97,11 +97,11 @@ sgpFlow <-
     for (cohort.type.iter in cohort.data.type) {
         # Loop over sgpFlow.config 
         for (sgpFlow.config.iter in sgpFlow.config) {
-            tmp_name <- paste(toupper(tail(sgpFlow.config.iter[['content_area.progression']], 1)), paste("GRADE", paste(sgpFlow.config.iter[['grade.progression']], collapse=""), sep="_"), sep="__")
+            tmp_name <- paste(toupper(tail(sgpFlow.config.iter[["content_area.progression"]], 1)), paste("GRADE", paste(sgpFlow.config.iter[["grade.progression"]], collapse=""), sep="_"), sep="__")
 
             # Create combinations for parallel processing
             combinations <- expand.grid(
-                growth.distributions = sgpFlow.config.iter[['growth.distributions']],
+                growth.distributions = sgpFlow.config.iter[["growth.distributions"]],
                 achievement.percentiles.tables.iter = seq_along(achievement.percentiles.tables),
                 stringsAsFactors = FALSE
             )
@@ -121,7 +121,7 @@ sgpFlow <-
                         csem.perturbation.iterations = csem.perturbation.iterations,
                         iterate.without.csem.perturbation = iterate.without.csem.perturbation,
                         achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
-                        projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[['content_area.progression']], 1), "BASELINE", sep=".")]]
+                        projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[["content_area.progression"]], 1), "BASELINE", sep=".")]]
                     )
                 })
                 
@@ -133,7 +133,7 @@ sgpFlow <-
                 }
             } else {
                 # Sequential processing if no parallel config
-                for (growth.distributions.iter in sgpFlow.config.iter[['growth.distributions']]) {
+                for (growth.distributions.iter in sgpFlow.config.iter[["growth.distributions"]]) {
                     for (achievement.percentiles.tables.iter in seq_along(achievement.percentiles.tables)) {
                         sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
                             sgpFlowTrajectories(
@@ -145,7 +145,7 @@ sgpFlow <-
                                 csem.perturbation.iterations = csem.perturbation.iterations,
                                 iterate.without.csem.perturbation = iterate.without.csem.perturbation,
                                 achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
-                                projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[['content_area.progression']], 1), "BASELINE", sep=".")]]
+                                projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[["content_area.progression"]], 1), "BASELINE", sep=".")]]
                             )
                     }
                 }

@@ -84,7 +84,7 @@ getPercentileTrajectories <-
 
         ## Parameters
         sgpFlow.trajectories.list <- list()
-        scale.score.variables.for.projections <- paste0("SCALE_SCORE_GRADE_", sgpFlow.config[['grade.progression']])
+        scale.score.variables.for.projections <- paste0("SCALE_SCORE_GRADE_", sgpFlow.config[["grade.progression"]])
         if (csem.perturbation.of.initial.scores | iterate.without.csem.perturbation) wide_data_original <- data.table::copy(wide_data)
 
         ## Utility functions
@@ -112,9 +112,9 @@ getPercentileTrajectories <-
 
             ## Loop over daisy-chained, matrix sequence
             for (i in seq_along(projection.splineMatrices)) {
-                if (collapse::anyv(completed_ids[['COMPLETED']], NA)) {
+                if (collapse::anyv(completed_ids[["COMPLETED"]], NA)) {
                     cols_to_select <- c("ID", paste0("SCALE_SCORE_GRADE_", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1)))
-                    sgpFlow.trajectories.list.INTERNAL[[i]] <- collapse::na_omit(wide_data[is.na(completed_ids[['COMPLETED']]), ..cols_to_select])
+                    sgpFlow.trajectories.list.INTERNAL[[i]] <- collapse::na_omit(wide_data[is.na(completed_ids[["COMPLETED"]]), ..cols_to_select])
                     completed_ids[sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]], COMPLETED := TRUE]
 
                     for (j in seq_along(projection.splineMatrices[[i]])) {
@@ -150,7 +150,7 @@ getPercentileTrajectories <-
                                 bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)
                         ]
                     } ## END j loop
-                } ## END if (collapse::anyv(completed_ids[['COMPLETED']], NA))
+                } ## END if (collapse::anyv(completed_ids[["COMPLETED"]], NA))
             } ## END i loop
 
             return(data.table::data.table(data.table::rbindlist(sgpFlow.trajectories.list.INTERNAL, fill = TRUE), key = "ID"))

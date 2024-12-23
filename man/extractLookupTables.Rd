@@ -33,10 +33,10 @@ These tables can be used for further analysis, reporting, or visualization of SG
 if(interactive()){
   # Extract lookup tables from an SGP object
   sgp_tables <- extractLookupTables(sgp_object)
-  
+
   # Access the percentile lookup table
   print(sgp_tables$sgpPercentileLookupTable)
-  
+
   # Access the projection lookup table
   print(sgp_tables$sgpProjectionLookupTable)
 }

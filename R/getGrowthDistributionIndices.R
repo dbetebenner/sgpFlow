@@ -50,23 +50,23 @@
 function(
     wide_data,
     growth.distribution
-) {
+    ) {
         
-    if (growth.distribution[['Distribution']] == "UNIFORM_RANDOM") {
-        if (!all(c("min", "max") %in% names(growth.distribution[['Parameters']]))) {
-            stop("UNIFORM_RANDOM distribution requires 'min' and 'max' parameters")
+        if (growth.distribution[["Distribution"]] == "UNIFORM_RANDOM") {
+            if (!all(c("min", "max") %in% names(growth.distribution[["Parameters"]]))) {
+                stop("UNIFORM_RANDOM distribution requires 'min' and 'max' parameters")
+            }
+            if (growth.distribution[["Parameters"]][["min"]] >= growth.distribution[["Parameters"]][["max"]]) {
+                stop("'min' must be less than 'max' for UNIFORM_RANDOM distribution")
+            }
+            return(dqrng::dqsample.int(growth.distribution[["Parameters"]][["max"]] - growth.distribution[["Parameters"]][["min"]] + 1L, nrow(wide_data), replace = TRUE) + growth.distribution[["Parameters"]][["min"]] - 1L)
         }
-        if (growth.distribution[['Parameters']][['min']] >= growth.distribution[['Parameters']][['max']]) {
-            stop("'min' must be less than 'max' for UNIFORM_RANDOM distribution")
+
+        if (growth.distribution[["Distribution"]] %in% as.character(1:99)) {
+            return(rep(as.integer(growth.distribution[["Distribution"]]), nrow(wide_data)))
         }
-        return(dqrng::dqsample.int(growth.distribution[['Parameters']][['max']] - growth.distribution[['Parameters']][['min']] + 1L, nrow(wide_data), replace = TRUE) + growth.distribution[['Parameters']][['min']] - 1L)
-    }
 
-    if (growth.distribution[['Distribution']] %in% as.character(1:99)) {
-        return(rep(as.integer(growth.distribution[['Distribution']]), nrow(wide_data)))
-    }
-
-    if (growth.distribution[['Distribution']] == "BETA") {
-        stop("Beta Distribution functionality not yet implemented.")
-    }
-} ### END getGrowthDistributionIndices
+        if (growth.distribution[["Distribution"]] == "BETA") {
+            stop("Beta Distribution functionality not yet implemented.")
+        }
+    } ### END getGrowthDistributionIndices

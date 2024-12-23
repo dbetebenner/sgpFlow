@@ -21,7 +21,7 @@
 #' @importFrom collapse fmean
 #' @export
 #' 
-outputsgpFlow <- 
+outputsgpFlow <-
 function(
     sgpFlow_results_list,
     state,

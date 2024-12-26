@@ -2,17 +2,36 @@
 % Please edit documentation in R/getGrowthDistributionProjectionSequence.R
 \name{getGrowthDistributionProjectionSequence}
 \alias{getGrowthDistributionProjectionSequence}
-\title{The function get.growth.distribution.projection.sequence takes the growth.distribution, validates it, and
-produces a list which exactly specifies the way in which growth is assigned to student trajectories
-The argument growth.distribution is specified either as a single argument for use with ALL years of the projection sequence or each year specifically.
-If only one year is specified in the growth distribution, then that distribution is utilized across each year of the projection. 
-Each element of the growth.distribution argument is a character string indicating the distribution from which to sample (using default parameters for the distribution)
-or a list containing the following components:
-     Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
-     Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM_RANDOM distribution)
-     Groupings: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)}
+\title{Get Growth Distribution Projection Sequence}
 \usage{
 getGrowthDistributionProjectionSequence(growth.distribution, years.projected)
+}
+\arguments{
+\item{growth.distribution}{A list or character string specifying the growth distribution(s) to use:
+\itemize{
+  \item If a single distribution is provided, it will be used for all projection years
+  \item If multiple distributions are provided, they should match the number of projection years
+  \item Each distribution element can be either:
+    \itemize{
+      \item A character string indicating the distribution (e.g., "UNIFORM_RANDOM", "SGP_BASELINE")
+      \item A list with components:
+        \itemize{
+          \item Distribution: (Required) The distribution type or variable name
+          \item Parameters: (Optional) Distribution-specific parameters as a list
+          \item Subgroups: (Optional) Variable name for subgroup analysis
+        }
+    }
+}}
+
+\item{years.projected}{Integer indicating the number of years to project growth distributions}
+}
+\value{
+A list containing validated growth distribution specifications for each projection year:
+  \itemize{
+    \item Distribution: The specified distribution type
+    \item Parameters: Distribution parameters (with defaults if not specified)
+    \item Subgroups: Subgroup specifications (if provided)
+  }
 }
 \description{
 The function get.growth.distribution.projection.sequence takes the growth.distribution, validates it, and
@@ -23,5 +42,28 @@ Each element of the growth.distribution argument is a character string indicatin
 or a list containing the following components:
      Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
      Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM_RANDOM distribution)
-     Groupings: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
+     Subgroups: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
 }
+\examples{
+\dontrun{
+# Single distribution for all years
+dist1 <- getGrowthDistributionProjectionSequence("UNIFORM_RANDOM", 3)
+
+# Custom distribution with parameters
+dist2 <- getGrowthDistributionProjectionSequence(
+  list(Distribution = "UNIFORM_RANDOM",
+       Parameters = list(min = 10, max = 90)),
+  2)
+
+# Multiple distributions by year
+dist3 <- getGrowthDistributionProjectionSequence(
+  list(
+    list(Distribution = "UNIFORM_RANDOM"),
+    list(Distribution = "SGP_BASELINE",
+          Subgroups = "SCHOOL_NUMBER")
+  ),
+  2)
+}
+
+}
+\keyword{internal}

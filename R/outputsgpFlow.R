@@ -17,11 +17,11 @@
 #'
 #' @return A data.table containing the processed and combined results from sgpFlow analysis
 #'
-#' @importFrom data.table rbindlist
+#' @importFrom data.table patterns rbindlist
 #' @importFrom collapse fmean
 #' @export
 #' 
-outputsgpFlow <- 
+outputsgpFlow <-
 function(
     sgpFlow_results_list,
     state,
@@ -54,7 +54,7 @@ function(
                     tmp.list[[paste(cohort.type.iter, sgpFlow.config.iter, growth.distributions.iter, achievement.percentiles.tables.iter, sep=".")]] <- 
                     rbindlist(sgpFlow_results_list[[cohort.type.iter]][[sgpFlow.config.iter]][[growth.distributions.iter]][[achievement.percentiles.tables.iter]], fill=TRUE)[,
                         lapply(.SD, collapse::fmean), 
-                            .SDcols = patterns("^SCALE_SCORE"),
+                            .SDcols = data.table::patterns("^SCALE_SCORE"),
                             keyby = "ID"][,
                             `:=`(
                                 COHORT_TYPE = cohort.type.iter,

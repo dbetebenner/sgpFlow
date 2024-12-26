@@ -11,6 +11,7 @@
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
 #' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
+#' @param achievement.percentiles.tables Logical. If `TRUE`, creates growth trajectory tables based upon achievement percentiles tables intstead of all  `wide_data` supplied. Default: `FALSE`.
 #' @param csem.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"Normal"`. Default: `"Normal"`.
 #' @returns A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
 #' @details 
@@ -67,7 +68,7 @@ getPercentileTrajectories <-
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
         iterate.without.csem.perturbation = FALSE,
-        achievement.percentiles.tables,
+        achievement.percentiles.tables = FALSE,
         csem.distribution = "Normal"
     ) {
 
@@ -84,7 +85,7 @@ getPercentileTrajectories <-
 
         ## Parameters
         sgpFlow.trajectories.list <- list()
-        scale.score.variables.for.projections <- paste0("SCALE_SCORE_GRADE_", sgpFlow.config[['grade.progression']])
+        scale.score.variables.for.projections <- paste0("SCALE_SCORE_GRADE_", sgpFlow.config[["grade.progression"]])
         if (csem.perturbation.of.initial.scores | iterate.without.csem.perturbation) wide_data_original <- data.table::copy(wide_data)
 
         ## Utility functions
@@ -112,9 +113,9 @@ getPercentileTrajectories <-
 
             ## Loop over daisy-chained, matrix sequence
             for (i in seq_along(projection.splineMatrices)) {
-                if (collapse::anyv(completed_ids[['COMPLETED']], NA)) {
+                if (collapse::anyv(completed_ids[["COMPLETED"]], NA)) {
                     cols_to_select <- c("ID", paste0("SCALE_SCORE_GRADE_", head(projection.splineMatrices[[i]][[1]]@Grade_Progression[[1]], -1)))
-                    sgpFlow.trajectories.list.INTERNAL[[i]] <- collapse::na_omit(wide_data[is.na(completed_ids[['COMPLETED']]), ..cols_to_select])
+                    sgpFlow.trajectories.list.INTERNAL[[i]] <- collapse::na_omit(wide_data[is.na(completed_ids[["COMPLETED"]]), ..cols_to_select])
                     completed_ids[sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]], COMPLETED := TRUE]
 
                     for (j in seq_along(projection.splineMatrices[[i]])) {
@@ -150,7 +151,7 @@ getPercentileTrajectories <-
                                 bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)
                         ]
                     } ## END j loop
-                } ## END if (collapse::anyv(completed_ids[['COMPLETED']], NA))
+                } ## END if (collapse::anyv(completed_ids[["COMPLETED"]], NA))
             } ## END i loop
 
             return(data.table::data.table(data.table::rbindlist(sgpFlow.trajectories.list.INTERNAL, fill = TRUE), key = "ID"))

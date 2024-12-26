@@ -16,7 +16,8 @@ sgpFlow(
   achievement.percentiles.tables = TRUE,
   export.duckdb = TRUE,
   export.Rdata = TRUE,
-  projection.splineMatrices
+  projection.splineMatrices,
+  parallel.config = list(WORKERS = parallel::detectCores() - 1)
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ sgpFlow(
 \item{export.Rdata}{Logical. If `TRUE`, exports the sgpFlow results to an Rdata file.}
 
 \item{projection.splineMatrices}{A list of projection spline matrices used for calculating growth trajectories.}
+
+\item{parallel.config}{A list of configuration parameters for parallel processing. Default: `list(WORKERS=parallel::detectCores()-1)`.}
 }
 \value{
 A list containing sgpFlow analysis results for each specified \code{cohort.data.type}.

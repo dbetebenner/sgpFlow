@@ -1,4 +1,4 @@
-#' sgpFlow: Create sgpFlow trajectories 
+#' sgpFlow: Create sgpFlow trajectories
 #'
 #' The `sgpFlow` function facilitates the analysis of sgpFlow trajectories using various cohort data types, such as traditional cohorts, super-cohorts, or achievement percentiles. It offers the flexibility to handle conditional standard error measurement (CSEM) perturbation, growth projection matrices, and other configurations.
 #'
@@ -14,6 +14,7 @@
 #' @param export.duckdb Logical. If `TRUE`, exports the aggregated results to a DuckDB database.
 #' @param export.Rdata Logical. If `TRUE`, exports the sgpFlow results to an Rdata file.
 #' @param projection.splineMatrices A list of projection spline matrices used for calculating growth trajectories.
+#' @param parallel.config A list of configuration parameters for parallel processing. Default: `list(WORKERS=parallel::detectCores()-1)`.
 #'
 #' @details
 #' The `sgpFlow` function loops over specified \code{cohort.data.type} values, performing SGP trajectory analysis for each type. It supports super-cohort analysis when a valid \code{superCohort.config} is provided. If \code{csem.perturbation.of.initial.scores} is enabled, the function applies random perturbations to initial scores to account for measurement error, with the number of iterations controlled by \code{csem.perturbation.iterations}.
@@ -39,6 +40,7 @@
 #'
 #' @importFrom collapse fscale
 #' @importFrom duckdb duckdb
+#' @importFrom parallel clusterExport detectCores makeCluster parLapply stopCluster
 #' @export
 
 sgpFlow <- 
@@ -54,7 +56,8 @@ sgpFlow <-
         achievement.percentiles.tables = TRUE,
         export.duckdb = TRUE,
         export.Rdata = TRUE,
-        projection.splineMatrices
+        projection.splineMatrices,
+        parallel.config = list(WORKERS=parallel::detectCores()-1)
     ) {
 
     # Utility functions
@@ -79,36 +82,77 @@ sgpFlow <-
     # Initialize an empty list to store results
     sgpFlow_results_list <- list()
 
+    # Setup parallel backend
+    if (!is.null(parallel.config[["WORKERS"]])) {
+        tmp.cluster <- parallel::makeCluster(parallel.config[["WORKERS"]])
+        parallel::clusterExport(tmp.cluster, 
+            varlist=c("long_data", "state", "csem.perturbation.of.initial.scores", 
+                     "csem.perturbation.iterations", "iterate.without.csem.perturbation",
+                     "achievement.percentiles.tables", "achievement.percentiles.tables.names",
+                     "projection.splineMatrices"),
+            envir=environment())
+        on.exit(parallel::stopCluster(tmp.cluster))
+    }
+
     # Loop over cohort.data.type
     for (cohort.type.iter in cohort.data.type) {
-#            prepareLongData(long_data, cohort.type.iter) will return SUPER_COHORT data if requested
-#            tmp.long_data <- prepareLongData(long_data, cohort.type.iter)
-
         # Loop over sgpFlow.config 
         for (sgpFlow.config.iter in sgpFlow.config) {
-            tmp_name <- paste(toupper(tail(sgpFlow.config.iter[['content_area.progression']], 1)), paste("GRADE", paste(sgpFlow.config.iter[['grade.progression']], collapse=""), sep="_"), sep="__")
+            tmp_name <- paste(toupper(tail(sgpFlow.config.iter[["content_area.progression"]], 1)), paste("GRADE", paste(sgpFlow.config.iter[["grade.progression"]], collapse=""), sep="_"), sep="__")
 
-            # Loop over growth.distribution
-            for (growth.distributions.iter in sgpFlow.config.iter[['growth.distributions']]) {
+            # Create combinations for parallel processing
+            combinations <- expand.grid(
+                growth.distributions = sgpFlow.config.iter[["growth.distributions"]],
+                achievement.percentiles.tables.iter = seq_along(achievement.percentiles.tables),
+                stringsAsFactors = FALSE
+            )
 
-                # Loop over whether achievement.percentiles.tables get calculated.
-                for (achievement.percentiles.tables.iter in seq_along(achievement.percentiles.tables)) {
-                    sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
-                        sgpFlowTrajectories(
-                            long_data = long_data,
-                            state = state,
-                            sgpFlow.config = sgpFlow.config.iter,
-                            growth.distribution = growth.distributions.iter,
-                            csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
-                            csem.perturbation.iterations = csem.perturbation.iterations,
-                            iterate.without.csem.perturbation = iterate.without.csem.perturbation,
-                            achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
-                            projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[['content_area.progression']], 1), "BASELINE", sep=".")]]
-                        )
-                } ### END achievement.percentiles.iter
-            } ### END growth.distributions.iter
-        } ### END sgpFlow.config.iter
-    } ### END cohort.type.iter
+            # Parallel processing of combinations
+            if (!is.null(parallel.config[["WORKERS"]])) {
+                results <- parallel::parLapply(tmp.cluster, seq_len(nrow(combinations)), function(i) {
+                    growth.distributions.iter <- combinations$growth.distributions[i]
+                    achievement.percentiles.tables.iter <- combinations$achievement.percentiles.tables.iter[i]
+                    
+                    sgpFlowTrajectories(
+                        long_data = long_data,
+                        state = state,
+                        sgpFlow.config = sgpFlow.config.iter,
+                        growth.distribution = growth.distributions.iter,
+                        csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
+                        csem.perturbation.iterations = csem.perturbation.iterations,
+                        iterate.without.csem.perturbation = iterate.without.csem.perturbation,
+                        achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
+                        projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[["content_area.progression"]], 1), "BASELINE", sep=".")]]
+                    )
+                })
+                
+                # Assign results back to the list structure
+                for (i in seq_len(nrow(combinations))) {
+                    growth.distributions.iter <- combinations$growth.distributions[i]
+                    achievement.percentiles.tables.iter <- combinations$achievement.percentiles.tables.iter[i]
+                    sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- results[[i]]
+                }
+            } else {
+                # Sequential processing if no parallel config
+                for (growth.distributions.iter in sgpFlow.config.iter[["growth.distributions"]]) {
+                    for (achievement.percentiles.tables.iter in seq_along(achievement.percentiles.tables)) {
+                        sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
+                            sgpFlowTrajectories(
+                                long_data = long_data,
+                                state = state,
+                                sgpFlow.config = sgpFlow.config.iter,
+                                growth.distribution = growth.distributions.iter,
+                                csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
+                                csem.perturbation.iterations = csem.perturbation.iterations,
+                                iterate.without.csem.perturbation = iterate.without.csem.perturbation,
+                                achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
+                                projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[["content_area.progression"]], 1), "BASELINE", sep=".")]]
+                            )
+                    }
+                }
+            }
+        }
+    }
 
     if (export.duckdb) {
         outputsgpFlow(sgpFlow_results_list, state = state, export.duckdb = export.duckdb, export.Rdata = export.Rdata)

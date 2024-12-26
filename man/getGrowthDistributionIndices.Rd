@@ -42,16 +42,4 @@ placeholder for "BETA" distribution (currently not implemented).
 \note{
 This function is not exported and is intended for internal use only.
 }
-\examples{
-# Generate random indices between 1 and 99
-growth.distribution <- list(Distribution = "UNIFORM_RANDOM", 
-                          Parameters = list(min = 1, max = 99))
-wide_data <- data.table::data.table(ID = 1:100)
-random_indices <- getGrowthDistributionIndices(wide_data, growth.distribution)
-
-# Generate fixed 50th percentile indices
-fixed_dist <- list(Distribution = "50", Parameters = 50)
-fixed_indices <- getGrowthDistributionIndices(wide_data, fixed_dist)
-
-}
 \keyword{internal}

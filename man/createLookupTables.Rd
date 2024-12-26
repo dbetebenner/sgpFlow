@@ -39,6 +39,9 @@ This function:
 
 The function can handle single-cohort and super-cohort data structures, allowing for flexible analysis configurations.
 }
+\note{
+This function is not exported and is intended for internal use only.
+}
 \examples{
 \dontrun{
 if(interactive()){
@@ -57,3 +60,4 @@ if(interactive()){
  \code{\link[SGP]{abcSGP}}
  \code{\link[data.table]{setDTthreads}}, \code{\link[data.table]{fwrite}}
 }
+\keyword{internal}

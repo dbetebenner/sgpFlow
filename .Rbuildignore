@@ -5,3 +5,4 @@
 ^\.github$
 ^CITATION\.cff$
 ^_sinewconfig.yml$
+^.lintr

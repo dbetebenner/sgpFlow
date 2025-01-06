@@ -36,4 +36,7 @@ $presentation-heading-font: "Yanone Kaffeesatz", sans-serif !default;
    -moz-transform: rotate(-180deg);
 }
 
-
+/* hide logo */
+.reveal .slide.no-logo .quarto-reveal-logo {
+  display: none !important;
+}

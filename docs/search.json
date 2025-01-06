@@ -1,0 +1,121 @@
+[
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#introduction-to-packageskeleton",
+    "href": "content/presentations/packageSkeleton_Presentation.html#introduction-to-packageskeleton",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Introduction to packageSkeleton",
+    "text": "Introduction to packageSkeleton\n\npackageSkeleton is a streamlined GitHub template designed to simplify R package development.\nIt also integrates with a Quarto-powered website hosted on GitHub, providing users a structured way to develop, document, and distribute their work."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#why-packageskeleton",
+    "href": "content/presentations/packageSkeleton_Presentation.html#why-packageskeleton",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Why packageSkeleton?",
+    "text": "Why packageSkeleton?\n\nEncourages best practices in R package development\nProvides a structure that integrates R code and documentation\nSimplifies setting up a website for sharing your work\nIdeal for both beginners and experienced developers"
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#key-features",
+    "href": "content/presentations/packageSkeleton_Presentation.html#key-features",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Key Features",
+    "text": "Key Features\n\nR Package Template: A basic structure that you can easily customize for your package needs.\nGitHub Integration: Fork the repository and start developing right away.\nQuarto Documentation: Create rich, dynamic content that documents your package and provides a public-facing website."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#customizing-packageskeleton",
+    "href": "content/presentations/packageSkeleton_Presentation.html#customizing-packageskeleton",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Customizing packageSkeleton",
+    "text": "Customizing packageSkeleton\n\nRename the Package: Start by modifying the DESCRIPTION file and renaming the package.\nAdd Your Own Functions: Inside the R/ directory, include your custom R functions.\nGenerate Documentation: Use roxygen2 to create function documentation and Quarto to build your website.\nDeploy the Website: Publish the Quarto website using GitHub Pages."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#requirements",
+    "href": "content/presentations/packageSkeleton_Presentation.html#requirements",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Requirements",
+    "text": "Requirements\n\nR: The latest version of R (available from CRAN)\nQuarto: The Quarto CLI tool for building documents and websites (Install Quarto).\nGit: Version control to manage your code and push to GitHub.\nGitHub: Host your R package and website."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#github-workflow",
+    "href": "content/presentations/packageSkeleton_Presentation.html#github-workflow",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "GitHub Workflow",
+    "text": "GitHub Workflow\n\nFork the Repository: Start by forking the packageSkeleton repo from GitHub.\nClone Locally: Clone the repo to your local machine using Git.\nPush Changes: After making your edits, push them to your GitHub repository.\nDeploy Website: Use GitHub Pages to host the Quarto-based documentation."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#customizing-the-website",
+    "href": "content/presentations/packageSkeleton_Presentation.html#customizing-the-website",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Customizing the Website",
+    "text": "Customizing the Website\n\nQuarto Configuration: Customize the _quarto.yml file to change the website settings such as title, author, and repository URL.\nAdd Pages: Create .qmd files to add custom documentation, tutorials, and more.\nThemes & Layouts: Modify the website’s theme using CSS or choose from Quarto’s built-in themes."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#building-your-package",
+    "href": "content/presentations/packageSkeleton_Presentation.html#building-your-package",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Building Your Package",
+    "text": "Building Your Package\n\nAdd Functions: Use the R/ folder to store your custom R scripts and functions.\nGenerate Documentation: Write roxygen-style documentation for each function and build it using devtools::document().\nCheck Your Package: Ensure your package passes all R CMD checks by running devtools::check()."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#publishing-the-website",
+    "href": "content/presentations/packageSkeleton_Presentation.html#publishing-the-website",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Publishing the Website",
+    "text": "Publishing the Website\n\nBuild the Website: Run quarto render to build the static HTML content.\nPublish on GitHub Pages: Push your changes to the repository and GitHub Pages will automatically deploy the site.\nPreview Locally: Use quarto preview to see live updates of the website as you edit."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#conclusion",
+    "href": "content/presentations/packageSkeleton_Presentation.html#conclusion",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Conclusion",
+    "text": "Conclusion\n\npackageSkeleton is a powerful starting point for R package development.\nUse it to streamline your workflow, create well-documented R code, and publish it with a professional Quarto-powered website.\nLeverage GitHub for collaboration, version control, and public distribution of your work."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#further-resources",
+    "href": "content/presentations/packageSkeleton_Presentation.html#further-resources",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Further Resources",
+    "text": "Further Resources\n\nQuarto Documentation\nR Package Development\nGitHub Pages\n\n\n\n\n\n\n\n\n \n\n\n \n\n\n \n\n\n\n\nGill, Brian. 2022. “What Should the Future of Educational Accountability Look Like?” Journal of Policy Analysis and Management 41 (4): 1232–39. https://doi.org/10.1002/pam.22428."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#death-to-proficiency",
+    "href": "content/presentations/packageSkeleton_Presentation.html#death-to-proficiency",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Death to Proficiency!",
+    "text": "Death to Proficiency!"
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#long-live-proficiency",
+    "href": "content/presentations/packageSkeleton_Presentation.html#long-live-proficiency",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Long Live Proficiency!",
+    "text": "Long Live Proficiency!\nDamian Betebenner\nJanuary 2025"
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#death-to-proficiency-long-live-proficiency",
+    "href": "content/presentations/packageSkeleton_Presentation.html#death-to-proficiency-long-live-proficiency",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Death to Proficiency! Long Live Proficiency!",
+    "text": "Death to Proficiency! Long Live Proficiency!\nDamian Betebenner\nJanuary 2025"
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#motivation",
+    "href": "content/presentations/packageSkeleton_Presentation.html#motivation",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "Motivation",
+    "text": "Motivation\n\nKentucky’s accountability system re-design design decision to forgo growth and utilize improvement instead.\nCountless TAC meetings where terminology is used interchangeably and incorrectly (most notably by experts in our field).\nCharacterizations of “learning loss” and “recovery” during and after the COVID-19 pandemic."
+  },
+  {
+    "objectID": "content/presentations/packageSkeleton_Presentation.html#references",
+    "href": "content/presentations/packageSkeleton_Presentation.html#references",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "References",
+    "text": "References\n\n\nGill, Brian. 2022. “What Should the Future of Educational Accountability Look Like?” Journal of Policy Analysis and Management 41 (4): 1232–39. https://doi.org/10.1002/pam.22428."
+  },
+  {
+    "objectID": "content/presentations/Accountability_System_Coherence.html#references",
+    "href": "content/presentations/Accountability_System_Coherence.html#references",
+    "title": "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website",
+    "section": "References",
+    "text": "References\n\n\nGill, Brian. 2022. “What Should the Future of Educational Accountability Look Like?” Journal of Policy Analysis and Management 41 (4): 1232–39. https://doi.org/10.1002/pam.22428."
+  }
+]

@@ -1,1 +1,1 @@
-Sitemap: https://centerforassessment.github.io/packageSkeleton/sitemap.xml
+Sitemap: https://centerforassessment.github.io/sgpFlow/sitemap.xml

@@ -20,15 +20,15 @@ references:
     source: "../man"   # Path to your R package .Rd files (relative to quarto_website)
 
 website:
-  site-url: "https://centerforassessment.github.io/packageSkeleton/"
-  repo-url: "https://github.com/centerforassessment/packageSkeleton"
-  title: "A GitHub repository featuring a starter template for R package development, paired with a Quarto-powered website"
+  site-url: "https://centerforassessment.github.io/sgpFlow/"
+  repo-url: "https://github.com/centerforassessment/sgpFlow"
+  title: "Functions to perform sgpFlow analyses utilizing data derived from SGP analyses"
   repo-actions: [edit, issue]
   favicon: ./assets/img/logo_color.png
 
   page-navigation: true
   navbar:
-    title: "packageSkeleton"
+    title: "sgpFlow"
     logo: ./assets/img/logo_grey.png
     logo-alt: "Center for Assessment GitHub Homepage"
     logo-href: "https://centerforassessment.github.io/"
@@ -39,7 +39,7 @@ website:
       - text: Getting Started 
         href: getting_started.qmd
       - text: Presentations 
-        href: ./content/presentations/packageSkeleton_Presentation.qmd
+        href: ./content/presentations/Accountability_System_Coherence.qmd
       - text: Documents
         href: documents.qmd
       - text: Reference 
@@ -47,11 +47,11 @@ website:
       - text: News
         href: news.qmd
       - icon: github
-        aria-label: packageSkeleton GitHub Repo 
-        href: https://github.com/centerforassessment/packageSkeleton
+        aria-label: sgpFlow GitHub Repo 
+        href: https://github.com/centerforassessment/sgpFlow
       - icon: github
         aria-label: Share on Bluesky 
-        href: https://bsky.app/intent/compose?text=packageSkeleton%3A%20A%20GitHub%20repository%20featuring%20a%20starter%20template%20for%20R%20package%20development%2C%20paired%20with%20a%20Quarto-powered%20website.%20%23packageSkeleton%20%23rstats
+        href: https://bsky.app/intent/compose?text=sgpFlow%3A%20A%20GitHub%20repository%20featuring%20a%20starter%20template%20for%20R%20package%20development%2C%20paired%20with%20a%20Quarto-powered%20website.%20%23sgpFlow%20%23rstats
 
   search:
     location: navbar
@@ -65,7 +65,7 @@ website:
       - icon: github
         text: GitHub
         aria-label: github
-        href: https://https://github.com/centerforassessment/packageSkeleton
+        href: https://https://github.com/centerforassessment/sgpFlow
 
   open-graph: true
   twitter-card: 

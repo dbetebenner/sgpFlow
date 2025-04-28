@@ -11,8 +11,8 @@
 #' \tabular{ll}{
 #'   Package: \tab sgpFlow \cr
 #'   Type: \tab Package \cr
-#'   Version: \tab 0.0-0.97 \cr
-#'   Date: \tab 2024-12-23 \cr
+#'   Version: \tab 0.0-0.984 \cr
+#'   Date: \tab 2025-4-28 \cr
 #'   License: \tab MIT \cr
 #'   LazyLoad: \tab yes \cr
 #' }

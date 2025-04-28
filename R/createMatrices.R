@@ -7,6 +7,7 @@
 #' @param state A character string indicating the state for which matrices are being generated.
 #' @param matrix.sgp.config A configuration list specifying the SGP baseline setup for generating coefficient matrices.
 #' @param super_cohort.sgp.config A configuration list used specifically for creating super-cohort datasets. Required if `matrix_types` includes `"super-cohort"`.
+#' @param super_cohort_base_years A character vector specifying the base years for the super-cohort analysis. If not provided, the function will use all years in the data.
 #' @param parallel.config A configuration list for specifying parallel processing options.
 #' @param matrix_types A character vector specifying the types of matrices to generate. Options are `"single-cohort"` and `"super-cohort"`. Default: `c("single-cohort", "super-cohort")`.
 #' @returns A list of SGP coefficient matrices, with separate entries for each matrix type specified in `matrix_types`.
@@ -44,6 +45,7 @@ createMatrices <-
         state,
         matrix.sgp.config,
         super_cohort.sgp.config,
+        super_cohort_base_years,
         parallel.config,
         matrix_types = c("single-cohort", "super-cohort")
     ) {
@@ -65,7 +67,8 @@ createMatrices <-
             if (matrix_type.iter == "super-cohort") {
                 tmp.data <- createSuperCohortData(
                     base_data = data_for_matrices[, .(VALID_CASE, CONTENT_AREA, YEAR, GRADE, ID, SCALE_SCORE)],
-                    sgp.config = super_cohort.sgp.config
+                    sgp.config = super_cohort.sgp.config,
+                    super_cohort_base_years = super_cohort_base_years
                 )
             }
 

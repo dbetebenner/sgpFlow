@@ -26,6 +26,8 @@ function(
         scale_score.names,
         achievement.percentiles.tables
     ) {
+        # Set varialbe to NULL to avoid R CMD check notes
+        ACHIEVEMENT_PERCENTILE_INITIAL <- ACHIEVEMENT_PERCENTILE_INITIAL_1 <- NULL
 
         # Utility functions
         get_percentile <- function(scale_score) {

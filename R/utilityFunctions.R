@@ -145,22 +145,52 @@ capWords <-
     }
 
 
-### my.beta
-`my.beta` <- 
-    function(quantiles, shape1.min.max=c(3,7), shape2.min.max=c(3,7), interpolated.min.value=NULL) {
-        my.shape1 <- seq(shape1.min.max[2L], shape1.min.max[1L] , length=100L)
-        my.shape2 <- seq(shape2.min.max[1L], shape2.min.max[2L] , length=100L)
-        tmp.sample <- stats::rbeta(length(quantiles), shape1=my.shape1[quantiles], shape2=my.shape2[quantiles])
-        if (is.null(interpolated.min.value)) {
-            return(100*tmp.sample)
-        } else {
-            tmp.interpolate <- seq(0, interpolated.min.value, length=100L)/100
-            return(100*(tmp.sample * (1-tmp.interpolate[quantiles]) + tmp.interpolate[quantiles]))
-        }
-    }
-
-### beta.copula
+### myBeta
 #' @importFrom stats rbeta
-`beta.copula` <- function(number, quantile, multiplier) {
+`sgpBeta` <-
+    function(n, mean.sgp = 50, sd.sgp = 15, sgp.min.value = NULL, sgp.max.value = NULL) {
+        # Validate parameters
+        if (mean.sgp < 1 || mean.sgp > 99) stop("mean.sgp must be between 1 and 99.")
+        if (sd.sgp <= 0) stop("sd.sgp must be a positive number.")
+
+        # Define sgp quantile cuts
+        sgp.cuts <- c(0, seq(0.005, 0.995, length=100L), 1)
+
+        # Convert to [0,1] scale
+        mu <- mean.sgp/100
+        sigma <- sd.sgp/100
+
+        # Calculate maximum possible standard deviation for given mean
+        max_sigma <- sqrt(mu * (1 - mu))
+        if (sigma >= max_sigma) {
+            warning("Requested standard deviation too large. Using maximum possible value.")
+            sigma <- max_sigma * 0.99
+        }
+        
+        # Calculate shape parameters
+        tmp.shape1 <- mu * (mu * (1 - mu) / sigma^2 - 1)
+        tmp.shape2 <- (1 - mu) * (mu * (1 - mu) / sigma^2 - 1)
+        
+        # Generate beta samples
+        tmp.sample <- rbeta(n, shape1=tmp.shape1, shape2=tmp.shape2)
+        
+        if (!is.null(sgp.min.value) | !is.null(sgp.max.value)) {
+            # Set defaults if only one value is provided
+            if (is.null(sgp.min.value)) sgp.min.value <- 0 else sgp.min.value <- sgp.min.value/100
+            if (is.null(sgp.max.value)) sgp.max.value <- 1 else sgp.max.value <- sgp.max.value/100
+            
+            # Linear interpolation from [0,1] to [min,max]
+            tmp.result <- sgp.min.value + tmp.sample * (sgp.max.value - sgp.min.value)
+            mean.sgp.new <- sgp.min.value + mean.sgp * (sgp.max.value - sgp.min.value)
+            sd.sgp.new <- sd.sgp * (sgp.max.value - sgp.min.value)
+            return(pmin(pmax(findInterval(tmp.result, sgp.cuts)-1L, 1L), 99L))
+        } else {
+            return(pmin(pmax(findInterval(tmp.sample, sgp.cuts)-1L, 1L), 99L))
+        }
+    } ### END sgpBeta
+
+### betaCopula
+#' @importFrom stats rbeta
+`betaCopula` <- function(number, quantile, multiplier) {
     return(quantile + (1 - quantile) * rbeta(number, multiplier*quantile, multiplier*(1-quantile)))
 }

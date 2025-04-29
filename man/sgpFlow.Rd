@@ -6,7 +6,7 @@
 \usage{
 sgpFlow(
   sgp_object,
-  state,
+  state = NULL,
   sgpFlow.config,
   superCohort.config = NULL,
   cohort.data.type = "SINGLE_COHORT",

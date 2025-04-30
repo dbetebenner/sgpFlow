@@ -34,10 +34,10 @@
 #' @importFrom dqrng dqsample.int
 #' @keywords internal
 
-`getGrowthDistributionIndices` <-
-function(
-    wide_data,
-    growth.distribution
+getGrowthDistributionIndices <-
+    function(
+        wide_data,
+        growth.distribution
     ) {
         
         if (growth.distribution[["Distribution"]] == "UNIFORM_RANDOM") {

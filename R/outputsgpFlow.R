@@ -22,12 +22,12 @@
 #' @export
 #' 
 outputsgpFlow <-
-function(
-    sgpFlow_results_list,
-    state,
-    export.duckdb = TRUE,
-    export.Rdata = TRUE
-) {
+    function(
+        sgpFlow_results_list,
+        state,
+        export.duckdb = TRUE,
+        export.Rdata = TRUE
+    ) {
 
     ## Initialize lists
     tmp.list <- tmp.list.final <- list()
@@ -36,6 +36,9 @@ function(
     if (!dir.exists("Data")) {
         dir.create("Data")
     }
+
+    ## Get state name from state abbreviation
+    state.name <- getStateAbbreviation(state, type="FULL_NAME")
 
     ## Loop through cohort types
     for (cohort.type.iter in names(sgpFlow_results_list)) {
@@ -74,7 +77,7 @@ function(
     ## Export results to DuckDB
     if (export.duckdb) {
         ## Create DuckDB connection and database
-        con <- duckdb::dbConnect(duckdb::duckdb(), paste0("Data/sgpFlow_", state, ".duckdb"))
+        con <- duckdb::dbConnect(duckdb::duckdb(), paste0("Data/", state.name, "_sgpFlow.duckdb"))
 
         # Write each table to DuckDB
         duckdb::dbWriteTable(con, "ENTIRE_COHORT", tmp.list.final[["ENTIRE_COHORT"]], overwrite = TRUE)
@@ -85,7 +88,7 @@ function(
     }
 
     if (export.Rdata) {
-        assign(paste0("sgpFlow_", state), tmp.list.final)
-        save(list=paste0("sgpFlow_", state), file=file.path("Data", paste0("sgpFlow_", state, ".Rdata")))
+        assign(paste0(state.name, "_sgpFlow"), tmp.list.final)
+        save(list=paste0(state.name, "_sgpFlow"), file=file.path("Data", paste0(state.name, "_sgpFlow.Rdata")))
     }
 } ### END outputsgpFlow

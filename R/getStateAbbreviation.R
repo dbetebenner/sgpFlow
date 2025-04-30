@@ -31,11 +31,12 @@
 #' getStateAbbreviation("CO", type="FULL_NAME") # Returns "Colorado"
 #' }
 
-`getStateAbbreviation` <-
-function(
-	supplied.name,
-	SGPfunction=NULL,
-	type="ABBREVIATION") {
+getStateAbbreviation <-
+	function(
+		supplied.name,
+		SGPfunction=NULL,
+		type="ABBREVIATION"
+	) {
 
 	state.abbreviation.name.lookup <- fread(
 "ABBREVIATION, FULL_NAME

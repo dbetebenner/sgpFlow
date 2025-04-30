@@ -111,7 +111,7 @@ capWords <-
 
 ### ddcast
 #' @importFrom data.table data.table dcast
-`ddcast` <-
+ddcast <-
     function(tmp.dt, ...) {
         if (dim(tmp.dt)[1L] == 0L) {
             return(data.table::data.table(NULL))
@@ -121,7 +121,7 @@ capWords <-
     } ### END ddcast Function
 
 ### yearIncrement
-`yearIncrement` <-
+yearIncrement <-
     function(
         base_year,
         year_lags
@@ -139,7 +139,7 @@ capWords <-
     } ### End yearIncrement
 
 ### get.loss.hoss
-`get.loss.hoss` <-
+get.loss.hoss <-
     function(state, content_area, grade) {
         return(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("boundaries", grade, sep = "_")]])
     }
@@ -147,7 +147,7 @@ capWords <-
 
 ### myBeta
 #' @importFrom stats rbeta
-`sgpBeta` <-
+sgpBeta <-
     function(n, mean.sgp = 50, sd.sgp = 15, sgp.min.value = NULL, sgp.max.value = NULL) {
         # Validate parameters
         if (mean.sgp < 1 || mean.sgp > 99) stop("mean.sgp must be between 1 and 99.")
@@ -191,6 +191,6 @@ capWords <-
 
 ### betaCopula
 #' @importFrom stats rbeta
-`betaCopula` <- function(number, quantile, multiplier) {
+betaCopula <- function(number, quantile, multiplier) {
     return(quantile + (1 - quantile) * rbeta(number, multiplier*quantile, multiplier*(1-quantile)))
 }

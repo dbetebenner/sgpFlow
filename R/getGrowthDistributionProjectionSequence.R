@@ -57,10 +57,10 @@
 #' 
 #' @keywords internal
 
-`getGrowthDistributionProjectionSequence` <-
-function(
-    growth.distribution,
-    years.projected
+getGrowthDistributionProjectionSequence <-
+    function(
+        growth.distribution,
+        years.projected
     ) {
 
         # Utility functions

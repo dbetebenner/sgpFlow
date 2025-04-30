@@ -20,7 +20,7 @@
 #' @note This function is not exported and is intended for internal use only.
 #' @keywords internal
 
-`getAchievementPercentiles` <-
+getAchievementPercentiles <-
 function(
         wide_data,
         scale_score.names,

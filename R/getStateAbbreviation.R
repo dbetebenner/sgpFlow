@@ -1,3 +1,36 @@
+#' Convert State Names to Abbreviations or Vice Versa
+#'
+#' @description
+#' A utility function that converts between state names and their two-letter abbreviations.
+#' This function is used internally by other SGP functions and is not exported.
+#'
+#' @param supplied.name A character string containing a state name or abbreviation
+#' @param SGPfunction Optional character string specifying the calling SGP function for error messages
+#' @param type Character string indicating the type of conversion: "ABBREVIATION" (default) or "FULL_NAME"
+#'
+#' @return
+#' Returns a character string containing either:
+#' - The two-letter state abbreviation when type="ABBREVIATION"
+#' - The full state name when type="FULL_NAME"
+#' 
+#' @details
+#' The function uses an internal lookup table that includes all 50 US states plus additional
+#' special cases like Washington DC, Department of Defense, and various assessment programs.
+#' The matching is case-insensitive and can handle partial matches.
+#'
+#' @note
+#' This function is not exported and is intended for internal use within the SGP package.
+#' If a state's metadata is not found, the function will provide guidance on how to add
+#' the state's data to the SGPstateData object.
+#'
+#' @importFrom data.table fread
+#'
+#' @examples
+#' \dontrun{
+#' getStateAbbreviation("Colorado") # Returns "CO"
+#' getStateAbbreviation("CO", type="FULL_NAME") # Returns "Colorado"
+#' }
+
 `getStateAbbreviation` <-
 function(
 	supplied.name,

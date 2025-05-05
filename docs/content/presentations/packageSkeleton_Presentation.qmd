@@ -1,0 +1,175 @@
+---
+pagetitle: "Death to Proficiency! Long Live Proficiency!"
+subtitle: "The case for coherence in accountability system design"
+author: Damian Betebenner
+format:
+  revealjs:
+    logo: assets/img/cfa_logo_full_color.png
+    footer-logo-link: "https://www.centerforassessment.org"
+    width: 1600
+    height: 900
+    preview-links: auto
+    scrollable: false
+    slide-number: true
+    show-slide-number: all
+    multiplex: true
+    controls: true
+    background-transition: fade
+    fig-align: center
+    center-title-slide: false
+    navigation-mode: vertical
+    theme: [simple, assets/css/presentation-style.scss]
+    html-math-method: mathjax
+    embed-resources: true
+    bibliography: assets/bibliography/references.bib
+filters:
+  - reveal-header
+draft: false
+---
+
+# {background-image=assets/img/title_slide_background.jpg background-size="cover" background-position="left" background-color="black" background-opacity=0.6 .no-logo}
+
+```{r setup, include=FALSE}
+library(fontawesome)
+library(quarto)
+library(qrcode)
+```
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+<h1>Death to Proficiency!</h1>
+
+<h1>Long Live Proficiency!</h1>
+
+<br>
+
+<h3>Damian Betebenner</h3>
+
+<h4>January, 2025</h4>
+
+:::
+
+:::{.column style="text-align: right; font-size: 68px; font-style: italic; padding-top: 500px;"}
+
+The case for coherence in accountability system design
+
+:::
+
+::::
+
+<!--
+#########################################
+Section: Inspiration
+#########################################
+-->
+
+# {background-image="assets/img/ideabulb.jpg" background-size="cover" background-position="center"}
+
+---
+
+<h2>Inspiration</h2>
+
+- Kentucky's accountability system re-design decision to forgo growth and utilize improvement instead.
+- Countless discussions at TAC meetings where accountability system terminology is used interchangeably and incorrectly (most notably by experts in our field).
+- Numerous presentations at TAC meetings of poorly designed quasi-experimental studies using results from state summative assessments.
+- Characterizations of "learning loss" and "recovery" during and after the COVID-19 pandemic.
+- Numerous staff meeting discussions about accountability systems and their design.
+- 2023 Brian Gong Colloquium on accountability system design.
+
+---
+
+<!--
+w
+#########################################
+Section: Coherence
+#########################################
+-->
+
+# {background-image="assets/img/coherence.jpg" background-size="cover" background-position="center"}
+
+---
+
+<h2>Coherence</h2>
+
+- The term [__coherence__]{style="color: magenta;"} is not frequently used in discussions of accountability systems and when it is, it is often not clearly defined.
+- What is coherence with respect to accountability systems?
+- What is incoherent about current accountability systems?
+- Why is coherence important?
+- How can coherence be instantiated in accountability systems?
+
+---
+
+<h2>Gill's Framework</h2>
+
+- Brian Gill's [-@Gill:2022] paper, _What should the future of educational accountability look like?,_ introduces a useful framework for indicators used in accountability systems.
+- Three Core Components of Gill's Framework
+  - **Processes:**  The activities, instructional practices, and organizational elements that schools implement to support student learning.
+  - **Impacts:**  The measurable effects of processes on student learning and development, often captured through growth metrics or value-added models.
+  - **Outcomes:**  The long-term results of education, such as achievement/proficiency levels, graduation rates, and other indicators of student success.
+
+- Gill argues that for indicators to drive meaningful improvement, they must be:
+  - **Valid:** Accurately measure what they claim to measure without systematic bias.
+  - **Reliable:** Stable and consistent over time to avoid misdiagnosis or loss of credibility.
+  - **Robust:** Resistant to unintended consequences and manipulation while capturing critical dimensions of educational quality.
+
+---
+
+
+---
+
+## Requirements
+
+- **R**: The latest version of R (available from [CRAN](https://cran.r-project.org/))
+- **Quarto**: The Quarto CLI tool for building documents and websites ([Install Quarto](https://quarto.org/docs/get-started/)).
+- **Git**: Version control to manage your code and push to GitHub.
+- **GitHub**: Host your R package and website.
+
+---
+
+## GitHub Workflow
+
+1. **Fork the Repository**: Start by forking the `packageSkeleton` repo from GitHub.
+2. **Clone Locally**: Clone the repo to your local machine using Git.
+3. **Push Changes**: After making your edits, push them to your GitHub repository.
+4. **Deploy Website**: Use GitHub Pages to host the Quarto-based documentation.
+
+---
+
+## Customizing the Website
+
+- **Quarto Configuration**: Customize the `_quarto.yml` file to change the website settings such as title, author, and repository URL.
+- **Add Pages**: Create `.qmd` files to add custom documentation, tutorials, and more.
+- **Themes & Layouts**: Modify the website’s theme using CSS or choose from Quarto’s built-in themes.
+
+---
+
+## Building Your Package
+
+- **Add Functions**: Use the `R/` folder to store your custom R scripts and functions.
+- **Generate Documentation**: Write roxygen-style documentation for each function and build it using `devtools::document()`.
+- **Check Your Package**: Ensure your package passes all R CMD checks by running `devtools::check()`.
+
+---
+
+## Publishing the Website
+
+1. **Build the Website**: Run `quarto render` to build the static HTML content.
+2. **Publish on GitHub Pages**: Push your changes to the repository and GitHub Pages will automatically deploy the site.
+3. **Preview Locally**: Use `quarto preview` to see live updates of the website as you edit.
+
+---
+
+## Conclusion
+
+- **packageSkeleton** is a powerful starting point for R package development.
+- Use it to streamline your workflow, create well-documented R code, and publish it with a professional Quarto-powered website.
+- Leverage GitHub for collaboration, version control, and public distribution of your work.
+
+---
+
+## References
+
+::: {#refs}
+:::

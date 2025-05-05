@@ -9,6 +9,7 @@ createMatrices(
   state,
   matrix.sgp.config,
   super_cohort.sgp.config,
+  super_cohort_base_years,
   parallel.config,
   matrix_types = c("single-cohort", "super-cohort")
 )
@@ -21,6 +22,8 @@ createMatrices(
 \item{matrix.sgp.config}{A configuration list specifying the SGP baseline setup for generating coefficient matrices.}
 
 \item{super_cohort.sgp.config}{A configuration list used specifically for creating super-cohort datasets. Required if `matrix_types` includes `"super-cohort"`.}
+
+\item{super_cohort_base_years}{A character vector specifying the base years for the super-cohort analysis. If not provided, the function will use all years in the data.}
 
 \item{parallel.config}{A configuration list for specifying parallel processing options.}
 

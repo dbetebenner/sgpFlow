@@ -55,12 +55,13 @@
 #'   2)
 #' }
 #' 
+#' @note This function is not exported and is intended for internal use only.
 #' @keywords internal
 
-`getGrowthDistributionProjectionSequence` <-
-function(
-    growth.distribution,
-    years.projected
+getGrowthDistributionProjectionSequence <-
+    function(
+        growth.distribution,
+        years.projected
     ) {
 
         # Utility functions

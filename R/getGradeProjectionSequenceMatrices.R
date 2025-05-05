@@ -1,3 +1,27 @@
+#' Generate Grade Projection Sequence Matrices
+#'
+#' @description
+#' Creates a sequence of matrices for grade projections based on configuration settings.
+#' This is an internal function used to generate the necessary matrices for SGP projections.
+#'
+#' @param sgpFlow.config A list containing configuration settings including:
+#'   \itemize{
+#'     \item grade.progression: Vector of grade levels
+#'     \item grade.projection.sequence: Vector of projection sequence grades
+#'     \item year_lags.progression: Vector of year lags for progression
+#'     \item year_lags.projection.sequence: Vector of year lags for projection sequence
+#'     \item content_area.progression: Vector of content areas for progression
+#'     \item content_area.projection.sequence: Vector of content areas for projection sequence
+#'     \item max.order.for.progression: Maximum order for progression
+#'   }
+#' @param projection.splineMatrices A list containing spline matrices used for projections
+#'
+#' @return A list of matrices, with highest orders first, where each element represents
+#'   a combination of grade progression and projection sequence.
+#'
+#' @note This function is not exported and is intended for internal use only.
+#' @keywords internal
+
 getGradeProjectionSequenceMatrices <-
     function(
         sgpFlow.config,

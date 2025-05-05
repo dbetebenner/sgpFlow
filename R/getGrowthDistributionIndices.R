@@ -32,12 +32,13 @@
 #' @note This function is not exported and is intended for internal use only.
 #' 
 #' @importFrom dqrng dqsample.int
+#' @note This function is not exported and is intended for internal use only.
 #' @keywords internal
 
-`getGrowthDistributionIndices` <-
-function(
-    wide_data,
-    growth.distribution
+getGrowthDistributionIndices <-
+    function(
+        wide_data,
+        growth.distribution
     ) {
         
         if (growth.distribution[["Distribution"]] == "UNIFORM_RANDOM") {

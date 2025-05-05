@@ -43,7 +43,7 @@
 #'  \code{\link[sgpFlow]{getPercentileTrajectories}}, 
 #'  \code{\link[sgpFlow]{getWideData}}, 
 #' @rdname sgpFlowTrajectories
-#' @export 
+#' @export
 
 sgpFlowTrajectories <-
     function(

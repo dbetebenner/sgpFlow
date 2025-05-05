@@ -46,7 +46,7 @@
 sgpFlow <- 
     function(
         sgp_object,
-        state,
+        state=NULL,
         sgpFlow.config,
         superCohort.config=NULL,
         cohort.data.type = "SINGLE_COHORT", #c("SUPER_COHORT", "SINGLE_COHORT"),
@@ -73,7 +73,12 @@ sgpFlow <-
     if (achievement.percentiles.tables) achievement.percentiles.tables <- c(FALSE, TRUE)
     achievement.percentiles.tables.names <- c("ENTIRE_COHORT", "ACHIEVEMENT_PERCENTILES")
 
-    # Get long_data
+    if (is.null(state)) {
+        tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+        state <- getStateAbbreviation(tmp.name, "sgpFlow")
+    }
+
+    # Extract long_data from sgp_object if it is an SGP object
     if ("SGP" %in% class(sgp_object)) long_data <- sgp_object@Data else long_data <- sgp_object
 
     # Add SCALE_SCORE_STANDARDIZED to long_data

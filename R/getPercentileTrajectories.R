@@ -89,7 +89,6 @@ getPercentileTrajectories <-
         if (csem.perturbation.of.initial.scores | iterate.without.csem.perturbation) wide_data_original <- data.table::copy(wide_data)
 
         ## Utility functions
-
         bound.iso.subset.scores <- function(projected.scores, loss.hoss, subset.indices) {
             ## Pull in outlier to loss/hoss
             projected.scores[
@@ -166,7 +165,7 @@ getPercentileTrajectories <-
 
         ## Loop over csem.perturbation.iterations (only one iteration if csem.perturbation.iterations == FALSE)
         for (csem.iter in 0:csem.perturbation.iterations) {
-            ## On first iteration (csem.iter == 0) apply getAchievementPercentiles 
+            ## On first iteration (csem.iter == 0) apply getAchievementPercentiles
             if (csem.iter == 0) {
                 ## Apply getAchievementPercentiles to:
                 ## 1. Create achievement percentiles tables if achievement.percentiles.tables == TRUE

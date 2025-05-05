@@ -30,6 +30,8 @@
 #' getStateAbbreviation("Colorado") # Returns "CO"
 #' getStateAbbreviation("CO", type="FULL_NAME") # Returns "Colorado"
 #' }
+#' @note This function is not exported and is intended for internal use only.
+#' @keywords internal
 
 getStateAbbreviation <-
 	function(

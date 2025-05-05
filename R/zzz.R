@@ -58,7 +58,7 @@ utils::globalVariables(c(
 
         # Define a friendly startup message
 		message_text <- paste0(
-		    magenta(bold("\uD83C\uDF89 sgpFlow v", installed.version, sep="")), " - ", toOrdinal::toOrdinalDate("2025-4-30"), "\n",
+		    magenta(bold("\uD83C\uDF89 sgpFlow v", installed.version, sep="")), " - ", toOrdinal::toOrdinalDate("2025-5-5"), "\n",
 			strrep("\u2501", 40), "\n",
     	    bold("\U1F4E6 CRAN: "), cran.version, "\n",
     	    bold("\U1F527 Dev: "), dev.version, "\n",
@@ -66,7 +66,7 @@ utils::globalVariables(c(
 		    "\U1F4A1 Tip: ", magenta(bold("> help(package=\"sgpFlow\")")), "\n",
 		    "\U1F310 Docs: ", magenta(bold("https://centerforassessment.github.io/sgpFlow")), "\n",
 			strrep("\u2501", 40), "\n",
-		    "\u2728 Happy sgpFlowing!")
+		    "\u2728 Happy sgpFlowing!", "\n")
 
         # Display the startup message
         packageStartupMessage(message_text)

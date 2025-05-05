@@ -20,7 +20,7 @@
 #' @importFrom data.table patterns rbindlist
 #' @importFrom collapse fmean
 #' @export
-#' 
+
 outputsgpFlow <-
     function(
         sgpFlow_results_list,

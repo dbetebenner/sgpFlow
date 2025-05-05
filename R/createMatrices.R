@@ -36,8 +36,8 @@
 #' @seealso 
 #'  \code{\link[SGP]{createSuperCohortData}}, \code{\link[SGP]{prepareSGP}}, \code{\link[SGP]{baselineSGP}}
 #' @rdname createMatrices
-#' @export 
 #' @importFrom SGP prepareSGP baselineSGP
+#' @export 
 
 createMatrices <-
     function(

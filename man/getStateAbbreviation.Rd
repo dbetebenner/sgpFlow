@@ -31,6 +31,8 @@ The matching is case-insensitive and can handle partial matches.
 This function is not exported and is intended for internal use within the SGP package.
 If a state's metadata is not found, the function will provide guidance on how to add
 the state's data to the SGPstateData object.
+
+This function is not exported and is intended for internal use only.
 }
 \examples{
 \dontrun{
@@ -38,3 +40,4 @@ getStateAbbreviation("Colorado") # Returns "CO"
 getStateAbbreviation("CO", type="FULL_NAME") # Returns "Colorado"
 }
 }
+\keyword{internal}

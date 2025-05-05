@@ -16,6 +16,8 @@
 #'  [sgpFlowStateData][sgpFlow::sgpFlowStateData]
 #' @rdname createScaleScorePermutations
 #' @importFrom data.table melt data.table set setcolorder rbindlist
+#' @note This function is not exported and is intended for internal use only.
+#' @keywords internal
 
 createScaleScorePermutations <-
     function(

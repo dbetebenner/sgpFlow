@@ -1,5 +1,7 @@
 #' @importFrom data.table data.table
 #' @importFrom stats rnorm
+#' @note This function is not exported and is intended for internal use only.
+#' @keywords internal
 
 perturbScoresWithCSEM <-
     function(

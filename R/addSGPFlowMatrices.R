@@ -1,3 +1,18 @@
+#' Add SGPFlow Matrices to SGPstateData
+#'
+#' This function adds SGPFlow matrices to the SGPstateData environment.
+#' It retrieves the appropriate matrices based on the state, year, and cohort type,
+#' and assigns them to the SGPstateData object.
+#'
+#' @param state The state abbreviation (e.g., "IN", "DEMO")
+#' @param year The year for which to add the matrices
+#' @param cohort_type The type of cohort (e.g., "EOC", "EOC_CSEM", "EOC_CSEM_CSEM")
+#' @param add.matrices.to.which.state The state to which to add the matrices
+#'
+#' @return The updated SGPstateData object with the added matrices
+#' @note This function is not exported and is intended for internal use only.
+#' @keywords internal
+
 addsgpFlowMatrices <-
     function(
         state,

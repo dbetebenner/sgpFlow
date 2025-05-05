@@ -1,5 +1,7 @@
 #' @importFrom data.table setnames
 #' @importFrom utils tail
+#' @note This function is not exported and is intended for internal use only.
+#' @keywords internal
 
 getSplineMatrices <-
     function(

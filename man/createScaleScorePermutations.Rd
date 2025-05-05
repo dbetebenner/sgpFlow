@@ -22,6 +22,9 @@ FUNCTION_DESCRIPTION
 \details{
 DETAILS
 }
+\note{
+This function is not exported and is intended for internal use only.
+}
 \examples{
 \dontrun{
 if(interactive()){
@@ -33,3 +36,4 @@ if(interactive()){
 [melt][data.table::melt], [data.table][data.table::data.table], [set][data.table::set], [setcolorder][data.table::setcolorder], [rbindlist][data.table::rbindlist]
  [sgpFlowStateData][sgpFlow::sgpFlowStateData]
 }
+\keyword{internal}

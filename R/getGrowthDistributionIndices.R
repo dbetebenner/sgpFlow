@@ -32,6 +32,7 @@
 #' @note This function is not exported and is intended for internal use only.
 #' 
 #' @importFrom dqrng dqsample.int
+#' @note This function is not exported and is intended for internal use only.
 #' @keywords internal
 
 getGrowthDistributionIndices <-

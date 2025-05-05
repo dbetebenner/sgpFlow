@@ -41,5 +41,7 @@ placeholder for "BETA" distribution (currently not implemented).
 }
 \note{
 This function is not exported and is intended for internal use only.
+
+This function is not exported and is intended for internal use only.
 }
 \keyword{internal}

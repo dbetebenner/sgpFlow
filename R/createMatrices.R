@@ -42,7 +42,7 @@
 createMatrices <-
     function(
         data_for_matrices, ### Either data.table or object of class SGP
-        state,
+        state = NULL,
         matrix.sgp.config,
         super_cohort.sgp.config,
         super_cohort_base_years,
@@ -52,10 +52,14 @@ createMatrices <-
         # Parameters
         sgpFlowMatrices.list <- list()
 
-        # Test arguments
+        # Test and update arguments
         if ("SGP" %in% class(data_for_matrices)) data_for_matrices <- data_for_matrices@Data
         if ("super-cohort" %in% matrix_types & missing(super_cohort.sgp.config)) stop("Super-cohort analysis requires super_cohort.sgp.config for data set construction.")
 
+        if (is.null(state)) {
+            tmp.name <- toupper(gsub("_", " ", deparse(substitute(data_for_matrices))))
+            state <- getStateAbbreviation(tmp.name, "sgpFlow")
+        }
 
         # Loop over matrix types
         for (matrix_type.iter in matrix_types) {
@@ -80,6 +84,7 @@ createMatrices <-
                 state = state,
                 sgp.baseline.config = matrix.sgp.config,
                 return.matrices.only = TRUE,
+                sgp.quantiles = seq.int(99)/100,
                 calculate.baseline.sgps = FALSE,
                 goodness.of.fit.print = FALSE,
                 parallel.config = parallel.config

@@ -75,7 +75,7 @@ getGrowthDistributionProjectionSequence <-
                 ))
             }
             return(growth.distribution.list)
-        }
+        } ### END check.growth.distribution.distribution
 
         check.growth.distribution.parameters <- function(parameters) {
             if (parameters[["Distribution"]] == "UNIFORM_RANDOM") {
@@ -95,7 +95,7 @@ getGrowthDistributionProjectionSequence <-
                 }
             }
             return(parameters)
-        }
+        } ### END check.growth.distribution.parameters
 
         check.growth.distribution.subgroups <- function(subgroups) {
             ### NULL subgroups[["Subgroups"]] implies ALL_STUDENTS
@@ -110,9 +110,9 @@ getGrowthDistributionProjectionSequence <-
         ## Validate growth.distribution argument
         growth.distribution <- toupper(ifelse(is.null(growth.distribution), "UNIFORM_RANDOM", gsub("[ -]", "", growth.distribution)))
         if (!is.list(growth.distribution) && !is.character(growth.distribution)) stop("Supplied growth.distribution must be either of class 'character' or 'list'.")
-
+        
         ## Validate length of growth.distribution
-        if (!length(growth.distribution) %in% c(1, years.projected)) {
+        if (!length(growth.distribution) %in% c(1L, years.projected)) {
             stop(sprintf(
                 "Length of supplied 'growth.distribution' must be either 1 or %d.",
                 years.projected

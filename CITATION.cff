@@ -7,7 +7,7 @@ authors:
 - family-names: "Van Iwaarden"
   given-names: "Adam"
 title: "sgpFlow: Functions for sgpFlow Analyses Utilizing Data Derived from Student Growth Percentile (SGP) Analyses."
-version: 0.0-0.989
+version: 0.0-0.991
 doi: 10.5281/zenodo.3634024
-date-released: 2025-5-5
+date-released: 2025-5-10
 url: "https://centerforassessment.github.io/sgpFlow"

@@ -40,7 +40,9 @@
 #'
 #' @importFrom collapse fscale
 #' @importFrom duckdb duckdb
-#' @importFrom parallel clusterExport detectCores makeCluster parLapply stopCluster
+#' @importFrom parallel clusterEvalQ clusterExport detectCores makeCluster parLapply stopCluster
+#' @importFrom future plan multisession
+#' @importFrom future.apply future_lapply
 #' @export
 
 sgpFlow <- 
@@ -87,36 +89,27 @@ sgpFlow <-
     # Initialize an empty list to store results
     sgpFlow_results_list <- list()
 
-    # Setup parallel backend
-    if (!is.null(parallel.config[["WORKERS"]])) {
-        tmp.cluster <- parallel::makeCluster(parallel.config[["WORKERS"]])
-        parallel::clusterExport(tmp.cluster, 
-            varlist=c("long_data", "state", "csem.perturbation.of.initial.scores", 
-                     "csem.perturbation.iterations", "iterate.without.csem.perturbation",
-                     "achievement.percentiles.tables", "achievement.percentiles.tables.names",
-                     "projection.splineMatrices"),
-            envir=environment())
-        on.exit(parallel::stopCluster(tmp.cluster))
-    }
-
     # Loop over cohort.data.type
     for (cohort.type.iter in cohort.data.type) {
         # Loop over sgpFlow.config 
         for (sgpFlow.config.iter in sgpFlow.config) {
             tmp_name <- paste(toupper(tail(sgpFlow.config.iter[["content_area.progression"]], 1)), paste("GRADE", paste(sgpFlow.config.iter[["grade.progression"]], collapse=""), sep="_"), sep="__")
 
-            # Create combinations for parallel processing
-            combinations <- expand.grid(
-                growth.distributions = sgpFlow.config.iter[["growth.distributions"]],
-                achievement.percentiles.tables.iter = seq_along(achievement.percentiles.tables),
-                stringsAsFactors = FALSE
-            )
-
             # Parallel processing of combinations
             if (!is.null(parallel.config[["WORKERS"]])) {
-                results <- parallel::parLapply(tmp.cluster, seq_len(nrow(combinations)), function(i) {
-                    growth.distributions.iter <- combinations$growth.distributions[i]
-                    achievement.percentiles.tables.iter <- combinations$achievement.percentiles.tables.iter[i]
+                # Setup parallel backend
+                future::plan(future::multisession, workers = parallel.config[["WORKERS"]])
+
+                # Create combinations for parallel processing
+                combinations <- expand.grid(
+                    growth.distributions = sgpFlow.config.iter[["growth.distributions"]],
+                    achievement.percentiles.tables.iter = seq_along(achievement.percentiles.tables),
+                    stringsAsFactors = FALSE
+                )
+
+                results <- future.apply::future_lapply(seq_len(nrow(combinations)), future.seed = TRUE, function(i) {
+                    growth.distributions.iter <- combinations[['growth.distributions']][i]
+                    achievement.percentiles.tables.iter <- combinations[['achievement.percentiles.tables.iter']][i]
                     
                     sgpFlowTrajectories(
                         long_data = long_data,
@@ -133,8 +126,8 @@ sgpFlow <-
                 
                 # Assign results back to the list structure
                 for (i in seq_len(nrow(combinations))) {
-                    growth.distributions.iter <- combinations$growth.distributions[i]
-                    achievement.percentiles.tables.iter <- combinations$achievement.percentiles.tables.iter[i]
+                    growth.distributions.iter <- as.character(combinations[['growth.distributions']][i])
+                    achievement.percentiles.tables.iter <- combinations[['achievement.percentiles.tables.iter']][i]
                     sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- results[[i]]
                 }
             } else {

@@ -7,12 +7,12 @@ bibentry(
                     person(given = c("Adam", "R."), family = "Van Iwaarden")
                    ),
     year         = "2025",
-    note         = "R package version 0.0-0.989",
+    note         = "R package version 0.0-0.991",
     url          = "https://centerforassessment.github.io/sgpFlow",
     textVersion  = paste(
                     "Damian W. Betebenner and Adam R. Van Iwaarden (2025).",
                     "{sgpFlow}: Functions to perform sgpFlow analyses utilizing data derived from SGP analyses.",
-                    "(R package version 0.0-0.989)",
+                    "(R package version 0.0-0.991)",
                     "URL: https://centerforassessment.github.io/sgpFlow"
                   )
 )

@@ -6,7 +6,7 @@
 \usage{
 createMatrices(
   data_for_matrices,
-  state,
+  state = NULL,
   matrix.sgp.config,
   super_cohort.sgp.config,
   super_cohort_base_years,
@@ -17,7 +17,7 @@ createMatrices(
 \arguments{
 \item{data_for_matrices}{Either a `data.table` or an object of class `SGP` containing the necessary data for matrix construction. If the input is an `SGP` object, the `Data` slot will be used.}
 
-\item{state}{A character string indicating the state for which matrices are being generated.}
+\item{state}{A character string indicating the state for which matrices are being generated. If not provided (default) the function will attempt to determine the state from the name of the supplied `data_for_matrices`.}
 
 \item{matrix.sgp.config}{A configuration list specifying the SGP baseline setup for generating coefficient matrices.}
 

@@ -7,6 +7,7 @@
 #' @param sgpFlow.config A configuration list for the sgpFlow analysis, containing details such as grade progression, year lags, and content area progression.
 #' @param superCohort.config A configuration list specific to super-cohort analysis. If \code{NULL}, super-cohort analysis is skipped.
 #' @param cohort.data.type A character vector specifying the type of cohort data to analyze. Options include \code{"SUPER_COHORT"}, \code{"COHORT"}, and \code{"ACHIEVEMENT_PERCENTILES"}. Default is \code{"COHORT"}.
+#' @param trajectory.type A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.
 #' @param csem.perturbation.of.initial.scores Logical. If \code{TRUE}, initial scores are perturbed using conditional standard error measurement (CSEM). Default is \code{TRUE}.
 #' @param csem.perturbation.iterations Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.
 #' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
@@ -52,6 +53,7 @@ sgpFlow <-
         sgpFlow.config,
         superCohort.config=NULL,
         cohort.data.type = "SINGLE_COHORT", #c("SUPER_COHORT", "SINGLE_COHORT"),
+        trajectory.type = c("EXACT_VALUE"), ## Later to include "NEAREST_INTEGER_VALUE" and "NEAREST_OBSERVED_VALUE"
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
         iterate.without.csem.perturbation = FALSE,
@@ -116,6 +118,7 @@ sgpFlow <-
                         state = state,
                         sgpFlow.config = sgpFlow.config.iter,
                         growth.distribution = growth.distributions.iter,
+                        trajectory.type = trajectory.type,
                         csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                         csem.perturbation.iterations = csem.perturbation.iterations,
                         iterate.without.csem.perturbation = iterate.without.csem.perturbation,
@@ -140,6 +143,7 @@ sgpFlow <-
                                 state = state,
                                 sgpFlow.config = sgpFlow.config.iter,
                                 growth.distribution = growth.distributions.iter,
+                                trajectory.type = trajectory.type,
                                 csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                                 csem.perturbation.iterations = csem.perturbation.iterations,
                                 iterate.without.csem.perturbation = iterate.without.csem.perturbation,

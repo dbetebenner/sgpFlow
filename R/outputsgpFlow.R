@@ -51,7 +51,7 @@ outputsgpFlow <-
                     # Extract content area and grade from config name
                     tmp.content_area.grade <- strsplit(sgpFlow.config.iter, "__")
                     content_area <- tmp.content_area.grade[[1]][1]
-                    grade <- gsub("GRADE_", "", tmp.content_area.grade[[1]][2], "")
+                    grade <- gsub("GRADE_", "", tmp.content_area.grade[[1]][2])
 
                     # Add metadata columns to each iteration's data
                     tmp.list[[paste(cohort.type.iter, sgpFlow.config.iter, growth.distributions.iter, achievement.percentiles.tables.iter, sep=".")]] <- 

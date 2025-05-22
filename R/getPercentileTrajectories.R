@@ -8,6 +8,7 @@
 #' @param sgpFlow.config A list of configuration parameters required for the SGP analysis, including grade progressions, content areas, and other metadata.
 #' @param projection.splineMatrices A list of projection spline matrices used for modeling growth percentiles over time.
 #' @param growth.distribution A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM_RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.
+#' @param trajectory.type A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
 #' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
@@ -39,12 +40,12 @@
 #'     growth.distribution = "UNIFORM_RANDOM",
 #'     csem.perturbation.iterations = 50
 #'   )
-#'   
+#'
 #'   # Access the first iteration results
 #'   print(trajectories[[1]])
 #' }
 #' }
-#' @seealso 
+#' @seealso
 #'  \code{\link[data.table]{copy}}, \code{\link[data.table]{setorder}}, \code{\link[data.table]{data.table}}, \code{\link[data.table]{rbindlist}}
 #'  \code{\link[sgpFlow]{sgpFlowStateData}}
 #'  \code{\link[stats]{runif}}
@@ -55,6 +56,7 @@
 #' @importFrom stats runif
 #' @importFrom collapse anyv fsubset collapv na_omit pivot qDT
 #' @importFrom splines bs
+#' @importFrom strider row_sums
 #' @importFrom utils head
 #' @export 
 
@@ -65,6 +67,7 @@ getPercentileTrajectories <-
         sgpFlow.config,
         projection.splineMatrices,
         growth.distribution = NULL,
+        trajectory.type = "EXACT_VALUE",
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
         iterate.without.csem.perturbation = FALSE,
@@ -73,15 +76,15 @@ getPercentileTrajectories <-
     ) {
 
         ## Check arguments
-        if (csem.perturbation.of.initial.scores & is.null(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["CSEM"]])) {
+        if (csem.perturbation.of.initial.scores && is.null(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["CSEM"]])) {
             stop(paste0(
                 "CSEM meta-data not included in sgpFlowStateData for state: ", state,
                 "\nContact package maintainers for CSEM meta-data incorporation into sgpFlow package."
             ))
         }
         if (csem.perturbation.iterations==0) csem.perturbation.of.initial.scores <- FALSE
-        if (csem.perturbation.of.initial.scores & iterate.without.csem.perturbation) stop("Conflicting arguments: Both csem.perturbation.of.initial.scores and iterate.without.csem.perturbation set to TRUE.\nAt least one of the arguments must be set to FALSE.")
-        if (!csem.perturbation.of.initial.scores & !iterate.without.csem.perturbation) csem.perturbation.iterations <- 0L
+        if (csem.perturbation.of.initial.scores && iterate.without.csem.perturbation) stop("Conflicting arguments: Both csem.perturbation.of.initial.scores and iterate.without.csem.perturbation set to TRUE.\nAt least one of the arguments must be set to FALSE.")
+        if (!csem.perturbation.of.initial.scores && !iterate.without.csem.perturbation) csem.perturbation.iterations <- 0L
 
         ## Parameters
         sgpFlow.trajectories.list <- list()
@@ -89,24 +92,11 @@ getPercentileTrajectories <-
         if (csem.perturbation.of.initial.scores | iterate.without.csem.perturbation) wide_data_original <- data.table::copy(wide_data)
 
         ## Utility functions
-        bound.iso.subset.scores <- function(projected.scores, loss.hoss, subset.indices) {
-            ## Pull in outlier to loss/hoss
-            projected.scores[
-                TEMP_1 < loss.hoss[1L], TEMP_1 := loss.hoss[1L]
-            ][TEMP_1 > loss.hoss[2L], TEMP_1 := loss.hoss[2L]]
-
-            ## isotonize projections
-            data.table::setorder(projected.scores, ID, TEMP_1)
-            tmp.increment <- (seq.int(length(subset.indices)) - 1L) * 100L
-            subset.indices <- c(rbind(subset.indices + tmp.increment, 1L + subset.indices + tmp.increment))
-            return(
-                collapse::fsubset(projected.scores, subset.indices) |>
-                    collapse::collapv(by = "ID", keep.by = FALSE) |> # FUN = fmean by default
-                    unlist(use.names = FALSE)
-            )
+        bound.scores <- function(projected.scores, loss.hoss) {
+            pmin(pmax(projected.scores, loss.hoss[1L]), loss.hoss[2L])
         }
 
-        get.percentile.trajectories.INTERNAL <- function(wide_data, growth.distribution.projection.sequence) {
+        get.percentile.trajectories.INTERNAL <- function(wide_data, growth.distribution.projection.sequence, trajectory.type) {
             sgpFlow.trajectories.list.INTERNAL <- vector("list", length(projection.splineMatrices))
             completed_ids <- data.table::data.table(ID = wide_data[["ID"]], COMPLETED = NA, key = "ID")
 
@@ -122,9 +112,9 @@ getPercentileTrajectories <-
                         loss.hoss <- get.loss.hoss(state, tail(qreg_coef_matrix@Content_Areas[[1]], 1L), tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))
                         subset.indices <- getGrowthDistributionIndices(sgpFlow.trajectories.list.INTERNAL[[i]], growth.distribution.projection.sequence[[j]])
 
-                        #  Create model (design) matrix
+                        #  Create model data matrix based upon b-splined scores
                         #  Use function as a "promise" to evaluate directly rather than create intermediate objects
-                        getModelMatrix <- function() {
+                        getModelDataMatrix <- function() {
                             Reduce(
                                 f = cbind, init = 1L,
                                 x = lapply(seq_along(qreg_coef_matrix@Time_Lags[[1L]]), function(model.iter) {
@@ -137,18 +127,30 @@ getPercentileTrajectories <-
                             )
                         }
 
-                        projected.scores <-
-                            collapse::pivot(
-                                data =
-                                    collapse::qDT(getModelMatrix() %*% qreg_coef_matrix@.Data)[, ID := sgpFlow.trajectories.list.INTERNAL[[i]][["ID"]]],
-                                ids = "ID",
-                                names = list("variable", "TEMP_1")
-                            )[, variable := NULL]
+                        # Create optimized model matrix based upon subset.indices
+                        #  Use function as a "promise" to evaluate directly rather than create intermediate objects
+                        getModelMatrix <- function(subset.indices) {
+                            t(qreg_coef_matrix@.Data[, subset.indices, drop = FALSE]) 
+                        }
 
-                        sgpFlow.trajectories.list.INTERNAL[[i]][,
-                            eval(paste0("SCALE_SCORE_GRADE_", tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))) :=
-                                bound.iso.subset.scores(projected.scores, loss.hoss, subset.indices)
-                        ]
+                        # Add projections to trajectories list based upon trajectory.type
+                        if (trajectory.type == "EXACT_VALUE") {
+                            sgpFlow.trajectories.list.INTERNAL[[i]][,
+                                eval(paste0("SCALE_SCORE_GRADE_", tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))) :=
+                                    bound.scores(strider::row_sums(getModelDataMatrix() * getModelMatrix(subset.indices)), loss.hoss)
+                            ]
+                        }
+
+                        if (trajectory.type == "NEAREST_INTEGER_VALUE") {
+                            sgpFlow.trajectories.list.INTERNAL[[i]][,
+                                eval(paste0("SCALE_SCORE_GRADE_", tail(qreg_coef_matrix@Grade_Progression[[1L]], 1L))) :=
+                                    bound.scores(round(strider::row_sums(getModelDataMatrix() * getModelMatrix(subset.indices))), loss.hoss)
+                            ]
+                        }
+
+                        if (trajectory.type == "NEAREST_OBSERVED_VALUE") {
+                            ### TODO: Implement nearest observed value
+                        }
                     } ## END j loop
                 } ## END if (collapse::anyv(completed_ids[["COMPLETED"]], NA))
             } ## END i loop
@@ -185,7 +187,7 @@ getPercentileTrajectories <-
             ## Get percentile trajectories
             sgpFlow.trajectories.list[[paste("ITERATION", csem.iter, sep="_")]] <- 
                 wide_data[,setdiff(names(wide_data), scale.score.variables.for.projections), with=FALSE][
-                    get.percentile.trajectories.INTERNAL(wide_data, growth.distribution.projection.sequence), on="ID"
+                    get.percentile.trajectories.INTERNAL(wide_data, growth.distribution.projection.sequence, trajectory.type), on="ID"
                 ]
         } ## END csem.iter loop
 

@@ -10,6 +10,7 @@ sgpFlowTrajectories(
   sgpFlow.config,
   cohort.end.year = NULL,
   growth.distribution = NULL,
+  trajectory.type = "EXACT_VALUE",
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
   iterate.without.csem.perturbation = FALSE,
@@ -27,6 +28,8 @@ sgpFlowTrajectories(
 \item{cohort.end.year}{Integer or `NULL`. The end year of the cohort for which percentile trajectories are generated. If `NULL`, the latest year in the data is used. Default: `NULL`.}
 
 \item{growth.distribution}{A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM_RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.}
+
+\item{trajectory.type}{A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.}
 
 \item{csem.perturbation.of.initial.scores}{Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.}
 

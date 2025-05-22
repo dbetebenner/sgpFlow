@@ -10,6 +10,7 @@ sgpFlow(
   sgpFlow.config,
   superCohort.config = NULL,
   cohort.data.type = "SINGLE_COHORT",
+  trajectory.type = c("EXACT_VALUE"),
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
   iterate.without.csem.perturbation = FALSE,
@@ -30,6 +31,8 @@ sgpFlow(
 \item{superCohort.config}{A configuration list specific to super-cohort analysis. If \code{NULL}, super-cohort analysis is skipped.}
 
 \item{cohort.data.type}{A character vector specifying the type of cohort data to analyze. Options include \code{"SUPER_COHORT"}, \code{"COHORT"}, and \code{"ACHIEVEMENT_PERCENTILES"}. Default is \code{"COHORT"}.}
+
+\item{trajectory.type}{A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.}
 
 \item{csem.perturbation.of.initial.scores}{Logical. If \code{TRUE}, initial scores are perturbed using conditional standard error measurement (CSEM). Default is \code{TRUE}.}
 

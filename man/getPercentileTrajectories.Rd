@@ -10,6 +10,7 @@ getPercentileTrajectories(
   sgpFlow.config,
   projection.splineMatrices,
   growth.distribution = NULL,
+  trajectory.type = "EXACT_VALUE",
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
   iterate.without.csem.perturbation = FALSE,
@@ -27,6 +28,8 @@ getPercentileTrajectories(
 \item{projection.splineMatrices}{A list of projection spline matrices used for modeling growth percentiles over time.}
 
 \item{growth.distribution}{A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM_RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.}
+
+\item{trajectory.type}{A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.}
 
 \item{csem.perturbation.of.initial.scores}{Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.}
 

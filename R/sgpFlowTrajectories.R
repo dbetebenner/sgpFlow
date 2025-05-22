@@ -8,6 +8,7 @@
 #' @param sgpFlow.config A list of configurations for SGP analysis, including grade progressions, content areas, and metadata.
 #' @param cohort.end.year Integer or `NULL`. The end year of the cohort for which percentile trajectories are generated. If `NULL`, the latest year in the data is used. Default: `NULL`.
 #' @param growth.distribution A character vector specifying the growth distribution for projecting scores. Options include `"UNIFORM_RANDOM"`, `"BETA"`, or percentile values (`"1"` through `"99"`). Default: `NULL`.
+#' @param trajectory.type A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
 #' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
@@ -52,6 +53,7 @@ sgpFlowTrajectories <-
         sgpFlow.config,
         cohort.end.year = NULL,
         growth.distribution = NULL,
+        trajectory.type = "EXACT_VALUE",
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
         iterate.without.csem.perturbation = FALSE,
@@ -72,6 +74,7 @@ sgpFlowTrajectories <-
                 state = state,
                 sgpFlow.config = sgpFlow.config,
                 growth.distribution = growth.distribution,
+                trajectory.type = trajectory.type,
                 csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                 csem.perturbation.iterations = csem.perturbation.iterations,
                 iterate.without.csem.perturbation = iterate.without.csem.perturbation,

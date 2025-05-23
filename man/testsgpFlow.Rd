@@ -9,7 +9,7 @@ testsgpFlow(test.number, save.results, test.option)
 \arguments{
 \item{test.number}{Test number}
 
-\item{save.results}{Save results}
+\item{save.results}{Save results to disk from tests}
 
 \item{test.option}{Test option}
 }

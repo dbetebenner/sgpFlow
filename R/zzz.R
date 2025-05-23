@@ -15,11 +15,16 @@ utils::globalVariables(c(
 ))
 
 .onLoad <- function(libname, pkgname) {
-    function(libname, pkgname) {
-        available_threads <- data.table::getDTthreads()
-        data.table::setDTthreads(available_threads)
-        utils::globalVariables(c("."))
-    }
+    # Load dependencies without startup messages but don't attach them
+    suppressPackageStartupMessages({
+        requireNamespace("sgpFlowData", quietly = TRUE)
+        requireNamespace("sgpFlowMatrices", quietly = TRUE)
+    })
+    
+    # Original code
+    available_threads <- data.table::getDTthreads()
+    data.table::setDTthreads(available_threads)
+    utils::globalVariables(c("."))
 }
 
 `.onAttach` <- function(libname, pkgname) {

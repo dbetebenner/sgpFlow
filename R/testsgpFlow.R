@@ -1,7 +1,7 @@
 #' @title Test sgpFlow
 #' @description Test of omnibus sgpFlow package functionalities. 
 #' @param test.number Test number
-#' @param save.results Save results
+#' @param save.results Save results to disk from tests
 #' @param test.option Test option
 #' @importFrom parallel detectCores
 #' @importFrom utils recover
@@ -42,4 +42,4 @@ testsgpFlow <-
 
 
 
-} ### END testsgpFlow function
+} ### END testsgpFlow

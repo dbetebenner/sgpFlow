@@ -30,11 +30,8 @@ The `sgpFlowStateData` object is preloaded into the package and is automatically
 }
 \examples{
 \dontrun{
-# Access state-specific CSEM values
-print(sgpFlowStateData[["NY"]][["Achievement"]])
-
-# Access projection matrices
-print(sgpFlowStateData[["NY"]][["ProjectionMatrices"]])
+# Access state-specific cutscores
+print(sgpFlowStateData[["DEMO"]][["Achievement"]])
 }
 }
 \seealso{

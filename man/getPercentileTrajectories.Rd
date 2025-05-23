@@ -74,7 +74,7 @@ if(interactive()){
     growth.distribution = "UNIFORM_RANDOM",
     csem.perturbation.iterations = 50
   )
-  
+
   # Access the first iteration results
   print(trajectories[[1]])
 }

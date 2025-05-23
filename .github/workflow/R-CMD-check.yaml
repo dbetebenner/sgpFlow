@@ -68,6 +68,7 @@ jobs:
         run: |
           Rscript -e 'remotes::install_github("CenterForAssessment/SGP", dependencies = TRUE)'
           Rscript -e 'remotes::install_github("CenterForAssessment/sgpFlowMatrices", dependencies = TRUE)'
+          Rscript -e 'remotes::install_github("CenterForAssessment/sgpFlowData", dependencies = TRUE)'
         shell: bash
 
       - uses: r-lib/actions/check-r-package@v2

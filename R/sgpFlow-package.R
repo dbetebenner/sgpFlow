@@ -11,8 +11,8 @@
 #' \tabular{ll}{
 #'   Package: \tab sgpFlow \cr
 #'   Type: \tab Package \cr
-#'   Version: \tab 0.0-0.994 \cr
-#'   Date: \tab 2025-5-22 \cr
+#'   Version: \tab 0.0-0.995 \cr
+#'   Date: \tab 2025-5-23 \cr
 #'   License: \tab MIT \cr
 #'   LazyLoad: \tab yes \cr
 #' }
@@ -49,6 +49,8 @@
 #' @name sgpFlow-package
 #' @keywords package
 #' @docType package
+#' @import sgpFlowMatrices
+#' @import sgpFlowData
 "_PACKAGE"
 
 ## usethis namespace: start
@@ -76,11 +78,8 @@ NULL
 #' 
 #' @examples 
 #' \dontrun{
-#' # Access state-specific CSEM values
-#' print(sgpFlowStateData[["NY"]][["Achievement"]])
-#' 
-#' # Access projection matrices
-#' print(sgpFlowStateData[["NY"]][["ProjectionMatrices"]])
+#' # Access state-specific cutscores
+#' print(sgpFlowStateData[["DEMO"]][["Achievement"]])
 #' }
 #' @seealso 
 #'  \code{\link[sgpFlow]{sgpFlowTrajectories}}, 

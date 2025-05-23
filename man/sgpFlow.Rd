@@ -59,20 +59,19 @@ The `sgpFlow` function facilitates the analysis of sgpFlow trajectories using va
 \details{
 The `sgpFlow` function loops over specified \code{cohort.data.type} values, performing SGP trajectory analysis for each type. It supports super-cohort analysis when a valid \code{superCohort.config} is provided. If \code{csem.perturbation.of.initial.scores} is enabled, the function applies random perturbations to initial scores to account for measurement error, with the number of iterations controlled by \code{csem.perturbation.iterations}.
 
-The function requires valid projection spline matrices, provided through \code{projection.splineMatrices}, to perform growth trajectory calculations.
+The function requires valid projection spline matrices (usually embedded in the sgpFlowMatrices package), provided through \code{projection.splineMatrices}, to perform growth trajectory calculations.
 }
 \examples{
 \dontrun{
 # Example usage with an SGP object
-results <- sgpFlow(
-  sgp_object = sgp_object,
-  state = "DEMO",
+Demonstration_sgpFlow <- sgpFlow(
+  sgp_object = sgpFlowData::sgpFlowData_LONG,
   sgpFlow.config = sgpFlow.config,
   superCohort.config = superCohort.config,
   cohort.data.type = c("COHORT", "SUPER_COHORT"),
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
-  projection.splineMatrices = projection.splineMatrices
+  projection.splineMatrices = sgpFlowMatrices::sgpFlowMatrices[["DEMO_sgpFlowMatrices"]][["2024_2025"]][["SUPER_COHORT"]]
 )
 }
 

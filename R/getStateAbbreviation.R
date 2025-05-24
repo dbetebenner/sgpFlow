@@ -100,6 +100,7 @@ DC, Washington DC
 DD, Department of Defense
 DEMO, Demonstration
 DEMO, SGPDATA LONG
+DEMO, SGPFLOWDATA LONG
 DEMO_COVID, Demonstration COVID
 DEMO_COVID, SGPDATA LONG COVID
 DEMO_EOCT, Demonstration

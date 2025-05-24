@@ -2,10 +2,7 @@
 ### Utility functions for sgpFlow package
 ###############################################################################
 
-##  Use backticks for util function names (e.g., `myUtil`) so not recognized by sinew package for export
-
 ### capWords
-
 #' @title Convert All Caps to Mixed Case
 #' @description Converts a character string from all uppercase to mixed case, intelligently handling capitalization and preserving specific words or acronyms in uppercase.
 #' 
@@ -46,7 +43,6 @@
 #'  \code{\link[base]{toupper}}, \code{\link[base]{tolower}}
 #' @rdname capWords
 #' @export capWords
-
 capWords <-
     function(
         x,
@@ -194,3 +190,64 @@ sgpBeta <-
 betaCopula <- function(number, quantile, multiplier) {
     return(quantile + (1 - quantile) * rbeta(number, multiplier*quantile, multiplier*(1-quantile)))
 }
+
+### convertTime
+#' @title Convert Time Duration to Human-Readable String
+#' @description Converts a time duration in the format "HH:MM:SS" to a human-readable string indicating days, hours, minutes, and seconds.
+#' 
+#' This function takes a time duration in the format "HH:MM:SS" and converts it to a human-readable string that indicates the number of days, hours, minutes, and seconds. It is particularly useful for displaying time durations in a more understandable format.
+#' 
+#' @param tmp.time A character string in the format "HH:MM:SS" representing a time duration.
+convertTime <-
+    function(tmp.time) {
+        tmp <- tail(c(0, 0, 0, as.numeric(unlist(strsplit(tmp.time, ":")))), 4)
+        tmp.label <- c("Day", "Hour", "Minute", "Second")
+        tmp.label[which(tmp!=1)] <- paste0(tmp.label, "s")[which(tmp!=1)]
+        return(paste(paste(tmp[tmp!=0], tmp.label[tmp!=0]), collapse=", "))
+    } ### END convertTime
+
+### timetakensgpFlow
+#' @title Calculate Time Taken for sgpFlow Function
+#' @description Calculates the time taken for an sgpFlow function to execute.
+#' 
+#' This function takes the starting time of an sgpFlow function and calculates the time taken for the function to execute. It is particularly useful for timing the execution of sgpFlow functions.
+#' 
+#' @param started.at The starting time of the sgpFlow function.
+#' @return A character string in the format "HH:MM:SS" indicating the time taken for the function to execute.
+timetakensgpFlow <-
+    function(started.at) {
+        format = function(secs) {
+            secs.integer = as.integer(secs)
+            sprintf("%02d:%02d:%02d:%.3f", secs.integer%/%86400L, (secs.integer%/%3600L)%%24L, (secs.integer%/%60L)%%60L, secs%%60L)
+        }
+        tt = proc.time() - started.at
+        format(tt[3L])
+    } ### END timetakensgpFlow
+
+### messagesgpFlow
+#' @title Print Messages to console and log file
+#' @description Prints messages to console and a log file.
+#' 
+#' @param tmp.message The message to print.
+messagesgpFlow <-
+    function(tmp.message,
+	    domain=NULL,
+	    appendLF=TRUE) {
+
+	    PrintLogMessage <- function(tmp.message, domain=NULL) {
+		    # print log message to file
+		    dir.create("Logs", showWarnings = FALSE)
+		    logfile <- paste0("Logs/sgpFlow-", utils::packageDescription("sgpFlow")[['Version']], "_", Sys.Date(), ".txt")
+
+		    if (is.call(tmp.message)) {
+			    tmp.message2 <- c(paste0("\n\n\t", as.character(tmp.message)[1L], "(\n\t\t"), paste(names(tmp.message)[-1L], as.character(tmp.message)[-1L], sep=" = ", collapse="\n\t\t"), ")\n\n")
+			    cat(tmp.message2, file = logfile, append=appendLF)
+		    } else cat(tmp.message, "\n", file=logfile, sep="", append=appendLF)
+	    }
+
+	    if (!is.call(tmp.message)) {
+		    base::message(tmp.message)
+	    }
+	    PrintLogMessage(tmp.message)
+	    invisible()
+    } ### END messagesgpFlow

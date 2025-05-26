@@ -1,5 +1,5 @@
 #' @title Test sgpFlow
-#' @description Test of omnibus sgpFlow package functionalities. 
+#' @description Test of omnibus sgpFlow package functionalities.
 #' @param test.number Test number
 #' @param save.results Save results to disk from tests (default=TRUE)
 #' @param test.option Test option
@@ -24,32 +24,8 @@ testsgpFlow <-
             if (.Platform$OS.type == "unix") number.cores <- detectCores() else number.cores <- NULL
             tmp.messages <- "##### Begin testsgpFlow test number 1 #####\n\n"
 
-            ### Define configurations
-            MATHEMATICS_2024_2025.config <- list(
-                MATHEMATICS.2024 = list(
-                    sgp.content.areas = c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS"),
-                    sgp.panel.years = c("2022_2023", "2023_2024", "2024_2025"),
-                    sgp.grade.sequences = list(
-                        c("3", "4"), c("3", "4", "5"),
-                        c("4", "5", "6"), c("5", "6", "7"), c("6", "7", "8"),
-                        c("7", "8", "9"), c("8", "9", "10")
-                    )
-                )
-            )
-
-            READING_2024_2025.config <- list(
-                READING.2024 = list(
-                    sgp.content.areas = c("READING", "READING", "READING"),
-                    sgp.panel.years = c("2022_2023", "2023_2024", "2024_2025"),
-                    sgp.grade.sequences = list(
-                        c("3", "4"), c("3", "4", "5"),
-                        c("4", "5", "6"), c("5", "6", "7"), c("6", "7", "8"),
-                        c("7", "8", "9"), c("8", "9", "10")
-                    )
-                )
-            )
-
-            DEMO_sgpFlow.config <- c(MATHEMATICS_2024_2025.config, READING_2024_2025.config)
+            ### Get test configurations
+            DEMO_sgpFlow.config <- sgpFlowTestConfigs()
 
             ### Use super-cohort matrices
             projection.splineMatrices <- sgpFlowMatrices::sgpFlowMatrices[['DEMO_sgpFlowMatrices']][['2024_2025']][['SUPER_COHORT']]

@@ -1,6 +1,9 @@
-#' sgpFlow: Create sgpFlow trajectories
+#' @title sgpFlow: Create sgpFlow trajectories
 #'
-#' The `sgpFlow` function facilitates the analysis of sgpFlow trajectories using various cohort data types, such as traditional cohorts, super-cohorts, or achievement percentiles. It offers the flexibility to handle conditional standard error measurement (CSEM) perturbation, growth projection matrices, and other configurations.
+#' @description
+#' The `sgpFlow` function facilitates the analysis of sgpFlow trajectories using various cohort data types,
+#' such as traditional cohorts, super-cohorts, or achievement percentiles. It offers the flexibility to handle
+#' conditional standard error measurement (CSEM) perturbation, growth projection matrices, and other configurations.
 #'
 #' @param sgp_object An object of class \code{"SGP"} or \code{"data.table"}. If of class \code{"SGP"}, the `@Data` slot is used; otherwise, the supplied \code{data.table} is used directly.
 #' @param state A character string indicating the state for which the analysis is conducted. This must match a state entry in \code{sgpFlowStateData}.
@@ -10,7 +13,6 @@
 #' @param trajectory.type A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.
 #' @param csem.perturbation.of.initial.scores Logical. If \code{TRUE}, initial scores are perturbed using conditional standard error measurement (CSEM). Default is \code{TRUE}.
 #' @param csem.perturbation.iterations Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.
-#' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
 #' @param achievement.percentiles.tables Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows) 
 #' @param export.duckdb Logical. If `TRUE`, exports the aggregated results to a DuckDB database.
 #' @param export.Rdata Logical. If `TRUE`, exports the sgpFlow results to an Rdata file.
@@ -43,6 +45,7 @@
 #' @importFrom parallel clusterEvalQ clusterExport detectCores makeCluster parLapply stopCluster
 #' @importFrom future plan multisession
 #' @importFrom future.apply future_lapply
+#' @rdname sgpFlow
 #' @export
 
 sgpFlow <- 
@@ -52,10 +55,9 @@ sgpFlow <-
         sgpFlow.config,
         superCohort.config=NULL,
         cohort.data.type = "SINGLE_COHORT", #c("SUPER_COHORT", "SINGLE_COHORT"),
-        trajectory.type = c("EXACT_VALUE"), ## Later to include "NEAREST_INTEGER_VALUE" and "NEAREST_OBSERVED_VALUE"
+        trajectory.type = c("EXACT_VALUE", "NEAREST_INTEGER_VALUE"), ## Later to include "NEAREST_OBSERVED_VALUE"
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
-        iterate.without.csem.perturbation = FALSE,
         achievement.percentiles.tables = TRUE,
         export.duckdb = TRUE,
         export.Rdata = TRUE,
@@ -120,7 +122,6 @@ sgpFlow <-
                         trajectory.type = trajectory.type,
                         csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                         csem.perturbation.iterations = csem.perturbation.iterations,
-                        iterate.without.csem.perturbation = iterate.without.csem.perturbation,
                         achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
                         projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[["content_area.progression"]], 1), "BASELINE", sep=".")]]
                     )
@@ -145,7 +146,6 @@ sgpFlow <-
                                 trajectory.type = trajectory.type,
                                 csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                                 csem.perturbation.iterations = csem.perturbation.iterations,
-                                iterate.without.csem.perturbation = iterate.without.csem.perturbation,
                                 achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
                                 projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[["content_area.progression"]], 1), "BASELINE", sep=".")]]
                             )

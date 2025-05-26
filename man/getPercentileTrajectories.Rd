@@ -13,7 +13,6 @@ getPercentileTrajectories(
   trajectory.type = "EXACT_VALUE",
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
-  iterate.without.csem.perturbation = FALSE,
   achievement.percentiles.tables = FALSE,
   csem.distribution = "Normal"
 )
@@ -34,8 +33,6 @@ getPercentileTrajectories(
 \item{csem.perturbation.of.initial.scores}{Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.}
 
 \item{csem.perturbation.iterations}{Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.}
-
-\item{iterate.without.csem.perturbation}{Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.}
 
 \item{achievement.percentiles.tables}{Logical. If `TRUE`, creates growth trajectory tables based upon achievement percentiles tables intstead of all  `wide_data` supplied. Default: `FALSE`.}
 
@@ -84,6 +81,6 @@ if(interactive()){
 \code{\link[data.table]{copy}}, \code{\link[data.table]{setorder}}, \code{\link[data.table]{data.table}}, \code{\link[data.table]{rbindlist}}
  \code{\link[sgpFlow]{sgpFlowStateData}}
  \code{\link[stats]{runif}}
- \code{\link[collapse]{anyv}}, \code{\link[collapse]{fsubset}}, \code{\link[collapse]{collapv}}, \code{\link[collapse]{na_omit}}, \code{\link[collapse]{pivot}}, \code{\link[collapse]{qDT}}
+ \code{\link[collapse]{fnrow}}, \code{\link[collapse]{na_omit}}, \code{\link[collapse]{qM}}, \code{\link[collapse]{whichNA}}
  \code{\link[splines]{bs}}
 }

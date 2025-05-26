@@ -2,9 +2,7 @@
 % Please edit documentation in R/getAchievementPercentiles.R
 \name{getAchievementPercentiles}
 \alias{getAchievementPercentiles}
-\title{Get Achievement Percentiles 
-This function processes wide-format data to calculate various percentile scores
-(e.g., univariate and multivariate percentiles) based on scale score variables.}
+\title{Get Achievement Percentiles}
 \usage{
 getAchievementPercentiles(
   wide_data,
@@ -28,11 +26,7 @@ A data.table containing the original data along with additional columns for scal
 If `achievement.percentiles.tables` is TRUE, returns percentile tables.
 }
 \description{
-Get Achievement Percentiles 
 This function processes wide-format data to calculate various percentile scores
 (e.g., univariate and multivariate percentiles) based on scale score variables.
-}
-\note{
-This function is not exported and is intended for internal use only.
 }
 \keyword{internal}

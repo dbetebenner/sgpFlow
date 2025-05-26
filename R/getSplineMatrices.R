@@ -1,6 +1,24 @@
+#' @title Get Spline Matrices
+#' 
+#' @description
+#' This function is used to get the spline matrices associated with the grade progression and progression sequence provided by the supplied arguments to the function.
+#'
+#' @param my.matrices A list of spline matrices.
+#' @param my.matrix.content_area.progression A character vector of content areas for progression.
+#' @param my.matrix.grade.progression A character vector of grades for progression.
+#' @param my.matrix.time.progression A character vector of years for progression.
+#' @param my.matrix.time.progression.lags A numeric vector of year lags for progression.
+#' @param my.exact.grade.progression.sequence A logical value indicating whether to use the exact grade progression sequence.
+#' @param return.highest.order.matrix A logical value indicating whether to return the highest order matrix.
+#' @param return.multiple.matrices A logical value indicating whether to return multiple matrices.
+#' @param my.matrix.order A numeric value indicating the order of the matrix to return.
+#' @param my.matrix.highest.order A numeric value indicating the highest order of the matrix to return.
+#' @param my.matrix.time.dependency A character vector of time dependencies for the matrix.
+#' @param what.to.return A character value indicating what to return.
+#'
 #' @importFrom data.table setnames
 #' @importFrom utils tail
-#' @note This function is not exported and is intended for internal use only.
+#' @rdname getSplineMatrices
 #' @keywords internal
 
 getSplineMatrices <-

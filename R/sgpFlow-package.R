@@ -1,18 +1,18 @@
 #' @title sgpFlow: Tools for Generating sgpFlow Trajectories 
 #' @description 
 #' The `sgpFlow` package provides tools for generating sgpFlow trajectories based on longitudinal student data. 
-#' It includes utilities for computing growth percentile trajectories, handling cohort-specific analyses, perturbing scores based on 
+#' It includes utilities for computing growth percentile trajectories, handling cohort-specific analyses, perturbing scores based on
 #' Conditional Standard Error of Measurement (CSEM), and managing state-specific configurations.
 #' 
-#' The package is designed for scalability and efficiency when working with large datasets, integrating features such as projection spline matrices, 
+#' The package is designed for scalability and efficiency when working with large datasets, integrating features such as projection spline matrices,
 #' growth distribution customization, and flexible trajectory simulation.
 #' 
 #' @details
 #' \tabular{ll}{
 #'   Package: \tab sgpFlow \cr
 #'   Type: \tab Package \cr
-#'   Version: \tab 0.0-0.995 \cr
-#'   Date: \tab 2025-5-23 \cr
+#'   Version: \tab 0.0-0.9973 \cr
+#'   Date: \tab 2025-5-26 \cr
 #'   License: \tab MIT \cr
 #'   LazyLoad: \tab yes \cr
 #' }

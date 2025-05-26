@@ -1,6 +1,6 @@
-#' Generate Grade Projection Sequence Matrices
+#' @title Generate Grade Projection Sequence Matrices
 #'
-#' @description
+#' @description 
 #' Creates a sequence of matrices for grade projections based on configuration settings.
 #' This is an internal function used to generate the necessary matrices for SGP projections.
 #'
@@ -19,7 +19,7 @@
 #' @return A list of matrices, with highest orders first, where each element represents
 #'   a combination of grade progression and projection sequence.
 #'
-#' @note This function is not exported and is intended for internal use only.
+#' @rdname getGradeProjectionSequenceMatrices
 #' @keywords internal
 
 getGradeProjectionSequenceMatrices <-

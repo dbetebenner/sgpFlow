@@ -1,7 +1,9 @@
 #' @title Extract SGP Lookup Tables
-#' @description Extracts percentile and projection lookup tables from an SGP object for use in Student Growth Percentile (SGP) analyses.
+#' 
+#' @description
+#' Extracts percentile and projection lookup tables from an SGP object for use in Student Growth Percentile (SGP) analyses.
 #'
-#' This function processes an SGP object to generate two key lookup tables: 
+#' This function processes an SGP object to generate two key lookup tables:
 #' - `sgpPercentileLookupTable`: A table containing baseline percentiles and associated scale scores.
 #' - `sgpProjectionLookupTable`: A table with projected percentile trajectories and their corresponding scale scores.
 #' These tables can be used for further analysis, reporting, or visualization of SGP data.
@@ -32,8 +34,8 @@
 #' @seealso
 #'  \code{\link[data.table]{tstrsplit}}, \code{\link[data.table]{setcolorder}}, \code{\link[data.table]{melt.data.table}}, \code{\link[data.table]{setattr}}, \code{\link[data.table]{setnames}}, \code{\link[data.table]{setkey}}
 #' @rdname extractLookupTables
-#' @export
 #' @importFrom data.table tstrsplit setcolorder melt.data.table setattr setnames setkey
+#' @export
 
 extractLookupTables <-
     function(

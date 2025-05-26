@@ -17,7 +17,7 @@ A list containing two `data.table` objects:
 \description{
 Extracts percentile and projection lookup tables from an SGP object for use in Student Growth Percentile (SGP) analyses.
 
-This function processes an SGP object to generate two key lookup tables: 
+This function processes an SGP object to generate two key lookup tables:
 - `sgpPercentileLookupTable`: A table containing baseline percentiles and associated scale scores.
 - `sgpProjectionLookupTable`: A table with projected percentile trajectories and their corresponding scale scores.
 These tables can be used for further analysis, reporting, or visualization of SGP data.

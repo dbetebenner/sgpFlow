@@ -28,7 +28,4 @@ A list of matrices, with highest orders first, where each element represents
 Creates a sequence of matrices for grade projections based on configuration settings.
 This is an internal function used to generate the necessary matrices for SGP projections.
 }
-\note{
-This function is not exported and is intended for internal use only.
-}
 \keyword{internal}

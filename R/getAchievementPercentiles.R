@@ -1,4 +1,6 @@
-#' Get Achievement Percentiles 
+#' @title Get Achievement Percentiles 
+#' 
+#' @description 
 #' This function processes wide-format data to calculate various percentile scores
 #' (e.g., univariate and multivariate percentiles) based on scale score variables.
 #'
@@ -17,7 +19,7 @@
 #' @importFrom copula normalCopula fitCopula pCopula
 #' @importFrom data.table as.data.table
 #' @importFrom stats uniroot
-#' @note This function is not exported and is intended for internal use only.
+#' @rdname getAchievementPercentiles
 #' @keywords internal
 
 getAchievementPercentiles <-

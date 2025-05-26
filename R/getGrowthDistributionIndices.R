@@ -1,5 +1,6 @@
-#' Generate Growth Distribution Indices
+#' @title Generate Growth Distribution Trajectory Indices
 #'
+#' @description
 #' This internal function calculates indices based on the specified growth distribution. 
 #' It supports "UNIFORM_RANDOM" for generating random indices within a range, numeric 
 #' growth distributions (e.g., "1" to "99") for fixed percentiles, and includes a 
@@ -29,10 +30,8 @@
 #'     \item For "BETA": Error (not implemented)
 #'   }
 #'
-#' @note This function is not exported and is intended for internal use only.
-#' 
 #' @importFrom dqrng dqsample.int
-#' @note This function is not exported and is intended for internal use only.
+#' @rdname getGrowthDistributionIndices
 #' @keywords internal
 
 getGrowthDistributionIndices <-

@@ -10,7 +10,7 @@ sgpFlow(
   sgpFlow.config,
   superCohort.config = NULL,
   cohort.data.type = "SINGLE_COHORT",
-  trajectory.type = c("EXACT_VALUE"),
+  trajectory.type = c("EXACT_VALUE", "NEAREST_INTEGER_VALUE"),
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
   achievement.percentiles.tables = TRUE,

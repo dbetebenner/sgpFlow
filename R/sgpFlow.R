@@ -54,7 +54,7 @@ sgpFlow <-
         state=NULL,
         sgpFlow.config,
         superCohort.config=NULL,
-        cohort.data.type = "SINGLE_COHORT", #c("SUPER_COHORT", "SINGLE_COHORT"),
+        cohort.data.type = "SINGLE_COHORT", ## Later to include "SUPER_COHORT"
         trajectory.type = c("EXACT_VALUE", "NEAREST_INTEGER_VALUE"), ## Later to include "NEAREST_OBSERVED_VALUE"
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
@@ -89,9 +89,6 @@ sgpFlow <-
     # Add SCALE_SCORE_STANDARDIZED to long_data
     long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := collapse::fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
 
-    # Initialize an empty list to store results
-    sgpFlow_results_list <- list()
-
     # Loop over cohort.data.type
     for (cohort.type.iter in cohort.data.type) {
         # Loop over sgpFlow.config 
@@ -105,14 +102,15 @@ sgpFlow <-
 
                 # Create combinations for parallel processing
                 combinations <- expand.grid(
-                    growth.distributions = sgpFlow.config.iter[["growth.distributions"]],
-                    achievement.percentiles.tables.iter = seq_along(achievement.percentiles.tables),
+                    trajectory.type = trajectory.type,
+                    growth.distribution = sgpFlow.config.iter[["growth.distributions"]],
+                    achievement.percentiles.table = seq_along(achievement.percentiles.tables),
                     stringsAsFactors = FALSE
                 )
 
                 results <- future.apply::future_lapply(seq_len(nrow(combinations)), future.seed = TRUE, function(i) {
-                    growth.distributions.iter <- combinations[['growth.distributions']][i]
-                    achievement.percentiles.tables.iter <- combinations[['achievement.percentiles.tables.iter']][i]
+                    growth.distributions.iter <- combinations[['growth.distribution']][i]
+                    achievement.percentiles.tables.iter <- combinations[['achievement.percentiles.table']][i]
                     
                     sgpFlowTrajectories(
                         long_data = long_data,
@@ -129,15 +127,20 @@ sgpFlow <-
                 
                 # Assign results back to the list structure
                 for (i in seq_len(nrow(combinations))) {
-                    growth.distributions.iter <- as.character(combinations[['growth.distributions']][i])
-                    achievement.percentiles.tables.iter <- combinations[['achievement.percentiles.tables.iter']][i]
+                    growth.distributions.iter <- as.character(combinations[['growth.distribution']][i])
+                    achievement.percentiles.tables.iter <- combinations[['achievement.percentiles.table']][i]
                     sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- results[[i]]
                 }
-            } else {
-                # Sequential processing if no parallel config
+            } else { # Sequential processing if no parallel config
+
+                # Initialize an empty list to store results
+                sgpFlow_results_list <- list()
+
+                # Loop over growth.distributions
                 for (growth.distributions.iter in sgpFlow.config.iter[["growth.distributions"]]) {
-                    for (achievement.percentiles.tables.iter in seq_along(achievement.percentiles.tables)) {
-                        sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
+                    for (trajectory.type.iter in trajectory.type) {
+                        for (achievement.percentiles.tables.iter in seq_along(achievement.percentiles.tables)) {
+                            sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[trajectory.type.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
                             sgpFlowTrajectories(
                                 long_data = long_data,
                                 state = state,
@@ -149,11 +152,12 @@ sgpFlow <-
                                 achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
                                 projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[["content_area.progression"]], 1), "BASELINE", sep=".")]]
                             )
-                    }
-                }
-            }
-        }
-    }
+                        } # End achievement.percentiles.tables.iter
+                    } # End trajectory.type.iter
+                } # End growth.distributions.iter
+            } # End sequential processing if no parallel config
+        } # End sgpFlow.config.iter
+    } # End cohort.type.iter
 
     if (export.duckdb) {
         outputsgpFlow(sgpFlow_results_list, state = state, export.duckdb = export.duckdb, export.Rdata = export.Rdata)

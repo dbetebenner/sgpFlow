@@ -35,7 +35,7 @@ testsgpFlow <-
             
 		    if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_sgpFlow, file='Data/Demonstration_sgpFlow.Rdata')", sep="\n")
 
-            cat(paste0("EVALUATING sgpFlow Test Number 1:\n", expression.to.evaluate), fill=TRUE)
+            cat(paste0("EVALUATING sgpFlow Test Number 1:\n\n", expression.to.evaluate), fill=TRUE)
 
             started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))

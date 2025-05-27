@@ -1,5 +1,5 @@
 Package: sgpFlow
-Version: 0.0-0.9976
+Version: 0.0-0.9977
 Date: 2025-5-27
 Title: Functions for sgpFlow Analyses Utilizing Data Derived from Student Growth Percentile (SGP) Analyses
 Description: An analytic framework based upon the `SGP` framework for the calculation of student learning flows allowing for the simultaneous modeling of student growth and attainment. The `sgpFlow` package provides tools for generating sgpFlow trajectories based on longitudinal student data.  It includes utilities for computing growth percentile trajectories, handling cohort-specific analyses, perturbing scores based on Conditional Standard Error of Measurement (CSEM), and managing state-specific configurations. The package is designed for scalability and efficiency when working with large datasets, integrating features such as projection spline matrices, growth distribution customization, and flexible trajectory simulation.

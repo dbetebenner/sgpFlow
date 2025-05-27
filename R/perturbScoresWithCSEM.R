@@ -6,9 +6,13 @@
 #' @param wide_data A data.table of wide data.
 #' @param state A character value of the state.
 #' @param sgpFlow.config A list of configuration parameters for the sgpFlow package.
+#' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories.
+#' @param csem.perturbation.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`.
+#' @param trajectory.type A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.
 #' @importFrom data.table data.table
-#' @importFrom stats rnorm
-#' 
+#' @importFrom dqrng dqrnorm
+#' @importFrom Rfast Round
+#'
 #' @rdname perturbScoresWithCSEM
 #' @keywords internal
 
@@ -17,28 +21,31 @@ perturbScoresWithCSEM <-
         wide_data,
         state,
         sgpFlow.config,
-        csem.distribution = "Normal",
-        csem.perturbation.iterations = 100L,
+        csem.perturbation.iterations,
+        csem.perturbation.distribution,
         trajectory.type
     ) {
+
+        ## If no iterations, return unperturbed scores
+        if (csem.perturbation.iterations == 0L) return(wide_data)
+
         ## Utility functions
-        perturb.rnorm <- function(mean = 0, sd) {
-            dt <-
-                data.table::data.table(sd = sd, VALUE = as.numeric(NA))[!is.na(sd), VALUE := stats::rnorm(.N, mean, sd)]
-            return(dt[["VALUE"]])
+        perturb.scale.scores <- function(scale.scores, csem.perturbation.distribution, csem.perturbation.iterations, csem.perturbation.function, trajectory.type) {
+            if (csem.perturbation.distribution == "NORMAL") {
+                if (trajectory.type == "EXACT_VALUE") {
+                    return(c(rep(scale.scores, csem.perturbation.iterations) + dqrng::dqrnorm(csem.perturbation.iterations) * rep(csem.perturbation.function(scale.scores), csem.perturbation.iterations)))
+                }
+                if (trajectory.type == "NEAREST_INTEGER_VALUE") {
+                    return(Rfast::Round(c(rep(scale.scores, csem.perturbation.iterations) + dqrng::dqrnorm(csem.perturbation.iterations) * rep(csem.perturbation.function(scale.scores), csem.perturbation.iterations))))
+                }
+                if (trajectory.type == "NEAREST_OBSERVED_VALUE") {
+                    ## TODO: Implement nearest observed value
+                }
+            }
         }
 
-        ## Parameters
-        csem.distribution <- toupper(csem.distribution)
-        supported.distributions <- c("NORMAL")
-
-        ## Create data.table to hold all scores 
-        tmp.dt <- data.table::data.table()
-
-        ## Define relevant variables
-        if (!csem.distribution %in% supported.distributions) {
-            stop(paste0("Distribution supplied (", csem.distribution, ") not currently supported."))
-        }
+        ## Create data.table to hold all scores
+        tmp.dt <- data.table::data.table(ID = rep(wide_data[["ID"]], csem.perturbation.iterations))
 
         ## Loop over grades in grade.progression
         for (grade.iter in seq_along(sgpFlow.config[["grade.progression"]])) {
@@ -52,11 +59,16 @@ perturbScoresWithCSEM <-
                 loss.hoss <- range(wide_data[[tmp.column.name]], na.rm = TRUE)
             }
 
-            if (csem.distribution == "NORMAL") {
-                tmp.dt[, (tmp.column.name) :=
-                    c(wide_data[[tmp.column.name]],
-                    replicate(csem.perturbation.iterations, wide_data[[tmp.column.name]] + perturb.rnorm(sd = sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["CSEM"]][[tmp.content_area]][[paste("GRADE", tmp.grade, sep = "_")]](wide_data[[tmp.column.name]]))))]
-            }
+            ## Add perturbed scores to data.table
+            tmp.dt[, (tmp.column.name) :=
+                c(wide_data[[tmp.column.name]],
+                perturb.scale.scores(
+                    scale.scores = wide_data[[tmp.column.name]],
+                    csem.perturbation.distribution = csem.perturbation.distribution,
+                    csem.perturbation.iterations = csem.perturbation.iterations,
+                    csem.perturbation.function = sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["CSEM"]][[tmp.content_area]][[paste("GRADE", tmp.grade, sep = "_")]],
+                    trajectory.type = trajectory.type)
+                )]
 
             ## Pull in scores to loss and hoss
             tmp.dt[

@@ -13,6 +13,7 @@ sgpFlowTrajectories(
   trajectory.type = "EXACT_VALUE",
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
+  csem.perturbation.distribution = "NORMAL",
   achievement.percentiles.tables,
   projection.splineMatrices
 )
@@ -33,6 +34,8 @@ sgpFlowTrajectories(
 \item{csem.perturbation.of.initial.scores}{Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.}
 
 \item{csem.perturbation.iterations}{Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.}
+
+\item{csem.perturbation.distribution}{A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.}
 
 \item{achievement.percentiles.tables}{Logical. If `TRUE`, creates tables of 99 trajectories tables based upon initial achievement percentiles.}
 

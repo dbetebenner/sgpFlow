@@ -13,6 +13,7 @@
 #' @param trajectory.type A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.
 #' @param csem.perturbation.of.initial.scores Logical. If \code{TRUE}, initial scores are perturbed using conditional standard error measurement (CSEM). Default is \code{TRUE}.
 #' @param csem.perturbation.iterations Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.
+#' @param csem.perturbation.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.
 #' @param achievement.percentiles.tables Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows) 
 #' @param export.duckdb Logical. If `TRUE`, exports the aggregated results to a DuckDB database.
 #' @param export.Rdata Logical. If `TRUE`, exports the sgpFlow results to an Rdata file.
@@ -36,6 +37,7 @@
 #'   cohort.data.type = c("COHORT", "SUPER_COHORT"),
 #'   csem.perturbation.of.initial.scores = TRUE,
 #'   csem.perturbation.iterations = 100L,
+#'   csem.perturbation.distribution = "NORMAL",
 #'   projection.splineMatrices = sgpFlowMatrices::sgpFlowMatrices[["DEMO_sgpFlowMatrices"]][["2024_2025"]][["SUPER_COHORT"]]
 #' )
 #' }
@@ -58,6 +60,7 @@ sgpFlow <-
         trajectory.type = c("EXACT_VALUE", "NEAREST_INTEGER_VALUE"), ## Later to include "NEAREST_OBSERVED_VALUE"
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
+        csem.perturbation.distribution = "NORMAL",
         achievement.percentiles.tables = TRUE,
         export.duckdb = TRUE,
         export.Rdata = TRUE,
@@ -65,9 +68,7 @@ sgpFlow <-
         parallel.config = list(WORKERS=parallel::detectCores()-1)
     ) {
 
-    # Utility functions
-
-    # Test/update arguments
+    ### Test/update arguments
     if (!any(class(sgp_object) %in% c("SGP", "data.table"))) stop("Supplied sgp_object must be either of class 'SGP' or 'data.table'.")
 
     if (is.null(superCohort.config) & "SUPER_COHORT" %in% cohort.data.type) {
@@ -83,13 +84,19 @@ sgpFlow <-
         state <- getStateAbbreviation(tmp.name, "sgpFlow")
     }
 
-    # Extract long_data from sgp_object if it is an SGP object
+    csem.perturbation.distribution <- toupper(csem.perturbation.distribution)
+    supported.distributions <- c("NORMAL")
+    if (!csem.perturbation.distribution %in% supported.distributions) {
+        stop(paste0("Distribution supplied (", csem.perturbation.distribution, ") not currently supported."))
+    }
+
+    ## Extract long_data from sgp_object if it is an SGP object
     if ("SGP" %in% class(sgp_object)) long_data <- sgp_object@Data else long_data <- sgp_object
 
-    # Add SCALE_SCORE_STANDARDIZED to long_data
+    ## Add SCALE_SCORE_STANDARDIZED to long_data
     long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := collapse::fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
 
-    # Loop over cohort.data.type
+    ## Loop over cohort.data.type
     for (cohort.type.iter in cohort.data.type) {
         # Loop over sgpFlow.config 
         for (sgpFlow.config.iter in sgpFlow.config) {
@@ -109,6 +116,7 @@ sgpFlow <-
                 )
 
                 results <- future.apply::future_lapply(seq_len(nrow(combinations)), future.seed = TRUE, function(i) {
+                    trajectory.type.iter <- combinations[['trajectory.type']][i]
                     growth.distributions.iter <- combinations[['growth.distribution']][i]
                     achievement.percentiles.tables.iter <- combinations[['achievement.percentiles.table']][i]
                     
@@ -117,9 +125,10 @@ sgpFlow <-
                         state = state,
                         sgpFlow.config = sgpFlow.config.iter,
                         growth.distribution = growth.distributions.iter,
-                        trajectory.type = trajectory.type,
+                        trajectory.type = trajectory.type.iter,
                         csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                         csem.perturbation.iterations = csem.perturbation.iterations,
+                        csem.perturbation.distribution = csem.perturbation.distribution,
                         achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
                         projection.splineMatrices = projection.splineMatrices[[paste(tail(sgpFlow.config.iter[["content_area.progression"]], 1), "BASELINE", sep=".")]]
                     )
@@ -127,9 +136,10 @@ sgpFlow <-
                 
                 # Assign results back to the list structure
                 for (i in seq_len(nrow(combinations))) {
+                    trajectory.type.iter <- combinations[['trajectory.type']][i]
                     growth.distributions.iter <- as.character(combinations[['growth.distribution']][i])
                     achievement.percentiles.tables.iter <- combinations[['achievement.percentiles.table']][i]
-                    sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- results[[i]]
+                    sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[trajectory.type.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- results[[i]]
                 }
             } else { # Sequential processing if no parallel config
 
@@ -140,13 +150,13 @@ sgpFlow <-
                 for (growth.distributions.iter in sgpFlow.config.iter[["growth.distributions"]]) {
                     for (trajectory.type.iter in trajectory.type) {
                         for (achievement.percentiles.tables.iter in seq_along(achievement.percentiles.tables)) {
-                            sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[trajectory.type.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- 
+                            sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[trajectory.type.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <-
                             sgpFlowTrajectories(
                                 long_data = long_data,
                                 state = state,
                                 sgpFlow.config = sgpFlow.config.iter,
                                 growth.distribution = growth.distributions.iter,
-                                trajectory.type = trajectory.type,
+                                trajectory.type = trajectory.type.iter,
                                 csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                                 csem.perturbation.iterations = csem.perturbation.iterations,
                                 achievement.percentiles.tables = achievement.percentiles.tables[achievement.percentiles.tables.iter],
@@ -159,6 +169,7 @@ sgpFlow <-
         } # End sgpFlow.config.iter
     } # End cohort.type.iter
 
+    ## Export duckdb and Rdata files
     if (export.duckdb) {
         outputsgpFlow(sgpFlow_results_list, state = state, export.duckdb = export.duckdb, export.Rdata = export.Rdata)
     }

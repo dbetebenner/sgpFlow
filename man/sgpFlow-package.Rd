@@ -16,8 +16,8 @@ growth distribution customization, and flexible trajectory simulation.
 \tabular{ll}{
   Package: \tab sgpFlow \cr
   Type: \tab Package \cr
-  Version: \tab 0.0-0.9973 \cr
-  Date: \tab 2025-5-26 \cr
+  Version: \tab 0.0-0.9974 \cr
+  Date: \tab 2025-5-27 \cr
   License: \tab MIT \cr
   LazyLoad: \tab yes \cr
 }

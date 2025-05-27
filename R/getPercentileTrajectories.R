@@ -11,8 +11,7 @@
 #' @param trajectory.type A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
-#' @param achievement.percentiles.tables Logical. If `TRUE`, creates growth trajectory tables based upon achievement percentiles tables intstead of all  `wide_data` supplied. Default: `FALSE`.
-#' @param csem.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"Normal"`. Default: `"Normal"`.
+#' @param csem.perturbation.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.
 #' @returns A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
 #' @details 
 #' - The function allows for iterative simulation of percentile trajectories using CSEM perturbations.
@@ -54,6 +53,7 @@
 #' @importFrom data.table copy setorder data.table rbindlist
 #' @importFrom stats runif
 #' @importFrom collapse fnrow na_omit qM whichNA
+#' @importFrom Rfast Pmin Pmax Round
 #' @importFrom splines2 bSpline
 #' @importFrom strider row_sums
 #' @importFrom utils head
@@ -69,8 +69,7 @@ getPercentileTrajectories <-
         trajectory.type = "EXACT_VALUE",
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
-        achievement.percentiles.tables = FALSE,
-        csem.distribution = "Normal"
+        csem.perturbation.distribution = "NORMAL"
     ) {
 
         ## Check arguments
@@ -82,17 +81,15 @@ getPercentileTrajectories <-
             ))
         }
 
-        ## Parameters
-        sgpFlow.trajectories.list <- list()
-        scale.score.variables.for.projections <- paste0("SCALE_SCORE_GRADE_", sgpFlow.config[["grade.progression"]])
-
+        ## Utility function to calculate percentile trajectories
         get.percentile.trajectories.INTERNAL <- function(wide_data, growth.distribution.projection.sequence, trajectory.type) {
 
             ## Utility functions
-                bound.scores <- function(projected.scores, loss.hoss) {
-                pmin(pmax(projected.scores, loss.hoss[1L]), loss.hoss[2L])
+            bound.scores <- function(projected.scores, loss.hoss) {
+                Rfast::Pmin(Rfast::Pmax(projected.scores, rep(loss.hoss[1L], length(projected.scores))), rep(loss.hoss[2L], length(projected.scores)))
             }
 
+            ## Initialize parameters
             sgpFlow.trajectories.list.INTERNAL <- vector("list", length(projection.splineMatrices))
             completed_rows <- vector("logical", collapse::fnrow(wide_data))
             
@@ -131,7 +128,7 @@ getPercentileTrajectories <-
                         # Create optimized model matrix based upon subset.indices
                         #  Use function as a "promise" to evaluate directly rather than create intermediate objects
                         getModelMatrix <- function(subset.indices) {
-                            t(qreg_coef_matrix@.Data[, subset.indices, drop = FALSE]) 
+                            t(qreg_coef_matrix@.Data[, subset.indices, drop = FALSE])
                         }
 
                         # Target column name for the projection
@@ -145,27 +142,28 @@ getPercentileTrajectories <-
 
                         if (trajectory.type == "NEAREST_INTEGER_VALUE") {
                             sgpFlow.trajectories.list.INTERNAL[[i]][, (target_column_name) := 
-                                bound.scores(round(strider::row_sums(getModelDataMatrix() * getModelMatrix(subset.indices))), loss.hoss)]
+                                bound.scores(Rfast::Round(strider::row_sums(getModelDataMatrix() * getModelMatrix(subset.indices))), loss.hoss)]
                         }
 
                         if (trajectory.type == "NEAREST_OBSERVED_VALUE") {
-                            ### TODO: Implement nearest observed value
+                            ## TODO: Implement nearest observed value
                         }
                     } ## END j loop
                 } ## END if (any(!completed_rows))
             } ## END i loop
             
-            # Combine all results - no need for ID-based binding
+            # Combine all results
             return(data.table::rbindlist(sgpFlow.trajectories.list.INTERNAL, fill = TRUE))
-        } ### END get.percentile.trajectories.INTERNAL
+        } ## END get.percentile.trajectories.INTERNAL
 
         ## Create growth distribution sequence associated with each projection matrix
         growth.distribution.projection.sequence <- getGrowthDistributionProjectionSequence(growth.distribution, length(projection.splineMatrices[[1]]))
 
         ## Calculate and return percentile trajectories
+        scale.score.variables.for.projections <- c("ID", paste0("SCALE_SCORE_GRADE_", sgpFlow.config[["grade.progression"]]))
         get.percentile.trajectories.INTERNAL(
-                            wide_data = perturbScoresWithCSEM(wide_data[,..scale.score.variables.for.projections], state, sgpFlow.config, csem.distribution, csem.perturbation.iterations, trajectory.type),
-                            growth.distribution.projection.sequence = growth.distribution.projection.sequence, 
+                            wide_data = ifelse(csem.perturbation.iterations == 0L, wide_data, perturbScoresWithCSEM(wide_data[,..scale.score.variables.for.projections], state, sgpFlow.config, csem.perturbation.distribution, csem.perturbation.iterations, trajectory.type)),
+                            growth.distribution.projection.sequence = growth.distribution.projection.sequence,
                             trajectory.type = trajectory.type)
 
-    } ### END getPercentileTrajectories
+    } ## END getPercentileTrajectories

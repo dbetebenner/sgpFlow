@@ -13,6 +13,7 @@ sgpFlow(
   trajectory.type = c("EXACT_VALUE", "NEAREST_INTEGER_VALUE"),
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
+  csem.perturbation.distribution = "NORMAL",
   achievement.percentiles.tables = TRUE,
   export.duckdb = TRUE,
   export.Rdata = TRUE,
@@ -36,6 +37,8 @@ sgpFlow(
 \item{csem.perturbation.of.initial.scores}{Logical. If \code{TRUE}, initial scores are perturbed using conditional standard error measurement (CSEM). Default is \code{TRUE}.}
 
 \item{csem.perturbation.iterations}{Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.}
+
+\item{csem.perturbation.distribution}{A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.}
 
 \item{achievement.percentiles.tables}{Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows)}
 
@@ -70,6 +73,7 @@ Demonstration_sgpFlow <- sgpFlow(
   cohort.data.type = c("COHORT", "SUPER_COHORT"),
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
+  csem.perturbation.distribution = "NORMAL",
   projection.splineMatrices = sgpFlowMatrices::sgpFlowMatrices[["DEMO_sgpFlowMatrices"]][["2024_2025"]][["SUPER_COHORT"]]
 )
 }

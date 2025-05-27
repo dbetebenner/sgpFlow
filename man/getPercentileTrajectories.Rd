@@ -13,8 +13,7 @@ getPercentileTrajectories(
   trajectory.type = "EXACT_VALUE",
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
-  achievement.percentiles.tables = FALSE,
-  csem.distribution = "Normal"
+  csem.perturbation.distribution = "NORMAL"
 )
 }
 \arguments{
@@ -34,9 +33,7 @@ getPercentileTrajectories(
 
 \item{csem.perturbation.iterations}{Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.}
 
-\item{achievement.percentiles.tables}{Logical. If `TRUE`, creates growth trajectory tables based upon achievement percentiles tables intstead of all  `wide_data` supplied. Default: `FALSE`.}
-
-\item{csem.distribution}{A character string specifying the distribution to use for CSEM perturbation. Options include `"Normal"`. Default: `"Normal"`.}
+\item{csem.perturbation.distribution}{A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.}
 }
 \value{
 A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.

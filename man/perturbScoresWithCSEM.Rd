@@ -8,8 +8,8 @@ perturbScoresWithCSEM(
   wide_data,
   state,
   sgpFlow.config,
-  csem.distribution = "Normal",
-  csem.perturbation.iterations = 100L,
+  csem.perturbation.iterations,
+  csem.perturbation.distribution,
   trajectory.type
 )
 }
@@ -19,6 +19,12 @@ perturbScoresWithCSEM(
 \item{state}{A character value of the state.}
 
 \item{sgpFlow.config}{A list of configuration parameters for the sgpFlow package.}
+
+\item{csem.perturbation.iterations}{Integer. Number of iterations for perturbing scores and calculating trajectories.}
+
+\item{csem.perturbation.distribution}{A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`.}
+
+\item{trajectory.type}{A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.}
 }
 \description{
 This function is used to perturb scale scores with associated scale score conditional standard errors of measurement (CSEM) values.

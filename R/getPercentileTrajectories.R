@@ -157,7 +157,7 @@ getPercentileTrajectories <-
         ## Calculate and return percentile trajectories
         scale.score.variables.for.projections <- c("ID", paste0("SCALE_SCORE_GRADE_", sgpFlow.config[["grade.progression"]]))
         get.percentile.trajectories.INTERNAL(
-                            wide_data = ifelse(csem.perturbation.iterations == 0L, wide_data, perturbScoresWithCSEM(wide_data[,..scale.score.variables.for.projections], state, sgpFlow.config, csem.perturbation.iterations, csem.perturbation.distribution, trajectory.type)),
+                            wide_data = if (csem.perturbation.iterations == 0L) wide_data else perturbScoresWithCSEM(wide_data[,..scale.score.variables.for.projections], state, sgpFlow.config, csem.perturbation.iterations, csem.perturbation.distribution, trajectory.type),
                             growth.distribution.projection.sequence = growth.distribution.projection.sequence,
                             trajectory.type = trajectory.type)
 

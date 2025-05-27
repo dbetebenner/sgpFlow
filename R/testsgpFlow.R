@@ -31,7 +31,7 @@ testsgpFlow <-
             projection.splineMatrices <- sgpFlowMatrices::sgpFlowMatrices[['DEMO_sgpFlowMatrices']][['2024_2025']][['SUPER_COHORT']]
 
             expression.to.evaluate <- 
-            		paste0("Demonstration_sgpFlow <- sgpFlow(\n\tsgp_object=sgpFlowData::sgpFlowData_LONG,\n\tsgpFlow.config=DEMO_sgpFlow.config,\n\tprojection.splineMatrices=projection.splineMatrices,\n\tparallel.config=NULL)\n")
+            		paste0("Demonstration_sgpFlow <- sgpFlow(\n\tsgp_object=sgpFlowData::sgpFlowData_LONG,\n\tsgpFlow.config=DEMO_sgpFlow.config,\n\tprojection.splineMatrices=projection.splineMatrices,\n\texport.duckdb=FALSE,\n\tparallel.config=NULL)\n")
             
 		    if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_sgpFlow, file='Data/Demonstration_sgpFlow.Rdata')", sep="\n")
 

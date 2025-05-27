@@ -96,6 +96,9 @@ sgpFlow <-
     ## Add SCALE_SCORE_STANDARDIZED to long_data
     long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := collapse::fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
 
+    ## Initialize an empty list to store results
+    sgpFlow_results_list <- list()
+
     ## Loop over cohort.data.type
     for (cohort.type.iter in cohort.data.type) {
         # Loop over sgpFlow.config 
@@ -142,10 +145,6 @@ sgpFlow <-
                     sgpFlow_results_list[[cohort.type.iter]][[tmp_name]][[growth.distributions.iter]][[trajectory.type.iter]][[achievement.percentiles.tables.names[achievement.percentiles.tables.iter]]] <- results[[i]]
                 }
             } else { # Sequential processing if no parallel config
-
-                # Initialize an empty list to store results
-                sgpFlow_results_list <- list()
-
                 # Loop over growth.distributions
                 for (growth.distributions.iter in sgpFlow.config.iter[["growth.distributions"]]) {
                     for (trajectory.type.iter in trajectory.type) {

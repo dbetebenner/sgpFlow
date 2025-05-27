@@ -152,13 +152,27 @@ yearIncrement <-
 #' @param state The state to get the loss hoss for.
 #' @param content_area The content area to get the loss hoss for.
 #' @param grade The grade to get the loss hoss for.
-#' @return The loss hoss for the given state, content area, and grade.
+#' @return The loss hoss for the given state, content area, and grade. Returns a numeric vector of length 2 for use with Pmin and Pmax.
 #' @rdname get.loss.hoss
 #' @keywords internal
 get.loss.hoss <-
     function(state, content_area, grade) {
-        return(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("boundaries", grade, sep = "_")]])
-    }
+        return(as.numeric(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("boundaries", grade, sep = "_")]]))
+    } ### END get.loss.hoss
+
+#' @title Bound Scores
+#' @description Bound scores to the loss hoss.
+#' @param scale.scores The scores to bound.
+#' @param loss.hoss The loss hoss.
+#' @importFrom Rfast Pmin Pmax
+#' @return The bounded scores.
+#' @rdname bound.scores
+#' @keywords internal
+bound.scores <- 
+    function(scale.scores, loss.hoss) {
+        tmp.length <- length(scale.scores)
+        Rfast::Pmin(Rfast::Pmax(scale.scores, rep(loss.hoss[1L], tmp.length)), rep(loss.hoss[2L], tmp.length))
+    } ### END bound.scores
 
 
 #' @title Generate Beta Distribution
@@ -208,9 +222,9 @@ sgpBeta <-
             tmp.result <- sgp.min.value + tmp.sample * (sgp.max.value - sgp.min.value)
             mean.sgp.new <- sgp.min.value + mean.sgp * (sgp.max.value - sgp.min.value)
             sd.sgp.new <- sd.sgp * (sgp.max.value - sgp.min.value)
-            return(pmin(pmax(findInterval(tmp.result, sgp.cuts)-1L, 1L), 99L))
+            return(bound.scores(findInterval(tmp.result, sgp.cuts)-1L, c(1, 99)))
         } else {
-            return(pmin(pmax(findInterval(tmp.sample, sgp.cuts)-1L, 1L), 99L))
+            return(bound.scores(findInterval(tmp.sample, sgp.cuts)-1L, c(1, 99)))
         }
     } ### END sgpBeta
 

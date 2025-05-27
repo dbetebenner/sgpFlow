@@ -14,7 +14,7 @@ get.loss.hoss(state, content_area, grade)
 \item{grade}{The grade to get the loss hoss for.}
 }
 \value{
-The loss hoss for the given state, content area, and grade.
+The loss hoss for the given state, content area, and grade. Returns a numeric vector of length 2 for use with Pmin and Pmax.
 }
 \description{
 Get the loss hoss for a given state, content area, and grade.

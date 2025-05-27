@@ -30,13 +30,13 @@ perturbScoresWithCSEM <-
         if (csem.perturbation.iterations == 0L) return(wide_data)
 
         ## Utility functions
-        perturb.scale.scores <- function(scale.scores, csem.perturbation.distribution, csem.perturbation.iterations, csem.perturbation.function, trajectory.type) {
+        perturb.scale.scores <- function(scale.scores, csem.perturbation.distribution, csem.perturbation.iterations, csem.perturbation.function, trajectory.type, loss.hoss) {
             if (csem.perturbation.distribution == "NORMAL") {
                 if (trajectory.type == "EXACT_VALUE") {
-                    return(c(rep(scale.scores, csem.perturbation.iterations) + dqrng::dqrnorm(csem.perturbation.iterations) * rep(csem.perturbation.function(scale.scores), csem.perturbation.iterations)))
+                    return(bound.scores(c(rep(scale.scores, csem.perturbation.iterations) + dqrng::dqrnorm(csem.perturbation.iterations) * rep(csem.perturbation.function(scale.scores), csem.perturbation.iterations)), loss.hoss))
                 }
                 if (trajectory.type == "NEAREST_INTEGER_VALUE") {
-                    return(Rfast::Round(c(rep(scale.scores, csem.perturbation.iterations) + dqrng::dqrnorm(csem.perturbation.iterations) * rep(csem.perturbation.function(scale.scores), csem.perturbation.iterations))))
+                    return(bound.scores(Rfast::Round(c(rep(scale.scores, csem.perturbation.iterations) + dqrng::dqrnorm(csem.perturbation.iterations) * rep(csem.perturbation.function(scale.scores), csem.perturbation.iterations))), loss.hoss))
                 }
                 if (trajectory.type == "NEAREST_OBSERVED_VALUE") {
                     ## TODO: Implement nearest observed value
@@ -45,19 +45,15 @@ perturbScoresWithCSEM <-
         }
 
         ## Create data.table to hold all scores
-        tmp.dt <- data.table::data.table(ID = rep(wide_data[["ID"]], csem.perturbation.iterations))
+        ## Add one iteration for unperturbed scores
+        tmp.dt <- data.table::data.table(ID = rep(wide_data[["ID"]], csem.perturbation.iterations + 1L))
 
         ## Loop over grades in grade.progression
         for (grade.iter in seq_along(sgpFlow.config[["grade.progression"]])) {
             tmp.grade <- sgpFlow.config[["grade.progression"]][grade.iter]
             tmp.content_area <- sgpFlow.config[["content_area.progression"]][grade.iter]
             tmp.column.name <- paste0("SCALE_SCORE_GRADE_", tmp.grade)
-
-            if (!is.null(state)) {
-                loss.hoss <- get.loss.hoss(state, tmp.content_area, tmp.grade)
-            } else {
-                loss.hoss <- range(wide_data[[tmp.column.name]], na.rm = TRUE)
-            }
+            loss.hoss <- get.loss.hoss(state, tmp.content_area, tmp.grade)
 
             ## Add perturbed scores to data.table
             tmp.dt[, (tmp.column.name) :=
@@ -67,26 +63,11 @@ perturbScoresWithCSEM <-
                     csem.perturbation.distribution = csem.perturbation.distribution,
                     csem.perturbation.iterations = csem.perturbation.iterations,
                     csem.perturbation.function = sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["CSEM"]][[tmp.content_area]][[paste("GRADE", tmp.grade, sep = "_")]],
-                    trajectory.type = trajectory.type)
+                    trajectory.type = trajectory.type,
+                    loss.hoss = loss.hoss)
                 )]
-
-            ## Pull in scores to loss and hoss
-            tmp.dt[
-                get(tmp.column.name) < loss.hoss[1L], (tmp.column.name) := loss.hoss[1L]
-            ][get(tmp.column.name) > loss.hoss[2L], (tmp.column.name) := loss.hoss[2L]]
-        }
+        } ## END grade.iter loop
 
         ## Return unperturbed and perturbed values
-        ## Depending upon trajectory.type 
-        if (trajectory.type == "EXACT_VALUE") {
-            return(tmp.dt)
-        }
-
-        if (trajectory.type == "NEAREST_INTEGER_VALUE") {
-            return(round(tmp.dt))
-        }
-
-        if (trajectory.type == "NEAREST_OBSERVED_VALUE") {
-            stop("NEAREST_OBSERVED_VALUE not currently supported.")
-        }
+        return(tmp.dt)
     } ### END perturbScoresWithCSEM

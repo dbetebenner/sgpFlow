@@ -84,11 +84,6 @@ getPercentileTrajectories <-
         ## Utility function to calculate percentile trajectories
         get.percentile.trajectories.INTERNAL <- function(wide_data, growth.distribution.projection.sequence, trajectory.type) {
 
-            ## Utility functions
-            bound.scores <- function(projected.scores, loss.hoss) {
-                Rfast::Pmin(Rfast::Pmax(projected.scores, rep(loss.hoss[1L], length(projected.scores))), rep(loss.hoss[2L], length(projected.scores)))
-            }
-
             ## Initialize parameters
             sgpFlow.trajectories.list.INTERNAL <- vector("list", length(projection.splineMatrices))
             completed_rows <- vector("logical", collapse::fnrow(wide_data))
@@ -162,7 +157,7 @@ getPercentileTrajectories <-
         ## Calculate and return percentile trajectories
         scale.score.variables.for.projections <- c("ID", paste0("SCALE_SCORE_GRADE_", sgpFlow.config[["grade.progression"]]))
         get.percentile.trajectories.INTERNAL(
-                            wide_data = ifelse(csem.perturbation.iterations == 0L, wide_data, perturbScoresWithCSEM(wide_data[,..scale.score.variables.for.projections], state, sgpFlow.config, csem.perturbation.distribution, csem.perturbation.iterations, trajectory.type)),
+                            wide_data = ifelse(csem.perturbation.iterations == 0L, wide_data, perturbScoresWithCSEM(wide_data[,..scale.score.variables.for.projections], state, sgpFlow.config, csem.perturbation.iterations, csem.perturbation.distribution, trajectory.type)),
                             growth.distribution.projection.sequence = growth.distribution.projection.sequence,
                             trajectory.type = trajectory.type)
 

@@ -18,6 +18,7 @@
 #' @importFrom collapse missing_cases
 #' @importFrom copula normalCopula fitCopula pCopula
 #' @importFrom data.table as.data.table
+#' @importFrom Rfast Round
 #' @importFrom stats uniroot
 #' @rdname getAchievementPercentiles
 #' @keywords internal
@@ -34,7 +35,7 @@ function(
         # Utility functions
         get_percentile <- function(scale_score) {
             percentiles <- collapse::fquantile(scale_score, probs=seq(0.005, 0.995, length=100), na.rm=TRUE)
-            return(pmax(1L, pmin(findInterval(scale_score, percentiles), 99L)))
+            return(bound.scores(findInterval(scale_score, percentiles), c(1, 99)))
         }
 
         calculate_copula_quantiles <- function(complete_scores, what.to.return, probs=seq(0.01, 0.99, 0.01)) {
@@ -48,7 +49,7 @@ function(
 
             # Step 3: Using copula return PERCENTILE_RANKS or PERCENTILE_CUTS
             if (what.to.return=="PERCENTILE_RANKS") {
-                return(as.integer(pmax(1, pmin(round(100*pCopula(scores_uniform, copula = fit@copula)), 99))))
+                return(as.integer(bound.scores(Rfast::Round(100*pCopula(scores_uniform, copula = fit@copula)), c(1, 99))))
             }
             if (what.to.return=="PERCENTILE_CUTS") {
                 u1_values <- vapply(1:99/100, function(prob) {
@@ -56,8 +57,7 @@ function(
                         function(u1) pCopula(c(u1, u1), copula = fit@copula) - prob, interval = c(0, 1))$root
                 }, numeric(1))
 
-                percentile_cuts_table <- as.data.table(apply(complete_scores, 2, function(x) collapse::fquantile(x, probs=u1_values)))[,ACHIEVEMENT_PERCENTILE_INITIAL_1:=pmax(1L, pmin(99L, as.integer(round(100L*u1_values))))][,ACHIEVEMENT_PERCENTILE_INITIAL := 1:99]
-                as.data.table(apply(complete_scores, 2, function(x) collapse::fquantile(x, probs=u1_values)))[,ACHIEVEMENT_PERCENTILE_INITIAL_1:=pmax(1L, pmin(99L, as.integer(round(100L*u1_values))))][,ACHIEVEMENT_PERCENTILE_INITIAL := 1:99]
+                percentile_cuts_table <- as.data.table(apply(complete_scores, 2, function(x) collapse::fquantile(x, probs=u1_values)))[,ACHIEVEMENT_PERCENTILE_INITIAL_1:=as.integer(bound.scores(Rfast::Round(100*u1_values), c(1, 99)))][,ACHIEVEMENT_PERCENTILE_INITIAL := 1:99]
 
                 return(percentile_cuts_table)
             }

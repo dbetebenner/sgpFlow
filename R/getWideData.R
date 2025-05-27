@@ -1,5 +1,6 @@
-#' Convert Long Data to Wide Format for Cohort Analysis
+#' @title Convert Long Data to Wide Format for Cohort Analysis
 #'
+#' @description 
 #' The `getWideData` function takes long-format student data and converts it into a wide-format data table for cohort-based analyses.
 #' It aligns years, grades, and content areas based on the provided `sgpFlow.config` and optionally filters by the specified cohort end year.
 #'
@@ -31,6 +32,7 @@
 #'
 #' @importFrom data.table SJ setnames setkeyv
 #' @importFrom collapse pivot join fselect na_omit
+#' @rdname getWideData
 #' @export
 
 getWideData <-

@@ -1,6 +1,6 @@
-#' Categorize Scale Scores into Achievement Levels
+#' @title Categorize Scale Scores into Achievement Levels
 #'
-#' @description
+#' @description 
 #' This function takes a vector of scale scores and categorizes them into achievement levels
 #' based on provided cut scores and corresponding labels.
 #'
@@ -26,6 +26,7 @@
 #' cut_scores <- c(200, 300, 400)
 #' level_labels <- c("Below Basic", "Basic", "Proficient", "Advanced")
 #' getAchievementLevels(scale_scores, cut_scores, level_labels)
+#' @rdname getAchievementLevels
 #' @export
 
 getAchievementLevels <-

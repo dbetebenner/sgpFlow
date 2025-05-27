@@ -1,7 +1,10 @@
 #' @title Generate SGP Trajectories for Cohorts
-#' @description Computes student growth percentile (SGP) trajectories for cohorts of students using longitudinal data, state-specific configurations, and projection spline matrices.
+#' @description Computes student growth percentile (SGP) trajectories for cohorts of students using longitudinal data,
+#' state-specific configurations, and projection spline matrices.
 #' 
-#' This function processes longitudinal student data to generate percentile trajectories over time, integrating cohort-specific configurations, growth distributions, and optional perturbations based on conditional standard error of measurement (CSEM).
+#' This function processes longitudinal student data to generate percentile trajectories over time,
+#' integrating cohort-specific configurations, growth distributions, and optional perturbations based
+#' on conditional standard error of measurement (CSEM).
 #' 
 #' @param long_data A `data.table` in long format containing student data. Required columns typically include `YEAR`, `GRADE`, `CONTENT_AREA`, `ID`, and scale scores.
 #' @param state A character string indicating the state for which trajectories are computed, used for state-specific configurations in the `sgpFlow` package.
@@ -11,7 +14,7 @@
 #' @param trajectory.type A character vector specifying the type of trajectory "rounding" to perform when calculating growth trajectories. Options include \code{"EXACT_VALUE"}, \code{"NEAREST_INTEGER_VALUE"}, and \code{"NEAREST_OBSERVED_VALUE"}. Default is \code{"EXACT_VALUE"}.
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
-#' @param iterate.without.csem.perturbation Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.
+#' @param csem.perturbation.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.
 #' @param achievement.percentiles.tables Logical. If `TRUE`, creates tables of 99 trajectories tables based upon initial achievement percentiles.
 #' @param projection.splineMatrices A list of projection spline matrices used to model growth percentiles over time.
 #' @returns A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
@@ -56,7 +59,7 @@ sgpFlowTrajectories <-
         trajectory.type = "EXACT_VALUE",
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
-        iterate.without.csem.perturbation = FALSE,
+        csem.perturbation.distribution = "NORMAL",
         achievement.percentiles.tables,
         projection.splineMatrices
     ) {
@@ -77,8 +80,7 @@ sgpFlowTrajectories <-
                 trajectory.type = trajectory.type,
                 csem.perturbation.of.initial.scores = csem.perturbation.of.initial.scores,
                 csem.perturbation.iterations = csem.perturbation.iterations,
-                iterate.without.csem.perturbation = iterate.without.csem.perturbation,
-                achievement.percentiles.tables = achievement.percentiles.tables,
+                csem.perturbation.distribution = csem.perturbation.distribution,
                 projection.splineMatrices = # Get matrix sequence associated with trajectory calculations
                     getGradeProjectionSequenceMatrices(
                         sgpFlow.config,

@@ -1,5 +1,6 @@
-#' Get Growth Distribution Projection Sequence
+#' @title Get Growth Distribution Projection Sequence
 #' 
+#' @description
 #' The function get.growth.distribution.projection.sequence takes the growth.distribution, validates it, and
 #' produces a list which exactly specifies the way in which growth is assigned to student trajectories
 #' The argument growth.distribution is specified either as a single argument for use with ALL years of the projection sequence or each year specifically.
@@ -54,8 +55,8 @@
 #'   ),
 #'   2)
 #' }
-#' 
-#' @note This function is not exported and is intended for internal use only.
+#'
+#' @rdname getGrowthDistributionProjectionSequence
 #' @keywords internal
 
 getGrowthDistributionProjectionSequence <-

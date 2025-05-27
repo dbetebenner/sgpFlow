@@ -10,10 +10,10 @@ sgpFlow(
   sgpFlow.config,
   superCohort.config = NULL,
   cohort.data.type = "SINGLE_COHORT",
-  trajectory.type = c("EXACT_VALUE"),
+  trajectory.type = c("EXACT_VALUE", "NEAREST_INTEGER_VALUE"),
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
-  iterate.without.csem.perturbation = FALSE,
+  csem.perturbation.distribution = "NORMAL",
   achievement.percentiles.tables = TRUE,
   export.duckdb = TRUE,
   export.Rdata = TRUE,
@@ -38,7 +38,7 @@ sgpFlow(
 
 \item{csem.perturbation.iterations}{Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.}
 
-\item{iterate.without.csem.perturbation}{Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.}
+\item{csem.perturbation.distribution}{A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.}
 
 \item{achievement.percentiles.tables}{Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows)}
 
@@ -54,7 +54,9 @@ sgpFlow(
 A list containing sgpFlow analysis results for each specified \code{cohort.data.type}.
 }
 \description{
-The `sgpFlow` function facilitates the analysis of sgpFlow trajectories using various cohort data types, such as traditional cohorts, super-cohorts, or achievement percentiles. It offers the flexibility to handle conditional standard error measurement (CSEM) perturbation, growth projection matrices, and other configurations.
+The `sgpFlow` function facilitates the analysis of sgpFlow trajectories using various cohort data types,
+such as traditional cohorts, super-cohorts, or achievement percentiles. It offers the flexibility to handle
+conditional standard error measurement (CSEM) perturbation, growth projection matrices, and other configurations.
 }
 \details{
 The `sgpFlow` function loops over specified \code{cohort.data.type} values, performing SGP trajectory analysis for each type. It supports super-cohort analysis when a valid \code{superCohort.config} is provided. If \code{csem.perturbation.of.initial.scores} is enabled, the function applies random perturbations to initial scores to account for measurement error, with the number of iterations controlled by \code{csem.perturbation.iterations}.
@@ -71,6 +73,7 @@ Demonstration_sgpFlow <- sgpFlow(
   cohort.data.type = c("COHORT", "SUPER_COHORT"),
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
+  csem.perturbation.distribution = "NORMAL",
   projection.splineMatrices = sgpFlowMatrices::sgpFlowMatrices[["DEMO_sgpFlowMatrices"]][["2024_2025"]][["SUPER_COHORT"]]
 )
 }

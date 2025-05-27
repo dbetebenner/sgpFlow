@@ -44,9 +44,6 @@ or a list containing the following components:
      Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM_RANDOM distribution)
      Subgroups: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
 }
-\note{
-This function is not exported and is intended for internal use only.
-}
 \examples{
 \dontrun{
 # Single distribution for all years

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getGrowthDistributionIndices.R
 \name{getGrowthDistributionIndices}
 \alias{getGrowthDistributionIndices}
-\title{Generate Growth Distribution Indices}
+\title{Generate Growth Distribution Trajectory Indices}
 \usage{
 getGrowthDistributionIndices(wide_data, growth.distribution)
 }
@@ -38,10 +38,5 @@ This internal function calculates indices based on the specified growth distribu
 It supports "UNIFORM_RANDOM" for generating random indices within a range, numeric 
 growth distributions (e.g., "1" to "99") for fixed percentiles, and includes a 
 placeholder for "BETA" distribution (currently not implemented).
-}
-\note{
-This function is not exported and is intended for internal use only.
-
-This function is not exported and is intended for internal use only.
 }
 \keyword{internal}

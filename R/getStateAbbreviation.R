@@ -1,4 +1,4 @@
-#' Convert State Names to Abbreviations or Vice Versa
+#' @title Convert State Names to Abbreviations or Vice Versa
 #'
 #' @description
 #' A utility function that converts between state names and their two-letter abbreviations.
@@ -30,7 +30,8 @@
 #' getStateAbbreviation("Colorado") # Returns "CO"
 #' getStateAbbreviation("CO", type="FULL_NAME") # Returns "Colorado"
 #' }
-#' @note This function is not exported and is intended for internal use only.
+#' 
+#' @rdname getStateAbbreviation
 #' @keywords internal
 
 getStateAbbreviation <-
@@ -100,6 +101,7 @@ DC, Washington DC
 DD, Department of Defense
 DEMO, Demonstration
 DEMO, SGPDATA LONG
+DEMO, SGPFLOWDATA LONG
 DEMO_COVID, Demonstration COVID
 DEMO_COVID, SGPDATA LONG COVID
 DEMO_EOCT, Demonstration

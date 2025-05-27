@@ -2,10 +2,7 @@
 ### Utility functions for sgpFlow package
 ###############################################################################
 
-##  Use backticks for util function names (e.g., `myUtil`) so not recognized by sinew package for export
-
 ### capWords
-
 #' @title Convert All Caps to Mixed Case
 #' @description Converts a character string from all uppercase to mixed case, intelligently handling capitalization and preserving specific words or acronyms in uppercase.
 #' 
@@ -46,7 +43,6 @@
 #'  \code{\link[base]{toupper}}, \code{\link[base]{tolower}}
 #' @rdname capWords
 #' @export capWords
-
 capWords <-
     function(
         x,
@@ -109,7 +105,13 @@ capWords <-
         return(s.new)
     } ### END capWords
 
-### ddcast
+
+#' @title Data Table dcast
+#' @description Casts a data table to a wide format.
+#' @param tmp.dt The data table to cast.
+#' @param ... Additional arguments to pass to the dcast function.
+#' @return A data table in wide format.
+#' @keywords internal
 #' @importFrom data.table data.table dcast
 ddcast <-
     function(tmp.dt, ...) {
@@ -120,7 +122,13 @@ ddcast <-
         }
     } ### END ddcast Function
 
-### yearIncrement
+
+#' @title Increment Year
+#' @description Increments a year by a specified number of years.
+#' @param base_year The base year to increment.
+#' @param year_lags The number of years to increment the base year by.
+#' @return A character string representing the incremented year.
+#' @keywords internal
 yearIncrement <-
     function(
         base_year,
@@ -138,15 +146,46 @@ yearIncrement <-
         }
     } ### End yearIncrement
 
-### get.loss.hoss
+
+#' @title Get Loss Hoss
+#' @description Get the loss hoss for a given state, content area, and grade.
+#' @param state The state to get the loss hoss for.
+#' @param content_area The content area to get the loss hoss for.
+#' @param grade The grade to get the loss hoss for.
+#' @return The loss hoss for the given state, content area, and grade. Returns a numeric vector of length 2 for use with Pmin and Pmax.
+#' @rdname get.loss.hoss
+#' @keywords internal
 get.loss.hoss <-
     function(state, content_area, grade) {
-        return(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("boundaries", grade, sep = "_")]])
-    }
+        return(as.numeric(sgpFlow::sgpFlowStateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("boundaries", grade, sep = "_")]]))
+    } ### END get.loss.hoss
+
+#' @title Bound Scores
+#' @description Bound scores to the loss hoss.
+#' @param scale.scores The scores to bound.
+#' @param loss.hoss The loss hoss.
+#' @importFrom Rfast Pmin Pmax
+#' @return The bounded scores.
+#' @rdname bound.scores
+#' @keywords internal
+bound.scores <- 
+    function(scale.scores, loss.hoss) {
+        tmp.length <- length(scale.scores)
+        Rfast::Pmin(Rfast::Pmax(scale.scores, rep(loss.hoss[1L], tmp.length)), rep(loss.hoss[2L], tmp.length))
+    } ### END bound.scores
 
 
-### myBeta
+#' @title Generate Beta Distribution
+#' @description Generate a beta distribution with specified mean and standard deviation.
+#' @param n The number of samples to generate.
+#' @param mean.sgp The mean of the beta distribution.
+#' @param sd.sgp The standard deviation of the beta distribution.
+#' @param sgp.min.value The minimum value of the beta distribution.
+#' @param sgp.max.value The maximum value of the beta distribution.
+#' @return A vector of samples from the beta distribution.
 #' @importFrom stats rbeta
+#' @rdname myBeta
+#' @keywords internal
 sgpBeta <-
     function(n, mean.sgp = 50, sd.sgp = 15, sgp.min.value = NULL, sgp.max.value = NULL) {
         # Validate parameters
@@ -183,14 +222,243 @@ sgpBeta <-
             tmp.result <- sgp.min.value + tmp.sample * (sgp.max.value - sgp.min.value)
             mean.sgp.new <- sgp.min.value + mean.sgp * (sgp.max.value - sgp.min.value)
             sd.sgp.new <- sd.sgp * (sgp.max.value - sgp.min.value)
-            return(pmin(pmax(findInterval(tmp.result, sgp.cuts)-1L, 1L), 99L))
+            return(bound.scores(findInterval(tmp.result, sgp.cuts)-1L, c(1, 99)))
         } else {
-            return(pmin(pmax(findInterval(tmp.sample, sgp.cuts)-1L, 1L), 99L))
+            return(bound.scores(findInterval(tmp.sample, sgp.cuts)-1L, c(1, 99)))
         }
     } ### END sgpBeta
 
-### betaCopula
-#' @importFrom stats rbeta
-betaCopula <- function(number, quantile, multiplier) {
-    return(quantile + (1 - quantile) * rbeta(number, multiplier*quantile, multiplier*(1-quantile)))
-}
+
+#' @title Generate Beta Copula
+#' @description Generate a beta copula with specified quantile and multiplier.
+#' @param number The number of samples to generate.
+#' @param quantile The quantile of the beta distribution.
+#' @param multiplier The multiplier of the beta distribution.
+#' @return A vector of samples from the beta copula.
+#' @rdname betaCopula
+#' @keywords internal
+betaCopula <- 
+    function(number, quantile, multiplier) {
+        return(quantile + (1 - quantile) * rbeta(number, multiplier*quantile, multiplier*(1-quantile)))
+    } ### END betaCopula
+
+
+### convertTime
+#' @title Convert Time Duration to Human-Readable String
+#' @description Converts a time duration in the format "HH:MM:SS" to a human-readable string indicating days, hours, minutes, and seconds.
+#' 
+#' This function takes a time duration in the format "HH:MM:SS" and converts it to a human-readable string that indicates the number of days, hours, minutes, and seconds. It is particularly useful for displaying time durations in a more understandable format.
+#' 
+#' @param tmp.time A character string in the format "HH:MM:SS" representing a time duration.
+#' @keywords internal
+convertTime <-
+    function(tmp.time) {
+        tmp <- tail(c(0, 0, 0, as.numeric(unlist(strsplit(tmp.time, ":")))), 4)
+        tmp.label <- c("Day", "Hour", "Minute", "Second")
+        tmp.label[which(tmp!=1)] <- paste0(tmp.label, "s")[which(tmp!=1)]
+        return(paste(paste(tmp[tmp!=0], tmp.label[tmp!=0]), collapse=", "))
+    } ### END convertTime
+
+
+#' @title Calculate Time Taken for sgpFlow Function
+#' @description Calculates the time taken for an sgpFlow function to execute.
+#' 
+#' This function takes the starting time of an sgpFlow function and calculates the time taken for the function to execute. It is particularly useful for timing the execution of sgpFlow functions.
+#' 
+#' @param started.at The starting time of the sgpFlow function.
+#' @return A character string in the format "HH:MM:SS" indicating the time taken for the function to execute.
+#' @keywords internal
+timetakensgpFlow <-
+    function(started.at) {
+        format = function(secs) {
+            secs.integer = as.integer(secs)
+            sprintf("%02d:%02d:%02d:%.3f", secs.integer%/%86400L, (secs.integer%/%3600L)%%24L, (secs.integer%/%60L)%%60L, secs%%60L)
+        }
+        tt = proc.time() - started.at
+        format(tt[3L])
+    } ### END timetakensgpFlow
+
+
+#' @title Print Messages to console and log file
+#' @description Prints messages to console and a log file.
+#' @param tmp.message The message to print.
+#' @keywords internal
+messagesgpFlow <-
+    function(tmp.message,
+	    domain=NULL,
+	    appendLF=TRUE) {
+
+	    PrintLogMessage <- function(tmp.message, domain=NULL) {
+		    # print log message to file
+		    dir.create("Logs", showWarnings = FALSE)
+		    logfile <- paste0("Logs/sgpFlow-", utils::packageDescription("sgpFlow")[['Version']], "_", Sys.Date(), ".txt")
+
+		    if (is.call(tmp.message)) {
+			    tmp.message2 <- c(paste0("\n\n\t", as.character(tmp.message)[1L], "(\n\t\t"), paste(names(tmp.message)[-1L], as.character(tmp.message)[-1L], sep=" = ", collapse="\n\t\t"), ")\n\n")
+			    cat(tmp.message2, file = logfile, append=appendLF)
+		    } else cat(tmp.message, "\n", file=logfile, sep="", append=appendLF)
+	    }
+
+	    if (!is.call(tmp.message)) {
+		    base::message(tmp.message)
+	    }
+	    PrintLogMessage(tmp.message)
+	    invisible()
+    } ### END messagesgpFlow
+
+
+#' @title SGP Flow Test Configurations
+#' @description Configuration definitions for sgpFlow package testing
+#' @keywords internal
+sgpFlowTestConfigs <- function() {
+  # Mathematics configurations
+  sgpFlow_MATHEMATICS.config <- list(
+    MATHEMATICS_GRADE_3 = list(
+      grade.progression="3",
+      grade.projection.sequence=c("4", "5", "6", "7", "8", "9", "10"),
+      content_area.progression="MATHEMATICS",
+      content_area.projection.sequence=rep("MATHEMATICS", 7),
+      year_lags.progression=as.integer(NULL),
+      year_lags.projection.sequence=rep(1L, 7),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    MATHEMATICS_GRADE_4 = list(
+      grade.progression=c("3", "4"),
+      grade.projection.sequence=c("5", "6", "7", "8", "9", "10"),
+      content_area.progression=c("MATHEMATICS", "MATHEMATICS"),
+      content_area.projection.sequence=rep("MATHEMATICS", 6),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 6),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    MATHEMATICS_GRADE_5 = list(
+      grade.progression=c("4", "5"),
+      grade.projection.sequence=c("6", "7", "8", "9", "10"),
+      content_area.progression=c("MATHEMATICS", "MATHEMATICS"),
+      content_area.projection.sequence=rep("MATHEMATICS", 5),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 5),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    MATHEMATICS_GRADE_6 = list(
+      grade.progression=c("5", "6"),
+      grade.projection.sequence=c("7", "8", "9", "10"),
+      content_area.progression=c("MATHEMATICS", "MATHEMATICS"),
+      content_area.projection.sequence=rep("MATHEMATICS", 4),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 4),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    MATHEMATICS_GRADE_7 = list(
+      grade.progression=c("6", "7"),
+      grade.projection.sequence=c("8", "9", "10"),
+      content_area.progression=c("MATHEMATICS", "MATHEMATICS"),
+      content_area.projection.sequence=rep("MATHEMATICS", 3),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 3),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    MATHEMATICS_GRADE_8 = list(
+      grade.progression=c("7", "8"),
+      grade.projection.sequence=c("9", "10"),
+      content_area.progression=c("MATHEMATICS", "MATHEMATICS"),
+      content_area.projection.sequence=rep("MATHEMATICS", 2),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 2),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    MATHEMATICS_GRADE_9 = list(
+      grade.progression=c("8", "9"),
+      grade.projection.sequence=c("10"),
+      content_area.progression=c("MATHEMATICS", "MATHEMATICS"),
+      content_area.projection.sequence=rep("MATHEMATICS", 1),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 1),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    )
+  ) ### END sgpFlow_MATHEMATICS.config
+  
+  # Reading configurations
+  sgpFlow_READING.config <- list(
+    READING_GRADE_3 = list(
+      grade.progression="3",
+      grade.projection.sequence=c("4", "5", "6", "7", "8", "9", "10"),
+      content_area.progression="READING",
+      content_area.projection.sequence=rep("READING", 7),
+      year_lags.progression=as.integer(NULL),
+      year_lags.projection.sequence=rep(1L, 7),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    READING_GRADE_4 = list(
+      grade.progression=c("3", "4"),
+      grade.projection.sequence=c("5", "6", "7", "8", "9", "10"),
+      content_area.progression=c("READING", "READING"),
+      content_area.projection.sequence=rep("READING", 6),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 6),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    READING_GRADE_5 = list(
+      grade.progression=c("4", "5"),
+      grade.projection.sequence=c("6", "7", "8", "9", "10"),
+      content_area.progression=c("READING", "READING"),
+      content_area.projection.sequence=rep("READING", 5),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 5),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    READING_GRADE_6 = list(
+      grade.progression=c("5", "6"),
+      grade.projection.sequence=c("7", "8", "9", "10"),
+      content_area.progression=c("READING", "READING"),
+      content_area.projection.sequence=rep("READING", 4),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 4),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    READING_GRADE_7 = list(
+      grade.progression=c("6", "7"),
+      grade.projection.sequence=c("8", "9", "10"),
+      content_area.progression=c("READING", "READING"),
+      content_area.projection.sequence=rep("READING", 3),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 3),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    READING_GRADE_8 = list(
+      grade.progression=c("7", "8"),
+      grade.projection.sequence=c("9", "10"),
+      content_area.progression=c("READING", "READING"),
+      content_area.projection.sequence=rep("READING", 2),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 2),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    ),
+    READING_GRADE_9 = list(
+      grade.progression=c("8", "9"),
+      grade.projection.sequence=c("10"),
+      content_area.progression=c("READING", "READING"),
+      content_area.projection.sequence=rep("READING", 1),
+      year_lags.progression=rep(1L, 1),
+      year_lags.projection.sequence=rep(1L, 1),
+      max.order.for.progression=2L,
+      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+    )
+  ) ### END sgpFlow_READING.config
+  
+  # Return combined configurations
+  return(c(sgpFlow_MATHEMATICS.config, sgpFlow_READING.config))
+} ### END sgpFlowTestConfigs

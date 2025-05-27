@@ -1,4 +1,4 @@
-#' Output Results from sgpFlow Analysis
+#' @title Output Results from sgpFlow Analysis
 #'
 #' @description
 #' This function processes the nested list structure returned by sgpFlow() and combines the results 

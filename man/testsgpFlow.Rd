@@ -4,12 +4,12 @@
 \alias{testsgpFlow}
 \title{Test sgpFlow}
 \usage{
-testsgpFlow(test.number, save.results, test.option)
+testsgpFlow(test.number, save.results = TRUE, test.option)
 }
 \arguments{
 \item{test.number}{Test number}
 
-\item{save.results}{Save results to disk from tests}
+\item{save.results}{Save results to disk from tests (default=TRUE)}
 
 \item{test.option}{Test option}
 }

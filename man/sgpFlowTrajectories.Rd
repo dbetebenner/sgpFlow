@@ -13,7 +13,7 @@ sgpFlowTrajectories(
   trajectory.type = "EXACT_VALUE",
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
-  iterate.without.csem.perturbation = FALSE,
+  csem.perturbation.distribution = "NORMAL",
   achievement.percentiles.tables,
   projection.splineMatrices
 )
@@ -35,7 +35,7 @@ sgpFlowTrajectories(
 
 \item{csem.perturbation.iterations}{Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.}
 
-\item{iterate.without.csem.perturbation}{Logical. If `TRUE`, performs CSEM iterations without perturbing score to derive 100 simulated trajectories from single (non-perturbed) initial score.}
+\item{csem.perturbation.distribution}{A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.}
 
 \item{achievement.percentiles.tables}{Logical. If `TRUE`, creates tables of 99 trajectories tables based upon initial achievement percentiles.}
 
@@ -45,9 +45,12 @@ sgpFlowTrajectories(
 A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
 }
 \description{
-Computes student growth percentile (SGP) trajectories for cohorts of students using longitudinal data, state-specific configurations, and projection spline matrices.
+Computes student growth percentile (SGP) trajectories for cohorts of students using longitudinal data,
+state-specific configurations, and projection spline matrices.
 
-This function processes longitudinal student data to generate percentile trajectories over time, integrating cohort-specific configurations, growth distributions, and optional perturbations based on conditional standard error of measurement (CSEM).
+This function processes longitudinal student data to generate percentile trajectories over time,
+integrating cohort-specific configurations, growth distributions, and optional perturbations based
+on conditional standard error of measurement (CSEM).
 }
 \details{
 - Converts `long_data` to wide format using \code{\link[sgpFlow]{getWideData}}, tailored to the specified `cohort.end.year` and `sgpFlow.config`.

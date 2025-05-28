@@ -53,7 +53,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/R
-          key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('**/DESCRIPTION') }}
+          key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('**/DESCRIPTION') }}-v2
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}
 
       - name: Install base packages
@@ -63,6 +63,11 @@ jobs:
             any::remotes
             any::rcmdcheck
             any::sessioninfo
+
+      - name: Install required CRAN packages
+        run: |
+          Rscript -e 'install.packages(c("copula", "dqrng", "duckdb", "future", "future.apply", "Rfast", "splines2", "strider"), dependencies = TRUE)'
+        shell: bash
 
       - name: Install GitHub packages
         run: |

@@ -14,7 +14,6 @@ sgpFlow(
   csem.perturbation.of.initial.scores = TRUE,
   csem.perturbation.iterations = 100L,
   csem.perturbation.distribution = "NORMAL",
-  achievement.percentiles.tables = TRUE,
   export.duckdb = TRUE,
   export.Rdata = TRUE,
   projection.splineMatrices,
@@ -39,8 +38,6 @@ sgpFlow(
 \item{csem.perturbation.iterations}{Integer. Number of iterations for CSEM perturbation. Default is \code{100L}.}
 
 \item{csem.perturbation.distribution}{A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.}
-
-\item{achievement.percentiles.tables}{Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows)}
 
 \item{export.duckdb}{Logical. If `TRUE`, exports the aggregated results to a DuckDB database.}
 

@@ -12,7 +12,6 @@
 #'     \item{\code{content_area.progression}}{A vector of content areas for the cohort.}
 #'   }
 #' @param cohort.end.year An optional integer specifying the cohort's end year. Defaults to the maximum year present in \code{long_data}.
-#' @param achievement.percentiles.tables Logical. Indicating whether subset based upon the achievement percentile is performed (99 resulting rows) 
 #'
 #' @return A wide-format `data.table` containing the following columns:
 #'   \describe{
@@ -39,8 +38,7 @@ getWideData <-
     function(
         long_data,
         sgpFlow.config,
-        cohort.end.year = NULL,
-        achievement.percentiles.tables
+        cohort.end.year = NULL
     ) {
         ### Parameters
         if (!is.null(cohort.end.year) & length(cohort.end.year) > 1) stop("Argument cohort.end.year must be of length 1.")

@@ -46,28 +46,25 @@ outputsgpFlow <-
         for (sgpFlow.config.iter in names(sgpFlow_results_list[[cohort.type.iter]])) {
             ## Loop through growth distributions
             for (growth.distributions.iter in names(sgpFlow_results_list[[cohort.type.iter]][[sgpFlow.config.iter]])) {
-                ## Loop through achievement.percentiles.tables
-                for (achievement.percentiles.tables.iter in names(sgpFlow_results_list[[cohort.type.iter]][[sgpFlow.config.iter]][[growth.distributions.iter]])) {
-                    # Extract content area and grade from config name
-                    tmp.content_area.grade <- strsplit(sgpFlow.config.iter, "__")
-                    content_area <- tmp.content_area.grade[[1]][1]
-                    grade <- gsub("GRADE_", "", tmp.content_area.grade[[1]][2])
+                # Extract content area and grade from config name
+                tmp.content_area.grade <- strsplit(sgpFlow.config.iter, "__")
+                content_area <- tmp.content_area.grade[[1]][1]
+                grade <- gsub("GRADE_", "", tmp.content_area.grade[[1]][2])
 
-                    # Add metadata columns to each iteration's data
-                    tmp.list[[paste(cohort.type.iter, sgpFlow.config.iter, growth.distributions.iter, achievement.percentiles.tables.iter, sep=".")]] <- 
-                    rbindlist(sgpFlow_results_list[[cohort.type.iter]][[sgpFlow.config.iter]][[growth.distributions.iter]][[achievement.percentiles.tables.iter]], fill=TRUE)[,
-                        lapply(.SD, collapse::fmean), 
-                            .SDcols = data.table::patterns("^SCALE_SCORE"),
-                            keyby = "ID"][,
-                            `:=`(
-                                COHORT_TYPE = cohort.type.iter,
-                                CONTENT_AREA = content_area,
-                                GRADE = grade,
-                                GROWTH_DISTRIBUTION = growth.distributions.iter)]
-                }
-            }
-        }
-    }
+                # Add metadata columns to each iteration's data
+                tmp.list[[paste(cohort.type.iter, sgpFlow.config.iter, growth.distributions.iter, sep=".")]] <- 
+                rbindlist(sgpFlow_results_list[[cohort.type.iter]][[sgpFlow.config.iter]][[growth.distributions.iter]], fill=TRUE)[,
+                    lapply(.SD, collapse::fmean), 
+                        .SDcols = data.table::patterns("^SCALE_SCORE"),
+                        keyby = "ID"][,
+                        `:=`(
+                            COHORT_TYPE = cohort.type.iter,
+                            CONTENT_AREA = content_area,
+                            GRADE = grade,
+                            GROWTH_DISTRIBUTION = growth.distributions.iter)]
+            } ## END growth.distributions.iter loop
+        } ## END sgpFlow.config.iter loop
+    } ## END cohort.type.iter loop
 
     ## Combine results into final lists
     for (table.type.iter in c("ENTIRE_COHORT", "ACHIEVEMENT_PERCENTILES")) {

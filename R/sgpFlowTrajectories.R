@@ -15,7 +15,6 @@
 #' @param csem.perturbation.of.initial.scores Logical. If `TRUE`, perturbs initial scale scores using CSEM to introduce variability in simulations. Default: `TRUE`.
 #' @param csem.perturbation.iterations Integer. Number of iterations for perturbing scores and calculating trajectories. Default: `100`.
 #' @param csem.perturbation.distribution A character string specifying the distribution to use for CSEM perturbation. Options include `"NORMAL"`. Default: `"NORMAL"`.
-#' @param achievement.percentiles.tables Logical. If `TRUE`, creates tables of 99 trajectories tables based upon initial achievement percentiles.
 #' @param projection.splineMatrices A list of projection spline matrices used to model growth percentiles over time.
 #' @returns A list of `data.table` objects, where each element represents the results of one simulation iteration. Each `data.table` contains student IDs and their projected scale scores at different percentiles.
 #' @details 
@@ -60,7 +59,6 @@ sgpFlowTrajectories <-
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
         csem.perturbation.distribution = "NORMAL",
-        achievement.percentiles.tables,
         projection.splineMatrices
     ) {
 
@@ -71,8 +69,7 @@ sgpFlowTrajectories <-
                     getWideData(
                         long_data = long_data,
                         sgpFlow.config = sgpFlow.config,
-                        cohort.end.year = cohort.end.year,
-                        achievement.percentiles.tables = achievement.percentiles.tables
+                        cohort.end.year = cohort.end.year
                     ),
                 state = state,
                 sgpFlow.config = sgpFlow.config,

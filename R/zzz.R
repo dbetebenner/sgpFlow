@@ -11,7 +11,7 @@ utils::globalVariables(c(
     "SGP_NORM_GROUP_BASELINE", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES",
     "TEMP_1", "VALID_CASE", "VALUE", "YEAR", "variable", "scale_score.names",
     "..cols_to_select", "..scale_score.names", "..scale.score.variables.for.projections",
-    "cols_to_select", ".SD", "SCALE_SCORE_STANDARDIZED"
+    "cols_to_select", ".SD", "SCALE_SCORE_STANDARDIZED", "SIMULATION_ITERATION"
 ))
 
 .onLoad <- function(libname, pkgname) {
@@ -63,7 +63,7 @@ utils::globalVariables(c(
 
         # Define a friendly startup message
 		message_text <- paste0(
-		    magenta(bold("\uD83C\uDF89 sgpFlow v", installed.version, sep="")), " - ", toOrdinal::toOrdinalDate("2025-5-27"), "\n",
+		    magenta(bold("\uD83C\uDF89 sgpFlow v", installed.version, sep="")), " - ", toOrdinal::toOrdinalDate("2025-5-28"), "\n",
 			strrep("\u2501", 40), "\n",
     	    bold("\U1F4E6 CRAN: "), cran.version, "\n",
     	    bold("\U1F527 Dev: "), dev.version, "\n",

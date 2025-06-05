@@ -7,8 +7,8 @@
 #' If only one year is specified in the growth distribution, then that distribution is utilized across each year of the projection. 
 #' Each element of the growth.distribution argument is a character string indicating the distribution from which to sample (using default parameters for the distribution)
 #' or a list containing the following components:
-#'      Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
-#'      Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM_RANDOM distribution)
+#'      Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., SGP_UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
+#'      Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the SGP_UNIFORM_RANDOM distribution)
 #'      Subgroups: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
 #'
 #' @param growth.distribution A list or character string specifying the growth distribution(s) to use:
@@ -17,7 +17,7 @@
 #'     \item If multiple distributions are provided, they should match the number of projection years
 #'     \item Each distribution element can be either:
 #'       \itemize{
-#'         \item A character string indicating the distribution (e.g., "UNIFORM_RANDOM", "SGP_BASELINE")
+#'         \item A character string indicating the distribution (e.g., "SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
 #'         \item A list with components:
 #'           \itemize{
 #'             \item Distribution: (Required) The distribution type or variable name
@@ -38,18 +38,18 @@
 #' @examples
 #' \dontrun{
 #' # Single distribution for all years
-#' dist1 <- getGrowthDistributionProjectionSequence("UNIFORM_RANDOM", 3)
+#' dist1 <- getGrowthDistributionProjectionSequence("SGP_UNIFORM_RANDOM", 3)
 #'
 #' # Custom distribution with parameters
 #' dist2 <- getGrowthDistributionProjectionSequence(
-#'   list(Distribution = "UNIFORM_RANDOM",
+#'   list(Distribution = "SGP_UNIFORM_RANDOM",
 #'        Parameters = list(min = 10, max = 90)),
 #'   2)
 #'
 #' # Multiple distributions by year
 #' dist3 <- getGrowthDistributionProjectionSequence(
 #'   list(
-#'     list(Distribution = "UNIFORM_RANDOM"),
+#'     list(Distribution = "SGP_UNIFORM_RANDOM"),
 #'     list(Distribution = "SGP_BASELINE",
 #'           Subgroups = "SCHOOL_NUMBER")
 #'   ),
@@ -79,19 +79,19 @@ getGrowthDistributionProjectionSequence <-
         } ### END check.growth.distribution.distribution
 
         check.growth.distribution.parameters <- function(parameters) {
-            if (parameters[["Distribution"]] == "UNIFORM_RANDOM") {
+            if (parameters[["Distribution"]] == "SGP_UNIFORM_RANDOM") {
                 if (is.null(parameters[["Parameters"]])) {
                     parameters[["Parameters"]] <- list(min = 1L, max = 99L)
                 } else {
-                    if (all(c("min", "max") %in% names(parameters[["Parameters"]]))) stop("Please supply integer min/max Value between 1 & 99 for UNIFORM_RANDOM growth.distribution.")
+                    if (all(c("min", "max") %in% names(parameters[["Parameters"]]))) stop("Please supply integer min/max Value between 1 & 99 for SGP_UNIFORM_RANDOM growth.distribution.")
                 }
             }
-            if (parameters[["Distribution"]] == "BETA") {
+            if (parameters[["Distribution"]] == "SGP_BETA") {
                 if (is.null(parameters[["Parameters"]])) {
                     parameters[["Parameters"]] <- list(shape1.min.max = c(3, 7), shape2.min.max = c(3, 7), interpolated.min.value = 0)
                 } else {
                     if (all(c("shape1.min.max", "shape2.min.max", "interpolated.min.value") %in% names(parameters[["Parameters"]]))) {
-                        stop("Please supply 'shape1.min.max', 'shape2.min.max', and 'interpolated.min.value' for BETA growth.distribution.")
+                        stop("Please supply 'shape1.min.max', 'shape2.min.max', and 'interpolated.min.value' for SGP_BETA growth.distribution.")
                     }
                 }
             }
@@ -105,11 +105,11 @@ getGrowthDistributionProjectionSequence <-
         }
 
         ## Parameters
-        supported_distributions <- c("UNIFORM_RANDOM", "BETA", paste0("P", 1:99), as.character(1:99))
-        supported_distributions.short <- c("UNIFORM_RANDOM", "BETA", "P**", "**")
+        supported_distributions <- c("SGP_UNIFORM_RANDOM", "SGP_BETA", paste0("SGP_", 1:99))
+        supported_distributions.short <- c("SGP_UNIFORM_RANDOM", "SGP_BETA", "SGP_##")
 
         ## Validate growth.distribution argument
-        growth.distribution <- toupper(ifelse(is.null(growth.distribution), "UNIFORM_RANDOM", gsub("[ -]", "", growth.distribution)))
+        growth.distribution <- toupper(ifelse(is.null(growth.distribution), "SGP_UNIFORM_RANDOM", gsub("[ -]", "", growth.distribution)))
         if (!is.list(growth.distribution) && !is.character(growth.distribution)) stop("Supplied growth.distribution must be either of class 'character' or 'list'.")
         
         ## Validate length of growth.distribution

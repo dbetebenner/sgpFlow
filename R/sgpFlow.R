@@ -56,13 +56,14 @@ sgpFlow <-
         sgpFlow.config,
         superCohort.config=NULL,
         cohort.data.type = "SINGLE_COHORT", ## Later to include "SUPER_COHORT"
+        coefficient.matrix.type = "SUPER_COHORT", ## Also SINGLE_COHORT
         trajectory.type = c("EXACT_VALUE", "NEAREST_INTEGER_VALUE"), ## Later to include "NEAREST_OBSERVED_VALUE"
         csem.perturbation.of.initial.scores = TRUE,
         csem.perturbation.iterations = 100L,
         csem.perturbation.distribution = "NORMAL",
         export.duckdb = TRUE,
         export.Rdata = TRUE,
-        projection.splineMatrices,
+        projection.splineMatrices = NULL,
         parallel.config = list(WORKERS=parallel::detectCores()-1)
     ) {
 
@@ -85,6 +86,10 @@ sgpFlow <-
         stop(paste0("Distribution supplied (", csem.perturbation.distribution, ") not currently supported."))
     }
 
+    if (is.null(projection.splineMatrices)) {
+        stop("Please supply projection.splineMatrices.")
+    }
+
     ## Extract long_data from sgp_object if it is an SGP object
     if ("SGP" %in% class(sgp_object)) long_data <- sgp_object@Data else long_data <- sgp_object
 
@@ -92,14 +97,13 @@ sgpFlow <-
     long_data[VALID_CASE=="VALID_CASE", SCALE_SCORE_STANDARDIZED := collapse::fscale(SCALE_SCORE, na.rm=TRUE), by=c("YEAR", "CONTENT_AREA", "GRADE")] 
 
     ## Initialize an empty list to store results
-    sgpFlow_results_list <- list()
+    sgpFlow_results_list <- list(YEAR=current.year <- max(long_data[["YEAR"]], na.rm=TRUE))
 
     ## Loop over sgpFlow.config
     for (sgpFlow.config.iter in sgpFlow.config) {
+        tmp_name <- paste(toupper(tail(sgpFlow.config.iter[["content_area.progression"]], 1)), paste("GRADE", paste(sgpFlow.config.iter[["grade.progression"]], collapse=""), sep="_"), sep="__")
         # Loop over cohort.data.type 
-        for (cohort.type.iter in cohort.data.type) {
-            tmp_name <- paste(toupper(tail(sgpFlow.config.iter[["content_area.progression"]], 1)), paste("GRADE", paste(sgpFlow.config.iter[["grade.progression"]], collapse=""), sep="_"), sep="__")
-
+        for (cohort.type.iter in cohort.data.type) { ## Either SINGLE_COHORT or SUPER_COHORT
             # Parallel processing of combinations
             if (!is.null(parallel.config[["WORKERS"]])) {
                 # Setup parallel backend
@@ -133,13 +137,13 @@ sgpFlow <-
                 for (i in seq_len(nrow(combinations))) {
                     growth.distributions.iter <- as.character(combinations[['growth.distribution']][i])
                     trajectory.type.iter <- combinations[['trajectory.type']][i]
-                    sgpFlow_results_list[[tmp_name]][[cohort.type.iter]][[growth.distributions.iter]][[trajectory.type.iter]] <- results[[i]]
+                    sgpFlow_results_list[[current.year]][[tmp_name]][[cohort.type.iter]][[growth.distributions.iter]][[trajectory.type.iter]] <- results[[i]]
                 }
             } else { # Sequential processing if no parallel config
                 # Loop over growth.distributions
                 for (growth.distributions.iter in sgpFlow.config.iter[["growth.distributions"]]) {
                     for (trajectory.type.iter in trajectory.type) {
-                        sgpFlow_results_list[[tmp_name]][[cohort.type.iter]][[growth.distributions.iter]][[trajectory.type.iter]] <-
+                        sgpFlow_results_list[[current.year]][[tmp_name]][[cohort.type.iter]][[growth.distributions.iter]][[trajectory.type.iter]] <-
                             sgpFlowTrajectories(
                                 long_data = long_data,
                                 state = state,
@@ -156,10 +160,8 @@ sgpFlow <-
         } # End cohort.type.iter
     } # End sgpFlow.config.iter
 
-    ## Export duckdb and Rdata files
-    if (export.duckdb) {
-        outputsgpFlow(sgpFlow_results_list, state = state, export.duckdb = export.duckdb, export.Rdata = export.Rdata)
-    }
+    ## outputSGPFlow
+    outputsgpFlow(sgpFlow_results_list, state = state, export.duckdb = export.duckdb, export.Rdata = export.Rdata)
 
     return(sgpFlow_results_list)
 } ### END sgpFlow

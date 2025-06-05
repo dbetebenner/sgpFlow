@@ -321,7 +321,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=as.integer(NULL),
       year_lags.projection.sequence=rep(1L, 7),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     MATHEMATICS_GRADE_4 = list(
       grade.progression=c("3", "4"),
@@ -331,7 +331,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 6),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     MATHEMATICS_GRADE_5 = list(
       grade.progression=c("4", "5"),
@@ -341,7 +341,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 5),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     MATHEMATICS_GRADE_6 = list(
       grade.progression=c("5", "6"),
@@ -351,7 +351,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 4),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     MATHEMATICS_GRADE_7 = list(
       grade.progression=c("6", "7"),
@@ -361,7 +361,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 3),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     MATHEMATICS_GRADE_8 = list(
       grade.progression=c("7", "8"),
@@ -371,7 +371,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 2),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     MATHEMATICS_GRADE_9 = list(
       grade.progression=c("8", "9"),
@@ -381,7 +381,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 1),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     )
   ) ### END sgpFlow_MATHEMATICS.config
   
@@ -395,7 +395,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=as.integer(NULL),
       year_lags.projection.sequence=rep(1L, 7),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     READING_GRADE_4 = list(
       grade.progression=c("3", "4"),
@@ -405,7 +405,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 6),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     READING_GRADE_5 = list(
       grade.progression=c("4", "5"),
@@ -415,7 +415,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 5),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     READING_GRADE_6 = list(
       grade.progression=c("5", "6"),
@@ -425,7 +425,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 4),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     READING_GRADE_7 = list(
       grade.progression=c("6", "7"),
@@ -435,7 +435,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 3),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     READING_GRADE_8 = list(
       grade.progression=c("7", "8"),
@@ -445,7 +445,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 2),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     ),
     READING_GRADE_9 = list(
       grade.progression=c("8", "9"),
@@ -455,7 +455,7 @@ sgpFlowTestConfigs <- function() {
       year_lags.progression=rep(1L, 1),
       year_lags.projection.sequence=rep(1L, 1),
       max.order.for.progression=2L,
-      growth.distributions=list("UNIFORM_RANDOM", "50", "1", "99")
+      growth.distributions=list("SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
     )
   ) ### END sgpFlow_READING.config
   

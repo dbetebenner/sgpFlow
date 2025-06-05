@@ -13,7 +13,7 @@ getGrowthDistributionProjectionSequence(growth.distribution, years.projected)
   \item If multiple distributions are provided, they should match the number of projection years
   \item Each distribution element can be either:
     \itemize{
-      \item A character string indicating the distribution (e.g., "UNIFORM_RANDOM", "SGP_BASELINE")
+      \item A character string indicating the distribution (e.g., "SGP_UNIFORM_RANDOM", "SGP_50", "SGP_1", "SGP_99")
       \item A list with components:
         \itemize{
           \item Distribution: (Required) The distribution type or variable name
@@ -40,25 +40,25 @@ The argument growth.distribution is specified either as a single argument for us
 If only one year is specified in the growth distribution, then that distribution is utilized across each year of the projection. 
 Each element of the growth.distribution argument is a character string indicating the distribution from which to sample (using default parameters for the distribution)
 or a list containing the following components:
-     Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
-     Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the UNIFORM_RANDOM distribution)
+     Distribution: (Required) The distribution associated with the growth distribution (either a theoretical distribution (e.g., SGP_UNIFORM_RANDOM) or a variable name (e.g., SGP_BASELINE) indicating the values to sample from.)
+     Parameters: (Optional) Distribution specific parameters, (formatted as a list) to pass to the distribution being used (e.g., min, max of the SGP_UNIFORM_RANDOM distribution)
      Subgroups: (Optional) Dataset variable indicating subgroup to apply growth distribution by (e.g., SCHOOL_NUMBER)
 }
 \examples{
 \dontrun{
 # Single distribution for all years
-dist1 <- getGrowthDistributionProjectionSequence("UNIFORM_RANDOM", 3)
+dist1 <- getGrowthDistributionProjectionSequence("SGP_UNIFORM_RANDOM", 3)
 
 # Custom distribution with parameters
 dist2 <- getGrowthDistributionProjectionSequence(
-  list(Distribution = "UNIFORM_RANDOM",
+  list(Distribution = "SGP_UNIFORM_RANDOM",
        Parameters = list(min = 10, max = 90)),
   2)
 
 # Multiple distributions by year
 dist3 <- getGrowthDistributionProjectionSequence(
   list(
-    list(Distribution = "UNIFORM_RANDOM"),
+    list(Distribution = "SGP_UNIFORM_RANDOM"),
     list(Distribution = "SGP_BASELINE",
           Subgroups = "SCHOOL_NUMBER")
   ),

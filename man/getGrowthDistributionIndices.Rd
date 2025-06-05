@@ -14,9 +14,9 @@ determines how many indices to generate.}
 \itemize{
   \item \code{Distribution}: The distribution type (required):
     \itemize{
-      \item "UNIFORM_RANDOM" for random indices within a range
-      \item A string "1" to "99" for fixed percentile values
-      \item "BETA" (not yet implemented)
+      \item "SGP_UNIFORM_RANDOM" for random indices within a range
+      \item A string "SGP_1" to "SGP_99" for fixed percentile values
+      \item "SGP_BETA" (not yet implemented)
     }
   \item \code{Parameters}: Distribution-specific parameters (required):
     \itemize{
@@ -28,15 +28,15 @@ determines how many indices to generate.}
 \value{
 An integer vector with length equal to \code{nrow(wide_data)}:
   \itemize{
-    \item For "UNIFORM_RANDOM": Random integers between \code{min} and \code{max} inclusive
+    \item For "SGP_UNIFORM_RANDOM": Random integers between \code{min} and \code{max} inclusive
     \item For numeric distributions: The specified integer repeated
-    \item For "BETA": Error (not implemented)
+    \item For "SGP_BETA": Error (not implemented)
   }
 }
 \description{
 This internal function calculates indices based on the specified growth distribution. 
-It supports "UNIFORM_RANDOM" for generating random indices within a range, numeric 
-growth distributions (e.g., "1" to "99") for fixed percentiles, and includes a 
-placeholder for "BETA" distribution (currently not implemented).
+It supports "SGP_UNIFORM_RANDOM" for generating random indices within a range, numeric 
+growth distributions (e.g., "SGP_1" to "SGP_99") for fixed percentiles, and includes a 
+placeholder for "SGP_BETA" distribution (currently not implemented).
 }
 \keyword{internal}

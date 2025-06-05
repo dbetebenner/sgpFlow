@@ -18,7 +18,7 @@
 #' @return A data.table containing the processed and combined results from sgpFlow analysis
 #'
 #' @importFrom data.table patterns rbindlist
-#' @importFrom collapse fmean
+#' @importFrom collapse unlist2d
 #' @export
 
 outputsgpFlow <-
@@ -29,47 +29,16 @@ outputsgpFlow <-
         export.Rdata = TRUE
     ) {
 
-    ## Initialize lists
-    tmp.list <- tmp.list.final <- list()
-
-    ## Initialize directory if it doesn't exist
-    if (!dir.exists("Data")) {
-        dir.create("Data")
-    }
-
     ## Get state name from state abbreviation
     state.name <- getStateAbbreviation(state, type="FULL_NAME")
 
-    ## Loop through cohort types
-    for (cohort.type.iter in names(sgpFlow_results_list)) {
-        ## Loop through sgpFlow.config
-        for (sgpFlow.config.iter in names(sgpFlow_results_list[[cohort.type.iter]])) {
-            ## Loop through growth distributions
-            for (growth.distributions.iter in names(sgpFlow_results_list[[cohort.type.iter]][[sgpFlow.config.iter]])) {
-                # Extract content area and grade from config name
-                tmp.content_area.grade <- strsplit(sgpFlow.config.iter, "__")
-                content_area <- tmp.content_area.grade[[1]][1]
-                grade <- gsub("GRADE_", "", tmp.content_area.grade[[1]][2])
+    ## Names of added fields to exported large data.tables
+    variables.to.add <- c("YEAR", "COHORT_TYPE", "GROWTH_DISTRIBUTION", "GROWTH_DISTRIBUTION_TYPE")
 
-                # Add metadata columns to each iteration's data
-                tmp.list[[paste(cohort.type.iter, sgpFlow.config.iter, growth.distributions.iter, sep=".")]] <- 
-                rbindlist(sgpFlow_results_list[[cohort.type.iter]][[sgpFlow.config.iter]][[growth.distributions.iter]], fill=TRUE)[,
-                    lapply(.SD, collapse::fmean), 
-                        .SDcols = data.table::patterns("^SCALE_SCORE"),
-                        keyby = "ID"][,
-                        `:=`(
-                            COHORT_TYPE = cohort.type.iter,
-                            CONTENT_AREA = content_area,
-                            GRADE = grade,
-                            GROWTH_DISTRIBUTION = growth.distributions.iter)]
-            } ## END growth.distributions.iter loop
-        } ## END sgpFlow.config.iter loop
-    } ## END cohort.type.iter loop
-
-    ## Combine results into final lists
-    for (table.type.iter in c("ENTIRE_COHORT", "ACHIEVEMENT_PERCENTILES")) {
-        tmp.list.final[[table.type.iter]] <- rbindlist(tmp.list[grep(table.type.iter, names(tmp.list))], fill=TRUE)
-    }
+    ## Loop through grade x content area groups
+    for (sgpFlow.config.iter in names(sgpFlow_results_list)) {
+        assign(paste0(state.name, "_sgpFlow_", sgpFlow.config.iter), collapse::unlist2d(sgpFlow_results_list[[sgpFlow.config.iter]], DT=TRUE))
+    } ## END sgpFlow.config.iter loop
 
     ## Export results to DuckDB
     if (export.duckdb) {
